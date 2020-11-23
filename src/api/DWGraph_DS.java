@@ -3,21 +3,20 @@ package api;
 import java.util.Collection;
 import java.util.HashMap;
 
-public class DWGraph_DS implements directed_weighted_graph{
-
+public class DWGraph_DS implements directed_weighted_graph {
     //here we put the edges
     private HashMap<Integer, HashMap<Integer, edge_data>> _ni;
     //here we put the node
     private HashMap<Integer,node_data> _graph;
-    private int _nodeSize;
-    private int _edgeSize;
+    // private int _nodeSize; // simply _graph.size() ? maybe usless integer
+    private int _edgeSize; // consider calculate degree beside edge
     private int _mc;
 
     public DWGraph_DS(){
         _graph = new HashMap<>();
         _ni = new HashMap<>();
-        _nodeSize = 0;
-        _edgeSize = 0;
+        //_nodeSize = 0; // simply _graph.size() ? maybe usless integer
+        _edgeSize = 0; // consider calculate degree beside edge
         _mc = 0;
     }
 
@@ -29,16 +28,29 @@ public class DWGraph_DS implements directed_weighted_graph{
     @Override
     public edge_data getEdge(int src, int dest) {
         return _ni.get(src).get(dest);
-    }
-
+    } // Does it matter that there is a edge from src to dest and not from dest to src?
+    
     @Override
     public void addNode(node_data n) {
-        ///// i don't know if it's true that n is node_data /////
+    	///// i don't know if it's true that n is node_data /////
+    	/// ---> seems like that.. ///
+    	if (n==null) return;
+    	_graph.put(n.getKey(), n);
+    	_ni.put(n.getKey(), new HashMap<>());
     }
 
+    // note, added one edge from src to dest but not from dest to src (seems to be usless at this point)
     @Override
     public void connect(int src, int dest, double w) {
-
+    	if (!_graph.containsKey(src)||!_graph.containsKey(dest)||w<0) return; // w==0 valid input? read interface
+    	if (_ni.get(src).containsKey(dest)) { // edge existe, check the weight
+    		if (_ni.get(src).get(dest).getWeight()==w) return; // same as input > do nothing (MC stays the same)
+    		else _ni.get(src).put(dest, new EdgeDate(src,dest,w)); // update edge only
+    	} else { // there no such edge
+    		_ni.get(src).put(dest, new EdgeDate(src,dest,w));
+    		_edgeSize++; // a new edge added
+    	}
+    	_mc++;
     }
 
     @Override
@@ -65,7 +77,8 @@ public class DWGraph_DS implements directed_weighted_graph{
 
     @Override
     public int nodeSize() {
-        return _nodeSize;
+        //return _nodeSize;
+    	return _graph.size();
     }
 
     @Override
@@ -82,58 +95,8 @@ public class DWGraph_DS implements directed_weighted_graph{
     /////////////////////////////////////////
     //////////////// Node class /////////////
     /////////////////////////////////////////
-    private class NodeData implements node_data{
-
-        private int _key, _tag;
-        private double _weight;
-        private geo_location _location;
-        private String _info;
-
-        @Override
-        public int getKey() {
-            return _key;
-        }
-
-        @Override
-        public geo_location getLocation() {
-            return _location;
-        }
-
-        @Override
-        public void setLocation(geo_location p) {
-
-        }
-
-        @Override
-        public double getWeight() {
-            return _weight;
-        }
-
-        @Override
-        public void setWeight(double w) {
-
-        }
-
-        @Override
-        public String getInfo() {
-            return _info;
-        }
-
-        @Override
-        public void setInfo(String s) {
-
-        }
-
-        @Override
-        public int getTag() {
-            return _tag;
-        }
-
-        @Override
-        public void setTag(int t) {
-            _tag = t;
-        }
-    }
+    
+    // Splitted the NodeData class due to an static 'key' variable
 
 
     /////////////////////////////////////////
