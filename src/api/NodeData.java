@@ -15,7 +15,7 @@ public class NodeData implements node_data {
         _key = key;
         _weight = 0;
         _tag = 0;
-        _location = null;
+        _location = new EdgeLocation();
         _info = null;
     }
 
