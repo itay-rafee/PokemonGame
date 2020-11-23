@@ -129,11 +129,19 @@ public class DWGraph_DS implements directed_weighted_graph{
     /////////////////////////////////////////
     //////// Edge Location class ////////////
     /////////////////////////////////////////
-    private class EdgeLocation implements edge_location{
+    public class EdgeLocation implements edge_location{
+    	// This class should be accessible from outside 
+    	// (the reason is because there are no setters in the inner class and also in the outer class)
+    	// and hence this class is public
         private edge_data _edge;
         private double _ratio;
         
-        /// ????????? ///
+        /*
+        public EdgeLocation(){
+        	_edge = new EdgeData(); // EdgeData should be public to implement this
+        	_ratio = 0;
+        }
+        */
         
         public EdgeLocation(edge_data e, double r){
         	_edge = e;
@@ -211,8 +219,9 @@ public class DWGraph_DS implements directed_weighted_graph{
     //////////////// Node class /////////////
     /////////////////////////////////////////
     public class NodeData implements node_data{ 
-    	// This class should be accessible from outside (initialize a vertex before adding it to the graph)
-    	
+    	// This class should be accessible from outside
+    	// (the reason is because we initialize a vertex before adding it to the graph)
+    	// and hence this class is public
         private int _key, _tag;
         private double _weight;
         private geo_location _location;
@@ -277,7 +286,10 @@ public class DWGraph_DS implements directed_weighted_graph{
     /////////////////////////////////////////
     ////////Node Location class /////////////
     /////////////////////////////////////////
-    private class GeoLocation implements geo_location{
+    public class GeoLocation implements geo_location{
+    	// This class should be accessible from outside 
+    	// (the reason is because we initialize a GeoLocation before adding it to an NodeData)
+    	// and hence this class is public
         private double _x, _y, _z, _distance;
 
         public GeoLocation(){
