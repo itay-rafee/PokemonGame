@@ -1,79 +1,77 @@
 package api;
 
-<<<<<<< HEAD
-public class NodeData implements node_data{
+
+public class NodeData implements node_data {
     /////////////////////////////////////////
     //////////////// Node class /////////////
     /////////////////////////////////////////
 
-        private int _key, _tag;
-        private double _weight;
-        private geo_location _location;
-        private String _info;
+    private int _key, _tag;
+    private double _weight;
+    private geo_location _location;
+    private String _info;
 
-        public NodeData(int key){
-            _key = key;
-            _weight = 0;
-            _tag = 0;
-            _location = null;
-            _info = null;
-        }
+    public NodeData(int key) {
+        _key = key;
+        _weight = 0;
+        _tag = 0;
+        _location = null;
+        _info = null;
+    }
 
-        @Override
-        public int getKey() {
-            return _key;
-        }
+    @Override
+    public int getKey() {
+        return _key;
+    }
 
-        @Override
-        public geo_location getLocation() {
-            return _location;
-        }
+    @Override
+    public geo_location getLocation() {
+        return _location;
+    }
 
-        @Override
-        public void setLocation(geo_location p) {
-            _location = p;
-        }
+    @Override
+    public void setLocation(geo_location p) {
+        _location = p;
+    }
 
-        @Override
-        public double getWeight() {
-            return _weight;
-        }
+    @Override
+    public double getWeight() {
+        return _weight;
+    }
 
-        @Override
-        public void setWeight(double w) {
-            _weight = w;
-        }
+    @Override
+    public void setWeight(double w) {
+        _weight = w;
+    }
 
-        @Override
-        public String getInfo() {
-            return _info;
-        }
+    @Override
+    public String getInfo() {
+        return _info;
+    }
 
-        @Override
-        public void setInfo(String s) {
-            _info = s;
-        }
+    @Override
+    public void setInfo(String s) {
+        _info = s;
+    }
 
-        @Override
-        public int getTag() {
-            return _tag;
-        }
+    @Override
+    public int getTag() {
+        return _tag;
+    }
 
-        @Override
-        public void setTag(int t) {
-            _tag = t;
-        }
-
-
+    @Override
+    public void setTag(int t) {
+        _tag = t;
+    }
 
 
     /////////////////////////////////////////
     ////////Node Location class /////////////
     /////////////////////////////////////////
-    private class GeoLocation implements geo_location{
+    private class GeoLocation implements geo_location {
         private double _x, _y, _z, _distance;
 
-        public GeoLocation(double x, double y, double z){
+        public GeoLocation(double x, double y, double z) {
             //// _distance = ?? ////
             _x = x;
             _y = y;
@@ -100,67 +98,5 @@ public class NodeData implements node_data{
             /////// ?? ////////
             return _distance;
         }
-=======
-// Splitted the NodeData class due to an static 'key' variable
-public class NodeData implements node_data{
-	private static int _key;
-    private int _tag;
-    private double _weight;
-    private geo_location _location;
-    private String _info;
-    
-    /* Constructor */
-	public NodeData() {
-		this._tag = -1;
-		this._weight = 0;
-		this._info = "";
-		this._key = _key++;
-		this._location = null;
-	}
-    
-    @Override
-    public int getKey() {
-        return _key;
-    }
-
-    @Override
-    public geo_location getLocation() {
-        return _location;
-    }
-
-    @Override
-    public void setLocation(geo_location p) {
-
-    }
-
-    @Override
-    public double getWeight() {
-        return _weight;
-    }
-
-    @Override
-    public void setWeight(double w) {
-
-    }
-
-    @Override
-    public String getInfo() {
-        return _info;
-    }
-
-    @Override
-    public void setInfo(String s) {
-
-    }
-
-    @Override
-    public int getTag() {
-        return _tag;
-    }
-
-    @Override
-    public void setTag(int t) {
-        _tag = t;
->>>>>>> origin/main
     }
 }
