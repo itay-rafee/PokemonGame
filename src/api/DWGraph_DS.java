@@ -29,12 +29,13 @@ public class DWGraph_DS implements directed_weighted_graph{
 
     @Override
     public node_data getNode(int key) {
-        return _graph.get(key);
+        return _graph.get(key); // exception is better instead of null if no such node
     }
 
     @Override
     public edge_data getEdge(int src, int dest) {
-        return _ni.get(src).get(dest);
+    	if (!_graph.containsKey(src)||!_graph.containsKey(dest)||src==dest) return null; // exception is better
+        return _ni.get(src).get(dest); // exception is better instead of null if no edge
     }
 
     @Override
@@ -59,7 +60,7 @@ public class DWGraph_DS implements directed_weighted_graph{
     		srcNi.put(dest,e); // update edge only
     	} else { // there no such edge
     		srcNi.put(dest,e);
-            _niRevers.get(dest).add(src);
+    		_niRevers.get(dest).add(src);
     		_edgeSize++; // a new edge added
     	}
         _mc++;
@@ -164,6 +165,10 @@ public class DWGraph_DS implements directed_weighted_graph{
     //////////////// Edge class /////////////
     /////////////////////////////////////////
     private class EdgeData implements edge_data{
+    	// This class should be accessible from outside
+    	// (the reason is that when we approach the neighbors of an vertex from outside this class
+    	// we get a list of edges. The only option to get the vertices is through this class [getDest() method]).
+    	// and hence this class is public
         private int _src, _dest, _tag;
         private double _weight;
         private String _info;
