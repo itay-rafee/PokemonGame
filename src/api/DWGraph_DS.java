@@ -218,119 +218,119 @@ public class DWGraph_DS implements directed_weighted_graph{
         }
     }
 
-
-    /** not sure it's in this class */
-    /////////////////////////////////////////
-    //////////////// Node class /////////////
-    /////////////////////////////////////////
-    public class NodeData implements node_data{ 
-    	// This class should be accessible from outside
-    	// (the reason is because we initialize a vertex before adding it to the graph)
-    	// and hence this class is public
-        private int _key, _tag;
-        private double _weight;
-        private geo_location _location;
-        private String _info;
-        
-        public NodeData(){
-        	_key = keys++;
-        	_location = new GeoLocation();
-            _weight = 0;
-            _tag = 0;
-            _info = "";
-        }
-        
-        @Override
-        public int getKey() {
-            return _key;
-        }
-
-        @Override
-        public geo_location getLocation() {
-            return _location;
-        }
-
-        @Override
-        public void setLocation(geo_location p) {
-
-        }
-
-        @Override
-        public double getWeight() {
-            return _weight;
-        }
-
-        @Override
-        public void setWeight(double w) {
-
-        }
-
-        @Override
-        public String getInfo() {
-            return _info;
-        }
-
-        @Override
-        public void setInfo(String s) {
-
-        }
-
-        @Override
-        public int getTag() {
-            return _tag;
-        }
-
-        @Override
-        public void setTag(int t) {
-            _tag = t;
-        }
-    }
-
-
-
-    /////////////////////////////////////////
-    ////////Node Location class /////////////
-    /////////////////////////////////////////
-    public class GeoLocation implements geo_location{
-    	// This class should be accessible from outside 
-    	// (the reason is because we initialize a GeoLocation before adding it to an NodeData)
-    	// and hence this class is public
-        private double _x, _y, _z, _distance;
-
-        public GeoLocation(){
-            _distance = 0;
-            _x = 0;
-            _y = 0;
-            _z = 0;
-        }
-        
-        public GeoLocation(double x, double y, double z){
-            //// _distance = ?? ////
-            _x = x;
-            _y = y;
-            _z = z;
-        }
-
-        @Override
-        public double x() {
-            return _x;
-        }
-
-        @Override
-        public double y() {
-            return _y;
-        }
-
-        @Override
-        public double z() {
-            return _z;
-        }
-
-        @Override
-        public double distance(geo_location g) {
-            /////// ?? ////////
-            return _distance;
-        }
-    }
+//
+//    /** not sure it's in this class */
+//    /////////////////////////////////////////
+//    //////////////// Node class /////////////
+//    /////////////////////////////////////////
+//    public class NodeData implements node_data{
+//    	// This class should be accessible from outside
+//    	// (the reason is because we initialize a vertex before adding it to the graph)
+//    	// and hence this class is public
+//        private int _key, _tag;
+//        private double _weight;
+//        private geo_location _location;
+//        private String _info;
+//
+//        public NodeData(){
+//        	_key = keys++;
+//        	_location = new GeoLocation();
+//            _weight = 0;
+//            _tag = 0;
+//            _info = "";
+//        }
+//
+//        @Override
+//        public int getKey() {
+//            return _key;
+//        }
+//
+//        @Override
+//        public geo_location getLocation() {
+//            return _location;
+//        }
+//
+//        @Override
+//        public void setLocation(geo_location p) {
+//
+//        }
+//
+//        @Override
+//        public double getWeight() {
+//            return _weight;
+//        }
+//
+//        @Override
+//        public void setWeight(double w) {
+//
+//        }
+//
+//        @Override
+//        public String getInfo() {
+//            return _info;
+//        }
+//
+//        @Override
+//        public void setInfo(String s) {
+//
+//        }
+//
+//        @Override
+//        public int getTag() {
+//            return _tag;
+//        }
+//
+//        @Override
+//        public void setTag(int t) {
+//            _tag = t;
+//        }
+//    }
+//
+//
+//
+//    /////////////////////////////////////////
+//    ////////Node Location class /////////////
+//    /////////////////////////////////////////
+//    public class GeoLocation implements geo_location{
+//    	// This class should be accessible from outside
+//    	// (the reason is because we initialize a GeoLocation before adding it to an NodeData)
+//    	// and hence this class is public
+//        private double _x, _y, _z, _distance;
+//
+//        public GeoLocation(){
+//            _distance = 0;
+//            _x = 0;
+//            _y = 0;
+//            _z = 0;
+//        }
+//
+//        public GeoLocation(double x, double y, double z){
+//            //// _distance = ?? ////
+//            _x = x;
+//            _y = y;
+//            _z = z;
+//        }
+//
+//        @Override
+//        public double x() {
+//            return _x;
+//        }
+//
+//        @Override
+//        public double y() {
+//            return _y;
+//        }
+//
+//        @Override
+//        public double z() {
+//            return _z;
+//        }
+//
+//        @Override
+//        public double distance(geo_location g) {
+//            /////// ?? ////////
+//            return _distance;
+//        }
+//    }
 
 }

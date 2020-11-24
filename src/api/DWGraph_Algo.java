@@ -1,5 +1,16 @@
 package api;
 
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+
+import java.io.*;
 import java.util.*;
 
 public class DWGraph_Algo implements dw_graph_algorithms{
@@ -30,33 +41,33 @@ public class DWGraph_Algo implements dw_graph_algorithms{
 
     @Override
     public boolean isConnected() {
-    	HashMap<node_data, Boolean> vis = new HashMap<>();
-		Queue<node_data> q = new LinkedList<node_data>();
-		if (!this._graph.getV().iterator().hasNext())
-			return vis.size() == this._graph.getV().size();
-		node_data first = this._graph.getV().iterator().next();
-		node_data current = first;
-		q.add(current);
-		vis.put(current, true);
-		while (!q.isEmpty()) {
-			current = (node_data) q.remove();
-			for (edge_data node : this._graph.getE(current.getKey())) {
-				if (!vis.containsKey(_graph.getNode(node.getDest()))) {
-					q.add(_graph.getNode(node.getDest()));
-					vis.put(_graph.getNode(node.getDest()), true);
-				}
-			}
-		}
-		boolean found = false;
-		// Checks if one of the vertices we visited has a edge to the first vertex.
-		for (node_data node : vis.keySet()) {
-		    if (_graph.getEdge(node.getKey(), first.getKey())!=null) {
-		    	found = true;
-		    	break;
-		    }
-		}
-		if (!found) return false;
-		return vis.size() == this._graph.getV().size();
+        HashMap<node_data, Boolean> vis = new HashMap<>();
+        Queue<node_data> q = new LinkedList<node_data>();
+        if (!this._graph.getV().iterator().hasNext())
+            return vis.size() == this._graph.getV().size();
+        node_data first = this._graph.getV().iterator().next();
+        node_data current = first;
+        q.add(current);
+        vis.put(current, true);
+        while (!q.isEmpty()) {
+            current = (node_data) q.remove();
+            for (edge_data node : this._graph.getE(current.getKey())) {
+                if (!vis.containsKey(_graph.getNode(node.getDest()))) {
+                    q.add(_graph.getNode(node.getDest()));
+                    vis.put(_graph.getNode(node.getDest()), true);
+                }
+            }
+        }
+        boolean found = false;
+        // Checks if one of the vertices we visited has a edge to the first vertex.
+        for (node_data node : vis.keySet()) {
+            if (_graph.getEdge(node.getKey(), first.getKey())!=null) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) return false;
+        return vis.size() == this._graph.getV().size();
     }
 
 
@@ -121,14 +132,133 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         theList.add(nodeDest);
         return theList;
     }
+
+    //// saving json by java-json ///
+
     @Override
     public boolean save(String file) {
+        if (_graph == null || file == null)return false;
+        int counter = 0;
+
+        try{
+            PrintWriter pw = new PrintWriter(new File(file));
+            //
+            JSONObject g = new JSONObject();
+            JSONArray Edges = new JSONArray();
+            Collection<node_data> nodes = _graph.getV();
+
+            // add the edges
+            for (node_data n: nodes) {
+                int src = n.getKey();
+                Collection<edge_data> edge = _graph.getE(src);
+                for (edge_data ed: edge) {
+                    JSONObject e1 = new JSONObject();
+                    e1.put("src",src);
+                    e1.put("w", ed.getWeight());
+                    e1.put("dest",ed.getWeight());
+                    Edges.put(e1);
+                }
+            }
+
+            //add the nodes
+            JSONArray Nodes1 = new JSONArray();
+            for (node_data n :nodes) {
+                JSONObject e1 = new JSONObject();
+                geo_location pos = n.getLocation();
+                String s = pos.x()+","+pos.y()+","+pos.z();//the x, y, z.
+                e1.put("pos", s);
+                e1.put("id", n.getKey());
+                Nodes1.put(e1);
+            }
+            g.put("Edge",Edges);
+            g.put("Node",Nodes1);
+
+            //
+            pw.write(g.toString());
+            pw.close();
+            return true;
+        }
+        catch (FileNotFoundException | JSONException e){
+            e.printStackTrace();
+        }
         return false;
     }
 
+    ////////// json by google ///////
+
+//    public boolean save(String file) {
+//        if (_graph == null || file == null)return false;
+//        int counter = 0;
+//
+//        try{
+//            PrintWriter pw = new PrintWriter(new File(file));
+//            //
+//            Gson gson = new Gson();
+//            JsonObject g = new JsonObject();
+//            JsonArray Edges = new JsonArray();
+//            Collection<node_data> nodes = _graph.getV();
+//            for (node_data n: nodes) {
+//                int src = n.getKey();
+//                Collection<edge_data> edge = _graph.getE(src);
+//                for (edge_data ed: edge) {
+//                    JsonObject e = new JsonObject();
+//                    e.add("src",gson.toJsonTree(src));
+//                    e.add("w",gson.toJsonTree(ed.getWeight()));
+//                    e.add("dest", gson.toJsonTree(ed.getDest()));
+//                    Edges.add(e);
+//                }
+//            }
+//            JsonArray Nodes = new JsonArray();
+//            for (node_data n :nodes) {
+//                JsonObject e = new JsonObject();
+//                geo_location pos = n.getLocation();
+//                String s = pos.x()+","+pos.y()+","+pos.z();
+//                e.add("pos",gson.toJsonTree(s));
+//                e.add("id",gson.toJsonTree(n.getKey()));
+//                Nodes.add(e);
+//            }
+//            g.add("Edge",Edges);
+//            g.add("Nodes",Nodes);
+//            //
+//            pw.write(g.toString());
+//            pw.close();
+//            return true;
+//        }
+//        catch (FileNotFoundException | JSONException e){
+//            e.printStackTrace();
+//        }
+//        return false;
+//    }
+
     @Override
     public boolean load(String file) {
-        return false;
+        if(file == null) return false;
+        try{
+            directed_weighted_graph g = new DWGraph_DS();
+            JSONObject graphFile = new JSONObject(new FileReader(file));
+            JSONArray nodes = graphFile.getJSONArray("Nodes");
+            //Iterator<String> it = nodes.iterator();
+            int n = nodes.length();
+
+            // add the nodes
+            for (int i = 0; i < n; i++) {
+                JSONObject node = nodes.getJSONObject(i);
+                String pos = node.getString("pos");
+                String[] xyz = pos.split("'");
+                double x = Double.parseDouble(xyz[0]), y = Double.parseDouble(xyz[1]), z = Double.parseDouble(xyz[2]);
+                geo_location geo = new GeoLocation(x,y,z);
+                int id = (int)node.get("id");
+                node_data n1 = new NodeData(id,geo);
+                g.addNode(n1);
+            }
+
+            _graph = g;
+            return true;
+        }
+        catch (IOException | JSONException e){
+            System.out.println("as is");
+            return false;
+        }
     }
 
 
