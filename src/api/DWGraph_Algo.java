@@ -251,26 +251,41 @@ public class DWGraph_Algo implements dw_graph_algorithms{
 //        return false;
 //    }
 
+
     @Override
     public boolean load(String file) {
         if(file == null) return false;
         try{
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String s = "", s1 = "";
+            while ((s1 = br.readLine()) != null)s = s + s1;
             directed_weighted_graph g = new DWGraph_DS();
-            JSONObject graphFile = new JSONObject(new FileReader(file));
+            JSONObject graphFile = new JSONObject(s);
             JSONArray nodes = graphFile.getJSONArray("Nodes");
-            //Iterator<String> it = nodes.iterator();
-            int n = nodes.length();
+
+            int t = nodes.length();
 
             // add the nodes
-            for (int i = 0; i < n; i++) {
+            for (int i = 0; i < t; i++) {
                 JSONObject node = nodes.getJSONObject(i);
                 String pos = node.getString("pos");
-                String[] xyz = pos.split("'");
+                String[] xyz = pos.split(",");
                 double x = Double.parseDouble(xyz[0]), y = Double.parseDouble(xyz[1]), z = Double.parseDouble(xyz[2]);
                 geo_location geo = new GeoLocation(x,y,z);
                 int id = (int)node.get("id");
                 node_data n1 = new NodeData(id,geo);
                 g.addNode(n1);
+            }
+
+            JSONArray edges = graphFile.getJSONArray("Edges");
+            t = edges.length();
+
+            //add the edges
+            for (int i = 0; i < t; i++) {
+                JSONObject ed = edges.getJSONObject(i);
+                int src = ed.getInt("src"), dest = ed.getInt("dest");
+                double w = ed.getDouble("w");
+                g.connect(src,dest,w);
             }
 
             _graph = g;
