@@ -127,7 +127,7 @@ class DWGraph_AlgoTest {
     void shortestPathDist() {
     	// we need to fix this method
     	
-    	/*
+
     	directed_weighted_graph g = graph();
     	dw_graph_algorithms ga = new DWGraph_Algo();
     	ga.init(g);
@@ -151,14 +151,14 @@ class DWGraph_AlgoTest {
     	System.out.print("Your answer: "+answer+" >> ");
     	if (answer==14) System.out.println("Correct Answer!");
     	else System.out.println("Wrong! Should be 14!");
-    	*/
+
     }
 
     @Test
     void shortestPath() {
     	// we need to fix this method
     	
-    	/*
+
     	directed_weighted_graph g = graph();
     	dw_graph_algorithms ga = new DWGraph_Algo();
     	ga.init(g);
@@ -204,7 +204,7 @@ class DWGraph_AlgoTest {
 		else System.out.print("> Wrong Answer!");
 		System.out.println();
 		//assertEquals(" 7 > 4 > 5 > 6 >", answer);
-		*/
+
     }
 
     @Test

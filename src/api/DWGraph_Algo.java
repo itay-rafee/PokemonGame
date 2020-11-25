@@ -132,7 +132,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
             return theList;
         }
         HashMap<node_data,node_data> p = new HashMap<>();
-        double w = shortestPathDist(dest,src,p);
+        double w = shortestPathDist(src,dest,p);
         //if there is no path between them
         if (w == -1){
             return null;
@@ -141,14 +141,15 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         //the list of the path that return
         node_data nodeSrc = _graph.getNode(src);
         node_data nodeDest = _graph.getNode(dest);
-        node_data n = nodeSrc;
-
-        while (p.get(n) != nodeDest){
-            theList.add(n);
+        node_data n = nodeDest;
+        Stack<node_data> opList = new Stack<>();
+        while (p.get(n) != nodeSrc){
+            opList.push(n);
             n = p.get(n);
         }
-        theList.add(n);
-        theList.add(nodeDest);
+        opList.push(n);
+        opList.push(nodeSrc);
+        while (!opList.isEmpty()) theList.add(opList.pop());
         return theList;
     }
 
@@ -275,6 +276,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         node_data nodeSrc = _graph.getNode(src);
 
         node_w n = new node_w(nodeSrc,1);
+        ch.put(src,n);
         pq.add(n);
         while (!pq.isEmpty() && !flag){
             node_w n_w = pq.remove();
@@ -291,7 +293,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
                     int key2 = e.getDest();
                     node_data n2 = _graph.getNode(key2);
                     double wKey1 = ch.get(key1).get_w();
-                    if (ch.containsKey(key2) || ch.get(key2).get_w() > wKey1 + w){
+                    if (!ch.containsKey(key2) || ch.get(key2).get_w() > wKey1 + w){
                         n_w = new node_w(n2,wKey1 + w);
                         ch.put(key2,n_w);
                         thePath.put(n2,n1);
@@ -300,7 +302,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
                 }
             }
         }
-        if (flag) return _graph.getNode(dest).getTag()-1;
+        if (flag) return ch.get(dest).get_w()-1;
         return -1;
     }
 
