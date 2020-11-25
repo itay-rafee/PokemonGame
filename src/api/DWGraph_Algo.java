@@ -106,13 +106,13 @@ public class DWGraph_Algo implements dw_graph_algorithms{
             return -1;//while one or two of the keys not exists
         }
         if(src == dest)return 0;
-        //keep all the node that we path
-        HashMap<node_data,HashMap<node_data,node_data>> thePath = new HashMap<>();
+        //used in shortestPath()
+        HashMap<node_data,node_data> thePath = new HashMap<>();
         //call the function that return the weight
         double w = shortestPathDist(src,dest,thePath);
-        resetTag(thePath.keySet());
-        return 1;//w;
+        return w;
     }
+
 
     /**
      * return the shortest path between src to dest
@@ -127,27 +127,25 @@ public class DWGraph_Algo implements dw_graph_algorithms{
             return null;//while one or two of the keys not exists
         }
         List<node_data> theList = new LinkedList<>();
-        if (src == dest) {
+        if (src == dest){
             theList.add(_graph.getNode(src));
             return theList;
         }
-        HashMap<node_data,HashMap<node_data,node_data>> thePath = new HashMap<>();
-        double w = shortestPathDist(dest,src,thePath);
+        HashMap<node_data,node_data> p = new HashMap<>();
+        double w = shortestPathDist(dest,src,p);
         //if there is no path between them
-        if (w == -1) {
-            resetTag(thePath.keySet());
+        if (w == -1){
             return null;
         }
-        //reset the tag of the node that we path
-        resetTag(thePath.keySet());
+
         //the list of the path that return
         node_data nodeSrc = _graph.getNode(src);
         node_data nodeDest = _graph.getNode(dest);
         node_data n = nodeSrc;
 
-        while (thePath.get(nodeDest).get(n) != nodeDest){
+        while (p.get(n) != nodeDest){
             theList.add(n);
-            n = thePath.get(nodeDest).get(n);
+            n = p.get(n);
         }
         theList.add(n);
         theList.add(nodeDest);
@@ -204,52 +202,6 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         }
         return false;
     }
-
-    ////////// json by google ///////
-
-//    public boolean save(String file) {
-//        if (_graph == null || file == null)return false;
-//        int counter = 0;
-//
-//        try{
-//            PrintWriter pw = new PrintWriter(new File(file));
-//            //
-//            Gson gson = new Gson();
-//            JsonObject g = new JsonObject();
-//            JsonArray Edges = new JsonArray();
-//            Collection<node_data> nodes = _graph.getV();
-//            for (node_data n: nodes) {
-//                int src = n.getKey();
-//                Collection<edge_data> edge = _graph.getE(src);
-//                for (edge_data ed: edge) {
-//                    JsonObject e = new JsonObject();
-//                    e.add("src",gson.toJsonTree(src));
-//                    e.add("w",gson.toJsonTree(ed.getWeight()));
-//                    e.add("dest", gson.toJsonTree(ed.getDest()));
-//                    Edges.add(e);
-//                }
-//            }
-//            JsonArray Nodes = new JsonArray();
-//            for (node_data n :nodes) {
-//                JsonObject e = new JsonObject();
-//                geo_location pos = n.getLocation();
-//                String s = pos.x()+","+pos.y()+","+pos.z();
-//                e.add("pos",gson.toJsonTree(s));
-//                e.add("id",gson.toJsonTree(n.getKey()));
-//                Nodes.add(e);
-//            }
-//            g.add("Edge",Edges);
-//            g.add("Nodes",Nodes);
-//            //
-//            pw.write(g.toString());
-//            pw.close();
-//            return true;
-//        }
-//        catch (FileNotFoundException | JSONException e){
-//            e.printStackTrace();
-//        }
-//        return false;
-//    }
 
 
     @Override
@@ -314,51 +266,63 @@ public class DWGraph_Algo implements dw_graph_algorithms{
      * @param thePath - the node that we path
      * @return the weight of the path between src to dest
      */
-    private double shortestPathDist(int src, int dest, HashMap<node_data,HashMap<node_data,node_data>> thePath){//Complexity: O(n)
-        PriorityQueue<node_data> pq = new PriorityQueue<>(new node());
+    private double shortestPathDist(int src, int dest,
+                                    HashMap<node_data,node_data> thePath){//Complexity: O(n)
+        PriorityQueue<node_w> pq = new PriorityQueue<>(new nodeComp());
+        // node that we already check
+        HashMap<Integer, node_w> ch = new HashMap<>();
         boolean flag = false;
         node_data nodeSrc = _graph.getNode(src);
-        nodeSrc.setTag(1);
-        thePath.put(nodeSrc,new HashMap<>());//
-        pq.add(nodeSrc);
+
+        node_w n = new node_w(nodeSrc,1);
+        pq.add(n);
         while (!pq.isEmpty() && !flag){
-            node_data node = pq.remove();
-            int key1 = node.getKey();
+            node_w n_w = pq.remove();
+            node_data n1 = n_w.get_n();
+            int key1 = n1.getKey();
             //when we find the dest and we break the loop
             if (key1 == dest){
                 flag = true;
             }
-//            else {
-//                Collection<node_data> ni = _graph.getV(key1);
-//                for (node_data n: ni){    //take the neighbors
-//                    int key2 = n.getKey();
-//                    double w = _graph.getEdge(key1,key2);
-//                    if (n.getTag() == 0 || n.getTag() > node.getTag()+w){
-//                        n.setTag(node.getTag()+w);    //set the weight of the node
-//                        thePath.put(n,null);   //the node that his tag change
-//                        thePath.get(nodeSrc).put(n,node);//order the path
-//                        pq.add(n);
-//                    }
-//                }
-//            }
+            else {
+                Collection<edge_data> ed = _graph.getE(key1);
+                for (edge_data e: ed){
+                    double w = e.getWeight();
+                    int key2 = e.getDest();
+                    node_data n2 = _graph.getNode(key2);
+                    double wKey1 = ch.get(key1).get_w();
+                    if (ch.containsKey(key2) || ch.get(key2).get_w() > wKey1 + w){
+                        n_w = new node_w(n2,wKey1 + w);
+                        ch.put(key2,n_w);
+                        thePath.put(n2,n1);
+                        pq.add(n_w);
+                    }
+                }
+            }
         }
         if (flag) return _graph.getNode(dest).getTag()-1;
         return -1;
     }
 
-    private void resetTag(Collection<node_data> node){ //reset the tag: tag = 0
-        for (node_data n: node){
-            n.setTag(0);
-        }
-    }
 
     /**
      * in this class we define the Comparator that compare between the nodes
      */
-    private static class node implements Comparator<node_data> {//define comparator for node_info
+    private static class nodeComp implements Comparator<node_w> {//define comparator
         @Override
-        public int compare(node_data o1, node_data o2) {
-            return Double.compare(o1.getTag(), o2.getTag());
+        public int compare(node_w o1, node_w o2) {
+            return Double.compare(o1.get_w(), o2.get_w());
         }
+    }
+
+    private static class node_w {
+        private double _w;
+        private node_data _n;
+        public node_w(node_data n, double w){
+            _n = n;
+            _w = w;
+        }
+        public node_data get_n(){return _n;}
+        public double get_w(){return _w;}
     }
 }
