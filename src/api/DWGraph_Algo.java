@@ -38,14 +38,35 @@ public class DWGraph_Algo implements dw_graph_algorithms{
     public directed_weighted_graph copy() {
         return null;
     }
-
+    
+    
+    // Check if a given directed graph is strongly connected (Kosaraju using BFS).
+    // The directed graph will be considered connected if the original graph is connected and
+    // also if after reversing the graph is still connected!
+    // (reversing the graph by rotatating the edges in the opposite direction)
+    // check out: https://www.geeksforgeeks.org/check-given-directed-graph-strongly-connected-set-2-kosaraju-using-bfs/
     @Override
     public boolean isConnected() {
+    	directed_weighted_graph Original = _graph; // point to original graph to init it again after all.
+    	directed_weighted_graph Fliped = flipedGraph(); // for checking if the reversed graph connected.
+    	if (!this._graph.getV().iterator().hasNext()) // check if there is at least one node.
+    		return true;
+    	// the node to start impliment BFS on original and also on the reversed graph (must be the same node).
+    	int startNode = this._graph.getV().iterator().next().getKey();
+    	boolean original = isConnectedBFS(startNode); // original graph connected result.
+    	this.init(Fliped); // init temporarily to reversed graph (so we can call methods).
+    	boolean fliped = isConnectedBFS(startNode); // reversed graph connected result.
+    	this.init(Original); // init to original graph again.
+    	return original&&fliped; // return true only if original&&fliped connected.
+    }
+    
+    // No comments. same BFS algo as on Ex1.
+    public boolean isConnectedBFS(int startNode) { 
         HashMap<node_data, Boolean> vis = new HashMap<>();
         Queue<node_data> q = new LinkedList<node_data>();
         if (!this._graph.getV().iterator().hasNext())
             return vis.size() == this._graph.getV().size();
-        node_data first = this._graph.getV().iterator().next();
+        node_data first = this._graph.getNode(startNode);
         node_data current = first;
         q.add(current);
         vis.put(current, true);
@@ -58,18 +79,19 @@ public class DWGraph_Algo implements dw_graph_algorithms{
                 }
             }
         }
-        boolean found = false;
-        // Checks if one of the vertices we visited has a edge to the first vertex.
-        for (node_data node : vis.keySet()) {
-            if (_graph.getEdge(node.getKey(), first.getKey())!=null) {
-                found = true;
-                break;
-            }
-        }
-        if (!found) return false;
         return vis.size() == this._graph.getV().size();
     }
-
+    
+    // copy to a new reversed graph by rotatating the edges in the opposite direction
+    public directed_weighted_graph flipedGraph() {
+    	directed_weighted_graph temp = new DWGraph_DS();
+    	for (node_data node : this._graph.getV())
+    		temp.addNode(node);
+    	for (node_data node : this._graph.getV())
+    		for (edge_data e : this._graph.getE(node.getKey()))
+    			temp.connect(e.getDest(), e.getSrc(), e.getWeight());
+    	return temp;
+    }
 
     /**
      * returns the length of the shortest path between src to dest
@@ -92,7 +114,6 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         return 1;//w;
     }
 
-
     /**
      * return the shortest path between src to dest
      * by using the algorithm Dijkstra
@@ -106,14 +127,14 @@ public class DWGraph_Algo implements dw_graph_algorithms{
             return null;//while one or two of the keys not exists
         }
         List<node_data> theList = new LinkedList<>();
-        if (src == dest){
+        if (src == dest) {
             theList.add(_graph.getNode(src));
             return theList;
         }
         HashMap<node_data,HashMap<node_data,node_data>> thePath = new HashMap<>();
         double w = shortestPathDist(dest,src,thePath);
         //if there is no path between them
-        if (w == -1){
+        if (w == -1) {
             resetTag(thePath.keySet());
             return null;
         }

@@ -17,7 +17,6 @@ public class DWGraph_DS implements directed_weighted_graph{
 
     private int _edgeSize;
     private int _mc;
-	private static int keys; // static key for initialize nodes
 
     public DWGraph_DS(){
         _graph = new HashMap<>();
@@ -75,29 +74,61 @@ public class DWGraph_DS implements directed_weighted_graph{
     public Collection<edge_data> getE(int node_id) {
         return _ni.get(node_id).values();
     }
-
-    @Override
+    
+    // ############# Solution 1
+ 	@Override
     public node_data removeNode(int key) {
 
         //while the node not exists
         if (!_graph.containsKey(key)) return null;
-
-        //delete the edge from key to others
+        
+      //delete the reversed edges (src=key dest=keyNeighbors) from _niRevers
+        this._ni.get(key).forEach((k,v) -> {
+        	_niRevers.get(k).remove(key);
+		});
+        
+      //delete the edge from key to others
         _edgeSize -= _ni.get(key).size();
         _ni.remove(key);
         
         //delete the edge from others to key
-        Integer[] ed = _niRevers.get(key).toArray(new Integer[0]);
-        _edgeSize -= ed.length;
-        for (Integer key2 : ed) {
-            _ni.get(key2).remove(key);
-        }
+        _edgeSize -= this._niRevers.get(key).size();
+        this._niRevers.get(key).forEach(e -> {
+        	_ni.get(e).remove(key); // tester fails if _ni.get(e)==Null
+		});
+        
         // need to check if 2 vertices with a two-way edge from one to the other
         // will count as 2 edges or as one edge (for updating _edgeSize variable)
         
         //remove the node
         return _graph.remove(key);
     }
+    
+    // ############# Solution 2
+    /* 
+    @Override
+    public node_data removeNode(int key) {
+
+        //while the node not exists
+        if (!_graph.containsKey(key)) return null;
+        
+      //delete the edge from key to others
+        _edgeSize -= _ni.get(key).size();
+        _ni.remove(key);
+        
+      //delete the edge from others to key
+        _edgeSize -= this._niRevers.get(key).size();
+        this._niRevers.get(key).forEach(e -> {
+        	if (_ni.get(e)!=null) _ni.get(e).remove(key); // tester fails if _ni.get(e)==Null
+		});
+        
+        // need to check if 2 vertices with a two-way edge from one to the other
+        // will count as 2 edges or as one edge (for updating _edgeSize variable)
+        
+        //remove the node
+        return _graph.remove(key);
+    }
+    */
 
     @Override
     public edge_data removeEdge(int src, int dest) {
@@ -124,7 +155,35 @@ public class DWGraph_DS implements directed_weighted_graph{
     public int getMC() {
         return _mc;
     }
-
+    
+    /* toString() method */
+	/* The implementation of this method is mainly for testing purposes */
+	/* The method is overridden so that the interface does not need to be changed */
+	@Override
+	public String toString() { // Print by keys printGraph
+		System.out.println(" ______________________________________________");
+		// System.out.println("| #############################################");
+		System.out.println("| ############### Print By Keys ###############");
+		_graph.forEach((k, v) -> {
+			System.out.print("| NodeKey = " + v.getKey() + ". NeighborsKeys = ");
+			this.getE(k).forEach(node -> {
+				System.out.print(node.getDest()+", ");
+				//System.out.print(" (weight:" + edges.get(v).get(node) + "), ");
+			});
+			System.out.println();
+		});
+		/*System.out.println("| ############### Print By Node ###############");
+		_graph.forEach((k, v) -> {
+			System.out.print("| NodeKey = " + v + ". NeighborsKeys = ");
+			this.getV(k).forEach(node -> {
+				System.out.print(node);
+				System.out.print(" (weight:" + edges.get(v).get(node) + "), ");
+			});
+			System.out.println();
+		});*/
+		System.out.println("|______________________________________________");
+		return null;
+	}
 
 
     /////////////////////////////////////////
@@ -160,7 +219,7 @@ public class DWGraph_DS implements directed_weighted_graph{
         }
     }
 
-
+/*
     /////////////////////////////////////////
     //////////////// Edge class /////////////
     /////////////////////////////////////////
@@ -217,7 +276,7 @@ public class DWGraph_DS implements directed_weighted_graph{
             _tag = t;
         }
     }
-
+*/
 //
 //    /** not sure it's in this class */
 //    /////////////////////////////////////////
