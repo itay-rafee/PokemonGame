@@ -9,18 +9,27 @@ public class GeoLocation implements geo_location {
     // and hence this class is public
     private double _x, _y, _z, _distance;
 
-    public GeoLocation() {
+    public GeoLocation(){
         _distance = 0;
         _x = 0;
         _y = 0;
         _z = 0;
     }
 
-    public GeoLocation(double x, double y, double z) {
+    public GeoLocation(double x, double y, double z){
         //// _distance = ?? ////
         _x = x;
         _y = y;
         _z = z;
+    }
+    
+    /* Copy Constructor */
+	/* This constructor is mainly used by deep copy methods */
+    public GeoLocation(geo_location gl){
+    	_distance = distance(gl); // ??? have no idea how to deep copy it
+        _x = gl.x();
+        _y = gl.y();
+        _z = gl.z();
     }
 
     @Override

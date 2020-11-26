@@ -104,12 +104,24 @@ class DWGraph_AlgoTest {
 
     @Test
     void copy() {
+    	directed_weighted_graph g = graph();
+    	dw_graph_algorithms ga = new DWGraph_Algo();
+    	ga.init(g);
+    	//ga.getGraph().toString();
+    	//directed_weighted_graph gaCopy = ga.copy();
+    	//gaCopy.toString();
     }
 
     @Test
     void isConnected() {
-    	directed_weighted_graph g = graph();
     	dw_graph_algorithms ga = new DWGraph_Algo();
+    	assertTrue(ga.isConnected());
+    	directed_weighted_graph oneNodeGraph = new DWGraph_DS();
+    	node_data node = new NodeData();
+    	oneNodeGraph.addNode(node);
+    	ga.init(oneNodeGraph);
+    	assertTrue(ga.isConnected());
+    	directed_weighted_graph g = graph();
     	ga.init(g);
     	assertFalse(ga.isConnected());
     	g.removeNode(0);
@@ -125,9 +137,7 @@ class DWGraph_AlgoTest {
 
     @Test
     void shortestPathDist() {
-    	// we need to fix this method
     	
-
     	directed_weighted_graph g = graph();
     	dw_graph_algorithms ga = new DWGraph_Algo();
     	ga.init(g);
@@ -151,13 +161,10 @@ class DWGraph_AlgoTest {
     	System.out.print("Your answer: "+answer+" >> ");
     	if (answer==14) System.out.println("Correct Answer!");
     	else System.out.println("Wrong! Should be 14!");
-
     }
 
     @Test
     void shortestPath() {
-    	// we need to fix this method
-    	
 
     	directed_weighted_graph g = graph();
     	dw_graph_algorithms ga = new DWGraph_Algo();
@@ -174,14 +181,21 @@ class DWGraph_AlgoTest {
 		if (answer.equals(" 1 > 2 > 3 > 7 >")) System.out.print("> Correct Answer!");
 		else System.out.print("> Wrong Answer!");
 		System.out.println();
-		//assertEquals(" 1 > 2 > 3 > 7 >", answer);
+		assertEquals(" 1 > 2 > 3 > 7 >", answer);
     	
 		directions = ga.shortestPath(1, 10);
 		System.out.print("The Path from 1 to 10 >> ");
 		if (ga.shortestPath(1, 10)==null) System.out.print("> Correct Answer!");
 		else System.out.print("> Wrong Answer! Should be Null!");
 		System.out.println();
-		//assertNull(answer);
+		assertNull(directions);
+		
+		directions = ga.shortestPath(14, 9);
+		System.out.print("The Path from 14 to 9 >> ");
+		if (ga.shortestPath(14, 9)==null) System.out.print("> Correct Answer!");
+		else System.out.print("> Wrong Answer! Should be Null!");
+		System.out.println();
+		assertNull(directions);
     	
 		directions = ga.shortestPath(10, 13);
 		System.out.print("The Path from 10 to 13: ");
@@ -192,7 +206,7 @@ class DWGraph_AlgoTest {
 		if (answer.equals(" 10 > 12 > 13 >")) System.out.print("> Correct Answer!");
 		else System.out.print("> Wrong Answer!");
 		System.out.println();
-		//assertEquals(" 10 > 12 > 13 >", answer);
+		assertEquals(" 10 > 12 > 13 >", answer);
     	
 		directions = ga.shortestPath(7, 6);
 		System.out.print("The Path from 7 to 6: ");
@@ -203,8 +217,7 @@ class DWGraph_AlgoTest {
 		if (answer.equals(" 7 > 4 > 5 > 6 >")) System.out.print("> Correct Answer!");
 		else System.out.print("> Wrong Answer!");
 		System.out.println();
-		//assertEquals(" 7 > 4 > 5 > 6 >", answer);
-
+		assertEquals(" 7 > 4 > 5 > 6 >", answer);
     }
 
     @Test

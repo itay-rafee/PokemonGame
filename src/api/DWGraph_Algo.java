@@ -1,14 +1,13 @@
 package api;
 
-
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 
 import java.io.*;
 import java.util.*;
@@ -16,17 +15,19 @@ import java.util.*;
 public class DWGraph_Algo implements dw_graph_algorithms{
     directed_weighted_graph _graph;
 
-    public DWGraph_Algo(){
+    public DWGraph_Algo() {
         _graph = new DWGraph_DS();
     }
 
-    public DWGraph_Algo(directed_weighted_graph graph){
-        _graph = graph;
+    public DWGraph_Algo(directed_weighted_graph graph) {
+    	if (graph==null) _graph = new DWGraph_DS(); // better avoid null on testers
+    	else _graph = graph;
     }
 
     @Override
     public void init(directed_weighted_graph g) {
-        _graph = g;
+    	if (g==null) _graph = new DWGraph_DS(); // better avoid null on testers
+    	else _graph = g;
     }
 
     @Override
@@ -36,7 +37,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
 
     @Override
     public directed_weighted_graph copy() {
-        return null;
+    	return new DWGraph_DS(this._graph);
     }
     
     
@@ -54,7 +55,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
     	// the node to start impliment BFS on original and also on the reversed graph (must be the same node).
     	int startNode = this._graph.getV().iterator().next().getKey();
     	boolean original = isConnectedBFS(startNode); // original graph connected result.
-    	this.init(Fliped); // init temporarily to reversed graph (so we can call methods).
+    	this.init(Fliped); // init the reversed graph temporarily (so we can call methods).
     	boolean fliped = isConnectedBFS(startNode); // reversed graph connected result.
     	this.init(Original); // init to original graph again.
     	return original&&fliped; // return true only if original&&fliped connected.
@@ -82,7 +83,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         return vis.size() == this._graph.getV().size();
     }
     
-    // copy to a new reversed graph by rotatating the edges in the opposite direction
+    // copy to a new reversed graph by rotatating the edges to the opposite direction
     public directed_weighted_graph flipedGraph() {
     	directed_weighted_graph temp = new DWGraph_DS();
     	for (node_data node : this._graph.getV())
@@ -102,9 +103,8 @@ public class DWGraph_Algo implements dw_graph_algorithms{
      */
     @Override
     public double shortestPathDist(int src, int dest) {
-        if (_graph.getNode(src) == null || _graph.getNode(dest) == null){
+        if (_graph.getNode(src) == null || _graph.getNode(dest) == null)
             return -1;//while one or two of the keys not exists
-        }
         if(src == dest)return 0;
         //used in shortestPath()
         HashMap<node_data,node_data> thePath = new HashMap<>();
@@ -112,7 +112,6 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         double w = shortestPathDist(src,dest,thePath);
         return w;
     }
-
 
     /**
      * return the shortest path between src to dest
@@ -123,27 +122,24 @@ public class DWGraph_Algo implements dw_graph_algorithms{
      */
     @Override
     public List<node_data> shortestPath(int src, int dest) {
-        if (_graph.getNode(src) == null || _graph.getNode(dest) == null){
+        if (_graph.getNode(src) == null || _graph.getNode(dest) == null)
             return null;//while one or two of the keys not exists
-        }
         List<node_data> theList = new LinkedList<>();
-        if (src == dest){
+        if (src == dest) {
             theList.add(_graph.getNode(src));
             return theList;
         }
         HashMap<node_data,node_data> p = new HashMap<>();
         double w = shortestPathDist(src,dest,p);
         //if there is no path between them
-        if (w == -1){
-            return null;
-        }
-
+        if (w == -1) return null;
+        
         //the list of the path that return
         node_data nodeSrc = _graph.getNode(src);
         node_data nodeDest = _graph.getNode(dest);
         node_data n = nodeDest;
         Stack<node_data> opList = new Stack<>();
-        while (p.get(n) != nodeSrc){
+        while (p.get(n) != nodeSrc) {
             opList.push(n);
             n = p.get(n);
         }
@@ -154,19 +150,15 @@ public class DWGraph_Algo implements dw_graph_algorithms{
     }
 
     //// saving json by java-json ///
-
     @Override
     public boolean save(String file) {
         if (_graph == null || file == null)return false;
         int counter = 0;
-
-        try{
+        try {
             PrintWriter pw = new PrintWriter(new File(file));
-            //
             JSONObject g = new JSONObject();
             JSONArray Edges = new JSONArray();
             Collection<node_data> nodes = _graph.getV();
-
             // add the edges
             for (node_data n: nodes) {
                 int src = n.getKey();
@@ -179,20 +171,18 @@ public class DWGraph_Algo implements dw_graph_algorithms{
                     Edges.put(e1);
                 }
             }
-
             //add the nodes
             JSONArray Nodes1 = new JSONArray();
             for (node_data n :nodes) {
                 JSONObject e1 = new JSONObject();
                 geo_location pos = n.getLocation();
-                String s = pos.x()+","+pos.y()+","+pos.z();//the x, y, z.
+                String s = pos.x()+","+pos.y()+","+pos.z(); //the x, y, z.
                 e1.put("pos", s);
                 e1.put("id", n.getKey());
                 Nodes1.put(e1);
-            }
+            	}
             g.put("Edge",Edges);
             g.put("Node",Nodes1);
-
             //
             pw.write(g.toString());
             pw.close();
@@ -203,7 +193,6 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         }
         return false;
     }
-
 
     @Override
     public boolean load(String file) {
@@ -250,8 +239,6 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         }
     }
 
-
-
     ////////// private function //////////////
 
     /**
@@ -268,13 +255,12 @@ public class DWGraph_Algo implements dw_graph_algorithms{
      * @return the weight of the path between src to dest
      */
     private double shortestPathDist(int src, int dest,
-                                    HashMap<node_data,node_data> thePath){//Complexity: O(n)
+        HashMap<node_data,node_data> thePath){//Complexity: O(n)
         PriorityQueue<node_w> pq = new PriorityQueue<>(new nodeComp());
         // node that we already check
         HashMap<Integer, node_w> ch = new HashMap<>();
         boolean flag = false;
         node_data nodeSrc = _graph.getNode(src);
-
         node_w n = new node_w(nodeSrc,1);
         ch.put(src,n);
         pq.add(n);
@@ -305,7 +291,6 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         if (flag) return ch.get(dest).get_w()-1;
         return -1;
     }
-
 
     /**
      * in this class we define the Comparator that compare between the nodes

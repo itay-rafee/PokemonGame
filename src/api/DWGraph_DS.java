@@ -1,5 +1,4 @@
 package api;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,6 +24,27 @@ public class DWGraph_DS implements directed_weighted_graph{
         _edgeSize = 0;
         _mc = 0;
     }
+    
+    /* Copy Constructor (Hard Copy) */
+	/* This constructor is mainly used by copy() method in DWGraph_Algo class */
+    public DWGraph_DS(directed_weighted_graph g){
+    	this();
+    	Collection<node_data> gNi = g.getV();
+    	gNi.forEach(node -> {
+        	node_data temp = new NodeData((NodeData) node);
+			_graph.put(temp.getKey(), temp);
+			_ni.put(temp.getKey(), new HashMap<>());
+			_niRevers.put(temp.getKey(), new HashSet<>());
+		});
+    	gNi.forEach(node -> {
+			g.getE(node.getKey()).forEach(e -> {
+				this._ni.get(e.getSrc()).put(e.getDest(), new EdgeData(e));
+				this._niRevers.get(e.getDest()).add(e.getSrc());
+			});
+		});
+		this._mc = g.nodeSize() + g.edgeSize();
+		this._edgeSize = g.edgeSize();
+    }
 
     @Override
     public node_data getNode(int key) {
@@ -41,10 +61,8 @@ public class DWGraph_DS implements directed_weighted_graph{
     public void addNode(node_data n) {
         int key = n.getKey();
         _graph.put(key,n);
-
         // define new place to the node in the _ni
         _ni.put(key,new HashMap<>());
-
         // define new place to the node in the _ni
         _niRevers.put(key,new HashSet<>());
     }
@@ -75,67 +93,33 @@ public class DWGraph_DS implements directed_weighted_graph{
         return _ni.get(node_id).values();
     }
     
-    // ############# Solution 1
+    // Solution 1
+    // another solution on commit no. 736f2897
  	@Override
     public node_data removeNode(int key) {
-
         //while the node not exists
         if (!_graph.containsKey(key)) return null;
-        
-      //delete the reversed edges (src=key dest=keyNeighbors) from _niRevers
+        //delete the reversed edges (src=key dest=keyNeighbors) from _niRevers
         this._ni.get(key).forEach((k,v) -> {
         	_niRevers.get(k).remove(key);
 		});
-        
-      //delete the edge from key to others
-        _edgeSize -= _ni.get(key).size();
+        _edgeSize -= _ni.get(key).size(); //delete the edge from key to others
         _ni.remove(key);
-        
         //delete the edge from others to key
         _edgeSize -= this._niRevers.get(key).size();
         this._niRevers.get(key).forEach(e -> {
-        	_ni.get(e).remove(key); // tester fails if _ni.get(e)==Null
+        	_ni.get(e).remove(key);
 		});
-        
         // need to check if 2 vertices with a two-way edge from one to the other
         // will count as 2 edges or as one edge (for updating _edgeSize variable)
-        
-        //remove the node
-        return _graph.remove(key);
+        return _graph.remove(key); //remove the node
     }
-    
-    // ############# Solution 2
-    /* 
-    @Override
-    public node_data removeNode(int key) {
-
-        //while the node not exists
-        if (!_graph.containsKey(key)) return null;
-        
-      //delete the edge from key to others
-        _edgeSize -= _ni.get(key).size();
-        _ni.remove(key);
-        
-      //delete the edge from others to key
-        _edgeSize -= this._niRevers.get(key).size();
-        this._niRevers.get(key).forEach(e -> {
-        	if (_ni.get(e)!=null) _ni.get(e).remove(key); // tester fails if _ni.get(e)==Null
-		});
-        
-        // need to check if 2 vertices with a two-way edge from one to the other
-        // will count as 2 edges or as one edge (for updating _edgeSize variable)
-        
-        //remove the node
-        return _graph.remove(key);
-    }
-    */
 
     @Override
     public edge_data removeEdge(int src, int dest) {
         //while the edge not exists
         if (!_graph.containsKey(src) || !_graph.containsKey(dest)
                 || !_ni.get(src).containsKey(dest)) return null;
-
         //remove the edge
         _niRevers.get(dest).remove(src);
         return _ni.get(src).remove(dest);
@@ -172,19 +156,18 @@ public class DWGraph_DS implements directed_weighted_graph{
 			});
 			System.out.println();
 		});
-		/*System.out.println("| ############### Print By Node ###############");
+		System.out.println("| ############### Print By Node ###############");
 		_graph.forEach((k, v) -> {
 			System.out.print("| NodeKey = " + v + ". NeighborsKeys = ");
-			this.getV(k).forEach(node -> {
-				System.out.print(node);
-				System.out.print(" (weight:" + edges.get(v).get(node) + "), ");
+			this.getE(k).forEach(node -> {
+				System.out.print(node+", ");
+				//System.out.print(" (weight:" + edges.get(v).get(node) + "), ");
 			});
 			System.out.println();
-		});*/
+		});
 		System.out.println("|______________________________________________");
 		return null;
 	}
-
 
     /////////////////////////////////////////
     //////// Edge Location class ////////////
@@ -196,16 +179,21 @@ public class DWGraph_DS implements directed_weighted_graph{
         private edge_data _edge;
         private double _ratio;
         
-        /*
         public EdgeLocation(){
         	_edge = new EdgeData(); // EdgeData should be public to implement this
         	_ratio = 0;
         }
-        */
         
         public EdgeLocation(edge_data e, double r){
         	_edge = e;
         	_ratio = r;
+        }
+        
+        /* Copy Constructor */
+		/* This constructor is mainly used by deep copy methods */
+        public EdgeLocation(EdgeLocation el){
+        	_edge = new EdgeData(el.getEdge());
+        	_ratio = el.getRatio();
         }
         
         @Override
@@ -219,11 +207,10 @@ public class DWGraph_DS implements directed_weighted_graph{
         }
     }
 
-/*
     /////////////////////////////////////////
     //////////////// Edge class /////////////
     /////////////////////////////////////////
-    private class EdgeData implements edge_data{
+    public class EdgeData implements edge_data{
     	// This class should be accessible from outside
     	// (the reason is that when we approach the neighbors of an vertex from outside this class
     	// we get a list of edges. The only option to get the vertices is through this class [getDest() method]).
@@ -231,13 +218,33 @@ public class DWGraph_DS implements directed_weighted_graph{
         private int _src, _dest, _tag;
         private double _weight;
         private String _info;
-
+        
+        public EdgeData(){
+            _src = 0;
+            _dest = 0;
+            _weight = 0;
+            _tag = 0;
+            _info = "";
+        }
+        
         public EdgeData(int src, int dest, double weight){
             _src = src;
             _dest = dest;
             _weight = weight;
             _tag = 0;
             _info = "";
+        }
+        
+        /* Copy Constructor */
+		/* This constructor is mainly used by deep copy methods */
+        public EdgeData(edge_data e){
+        	this();
+        	if (e==null) return;
+        	_src = e.getSrc();
+            _dest = e.getDest();
+            _weight = e.getWeight();
+            _tag = e.getTag();
+            _info = new String(e.getInfo());
         }
 
         @Override
@@ -276,120 +283,4 @@ public class DWGraph_DS implements directed_weighted_graph{
             _tag = t;
         }
     }
-*/
-//
-//    /** not sure it's in this class */
-//    /////////////////////////////////////////
-//    //////////////// Node class /////////////
-//    /////////////////////////////////////////
-//    public class NodeData implements node_data{
-//    	// This class should be accessible from outside
-//    	// (the reason is because we initialize a vertex before adding it to the graph)
-//    	// and hence this class is public
-//        private int _key, _tag;
-//        private double _weight;
-//        private geo_location _location;
-//        private String _info;
-//
-//        public NodeData(){
-//        	_key = keys++;
-//        	_location = new GeoLocation();
-//            _weight = 0;
-//            _tag = 0;
-//            _info = "";
-//        }
-//
-//        @Override
-//        public int getKey() {
-//            return _key;
-//        }
-//
-//        @Override
-//        public geo_location getLocation() {
-//            return _location;
-//        }
-//
-//        @Override
-//        public void setLocation(geo_location p) {
-//
-//        }
-//
-//        @Override
-//        public double getWeight() {
-//            return _weight;
-//        }
-//
-//        @Override
-//        public void setWeight(double w) {
-//
-//        }
-//
-//        @Override
-//        public String getInfo() {
-//            return _info;
-//        }
-//
-//        @Override
-//        public void setInfo(String s) {
-//
-//        }
-//
-//        @Override
-//        public int getTag() {
-//            return _tag;
-//        }
-//
-//        @Override
-//        public void setTag(int t) {
-//            _tag = t;
-//        }
-//    }
-//
-//
-//
-//    /////////////////////////////////////////
-//    ////////Node Location class /////////////
-//    /////////////////////////////////////////
-//    public class GeoLocation implements geo_location{
-//    	// This class should be accessible from outside
-//    	// (the reason is because we initialize a GeoLocation before adding it to an NodeData)
-//    	// and hence this class is public
-//        private double _x, _y, _z, _distance;
-//
-//        public GeoLocation(){
-//            _distance = 0;
-//            _x = 0;
-//            _y = 0;
-//            _z = 0;
-//        }
-//
-//        public GeoLocation(double x, double y, double z){
-//            //// _distance = ?? ////
-//            _x = x;
-//            _y = y;
-//            _z = z;
-//        }
-//
-//        @Override
-//        public double x() {
-//            return _x;
-//        }
-//
-//        @Override
-//        public double y() {
-//            return _y;
-//        }
-//
-//        @Override
-//        public double z() {
-//            return _z;
-//        }
-//
-//        @Override
-//        public double distance(geo_location g) {
-//            /////// ?? ////////
-//            return _distance;
-//        }
-//    }
-
 }

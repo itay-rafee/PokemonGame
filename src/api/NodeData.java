@@ -23,11 +23,22 @@ public class NodeData implements node_data{
     }
 
     public NodeData(int key,geo_location location){
+    	this();
         _key = key;
+        if (location==null) return;
         _location = location;
-        _weight = 0;
-        _tag = 0;
-        _info = "";
+    }
+    
+    /* Copy Constructor */
+	/* This constructor is mainly used by deep copy methods */
+    public NodeData(NodeData n){
+    	this();
+    	if (n==null) return;
+        _key = n.getKey();
+        _location = new GeoLocation(n.getLocation());
+        _weight = n._weight;
+        _tag = n._tag;
+        _info = new String(n._info);
     }
 
     @Override
@@ -42,7 +53,8 @@ public class NodeData implements node_data{
 
     @Override
     public void setLocation(geo_location p) {
-
+    	if (p==null) this._location = new GeoLocation();
+    	else this._location = p;
     }
 
     @Override
@@ -52,7 +64,7 @@ public class NodeData implements node_data{
 
     @Override
     public void setWeight(double w) {
-
+    	this._weight = w;
     }
 
     @Override
@@ -62,7 +74,8 @@ public class NodeData implements node_data{
 
     @Override
     public void setInfo(String s) {
-
+    	if (s==null) this._info = new String();
+    	else this._info = s;
     }
 
     @Override
@@ -74,5 +87,4 @@ public class NodeData implements node_data{
     public void setTag(int t) {
         _tag = t;
     }
-
 }
