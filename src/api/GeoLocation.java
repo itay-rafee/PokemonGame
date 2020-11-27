@@ -52,4 +52,16 @@ public class GeoLocation implements geo_location {
         /////// ?? ////////
         return _distance;
     }
+    
+    @Override
+	public boolean equals(Object gl) {
+		if (gl instanceof GeoLocation) {return this.equals((GeoLocation) gl);} 
+		return false;
+	}
+
+	public boolean equals(GeoLocation gl) {
+		if (this._x==gl._x&&this._y==gl._y&&this._z==gl._z) // distance ???
+			return true;
+		return false;
+	}
 }

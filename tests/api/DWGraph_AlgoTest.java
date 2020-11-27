@@ -2,6 +2,7 @@ package api;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -107,9 +108,27 @@ class DWGraph_AlgoTest {
     	directed_weighted_graph g = graph();
     	dw_graph_algorithms ga = new DWGraph_Algo();
     	ga.init(g);
-    	//ga.getGraph().toString();
-    	//directed_weighted_graph gaCopy = ga.copy();
-    	//gaCopy.toString();
+    	directed_weighted_graph g2 = new DWGraph_DS(g);
+    	assertEquals(g,g2);
+    	g2.getEdge(11, 13).setTag(123);
+    	assertNotEquals(g,g2);
+    	g.getEdge(11, 13).setTag(123);
+    	assertEquals(g,g2);
+    	g2.removeNode(14);
+    	assertNotEquals(g,g2);
+    	g.removeNode(14);
+    	assertEquals(g,g2);
+    	g.addNode(new NodeData(15, new GeoLocation()));
+    	g2.addNode(new NodeData(15, new GeoLocation()));
+    	g2.removeEdge(12, 13);
+    	assertNotEquals(g,g2);
+    	g2.connect(12, 13, 0);
+    	assertEquals(g,g2);
+    	g2.connect(12, 13, 0.5);
+    	assertNotEquals(g,g2);
+    	g2.removeEdge(12, 13);
+    	g.removeEdge(12, 13);
+    	assertEquals(g,g2);
     }
 
     @Test

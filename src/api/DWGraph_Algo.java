@@ -49,16 +49,17 @@ public class DWGraph_Algo implements dw_graph_algorithms{
     @Override
     public boolean isConnected() {
     	directed_weighted_graph Original = _graph; // point to original graph to init it again after all.
-    	directed_weighted_graph Fliped = flipedGraph(); // for checking if the reversed graph connected.
     	if (!this._graph.getV().iterator().hasNext()) // check if there is at least one node.
     		return true;
     	// the node to start impliment BFS on original and also on the reversed graph (must be the same node).
     	int startNode = this._graph.getV().iterator().next().getKey();
     	boolean original = isConnectedBFS(startNode); // original graph connected result.
+    	if (original==false) return false;
+    	directed_weighted_graph Fliped = flipedGraph(); // for checking if the reversed graph connected.
     	this.init(Fliped); // init the reversed graph temporarily (so we can call methods).
     	boolean fliped = isConnectedBFS(startNode); // reversed graph connected result.
     	this.init(Original); // init to original graph again.
-    	return original&&fliped; // return true only if original&&fliped connected.
+    	return fliped; // return true only if original&&fliped connected.
     }
     
     // No comments. same BFS algo as on Ex1.

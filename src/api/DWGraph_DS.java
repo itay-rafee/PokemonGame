@@ -59,6 +59,8 @@ public class DWGraph_DS implements directed_weighted_graph{
 
     @Override
     public void addNode(node_data n) {
+    	// if n==null or this graph contains node with such key -> do nothing.
+    	if (n==null||this._graph.containsKey(n.getKey())) return;
         int key = n.getKey();
         _graph.put(key,n);
         // define new place to the node in the _ni
@@ -121,6 +123,7 @@ public class DWGraph_DS implements directed_weighted_graph{
         if (!_graph.containsKey(src) || !_graph.containsKey(dest)
                 || !_ni.get(src).containsKey(dest)) return null;
         //remove the edge
+        this._edgeSize--;
         _niRevers.get(dest).remove(src);
         return _ni.get(src).remove(dest);
     }
@@ -139,6 +142,35 @@ public class DWGraph_DS implements directed_weighted_graph{
     public int getMC() {
         return _mc;
     }
+    
+    @Override
+	public boolean equals(Object g) {
+    	if (g instanceof directed_weighted_graph) {
+			return this.equals((directed_weighted_graph) g);
+		}
+		return false;
+	}
+
+	public boolean equals(directed_weighted_graph g) {
+		Collection<node_data> gNi = g.getV();
+		if (this.edgeSize() != g.edgeSize() || this._graph.size() != gNi.size()) // this.edgeSize() != g.edgeSize() || 
+			return false;
+		node_data tempOne;
+		edge_data tempTwo;
+		for (node_data node : gNi) {
+			tempOne = this._graph.get(node.getKey());
+			if (tempOne == null || !tempOne.equals(node))
+				return false;
+			Collection<edge_data> nodeE = g.getE(node.getKey());
+			if (nodeE.size() != _ni.get(node.getKey()).size()) {return false;}
+			for (edge_data e : nodeE) {
+				tempTwo = _ni.get(tempOne.getKey()).get(e.getDest());
+				if (tempTwo == null || !e.equals(tempTwo))
+					return false;
+			}
+		}
+		return true;
+	}
     
     /* toString() method */
 	/* The implementation of this method is mainly for testing purposes */
@@ -282,5 +314,22 @@ public class DWGraph_DS implements directed_weighted_graph{
         public void setTag(int t) {
             _tag = t;
         }
+        
+        @Override
+    	public boolean equals(Object e) {
+        	if (e instanceof EdgeData) {return this.equals((EdgeData) e);} 
+    		return false;
+    	}
+
+    	public boolean equals(EdgeData e) {
+    		//System.out.println("this.src = "+this._src+"."+" e.src = "+e._src);
+    		//System.out.println("this.dest = "+this._dest+"."+" e.dest = "+e._dest);
+    		//System.out.println("this.tag = "+this._tag+"."+" e.tag = "+e._tag);
+    		//System.out.println("this.weight = "+this._weight+"."+" e.weight = "+e._weight);
+    		if (this._src==e._src&&this._dest==e._dest&&this._tag==e._tag
+    				&&this._weight==e._weight&&this._info.equals(e._info))
+    			return true;
+    		return false;
+    	}
     }
 }
