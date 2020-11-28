@@ -1,4 +1,5 @@
 package api;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -92,6 +93,7 @@ public class DWGraph_DS implements directed_weighted_graph{
 
     @Override
     public Collection<edge_data> getE(int node_id) {
+    	if (!_graph.containsKey(node_id)) return null; // returning null ???
         return _ni.get(node_id).values();
     }
     
@@ -145,6 +147,7 @@ public class DWGraph_DS implements directed_weighted_graph{
     
     @Override
 	public boolean equals(Object g) {
+    	if (g == this) { return true; } 
     	if (g instanceof directed_weighted_graph) {
 			return this.equals((directed_weighted_graph) g);
 		}
@@ -153,7 +156,7 @@ public class DWGraph_DS implements directed_weighted_graph{
 
 	public boolean equals(directed_weighted_graph g) {
 		Collection<node_data> gNi = g.getV();
-		if (this.edgeSize() != g.edgeSize() || this._graph.size() != gNi.size()) // this.edgeSize() != g.edgeSize() || 
+		if (this.edgeSize() != g.edgeSize() || this._graph.size() != gNi.size())
 			return false;
 		node_data tempOne;
 		edge_data tempTwo;
@@ -171,8 +174,8 @@ public class DWGraph_DS implements directed_weighted_graph{
 		}
 		return true;
 	}
-    
-    /* toString() method */
+	
+	/* toString() method */
 	/* The implementation of this method is mainly for testing purposes */
 	/* The method is overridden so that the interface does not need to be changed */
 	@Override
@@ -198,7 +201,7 @@ public class DWGraph_DS implements directed_weighted_graph{
 			System.out.println();
 		});
 		System.out.println("|______________________________________________");
-		return null;
+		return "";
 	}
 
     /////////////////////////////////////////
@@ -321,7 +324,7 @@ public class DWGraph_DS implements directed_weighted_graph{
     		return false;
     	}
 
-    	public boolean equals(EdgeData e) {
+        public boolean equals(EdgeData e) {
     		//System.out.println("this.src = "+this._src+"."+" e.src = "+e._src);
     		//System.out.println("this.dest = "+this._dest+"."+" e.dest = "+e._dest);
     		//System.out.println("this.tag = "+this._tag+"."+" e.tag = "+e._tag);
