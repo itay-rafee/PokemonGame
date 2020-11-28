@@ -68,6 +68,8 @@ public class DWGraph_DS implements directed_weighted_graph{
         _ni.put(key,new HashMap<>());
         // define new place to the node in the _ni
         _niRevers.put(key,new HashSet<>());
+
+        _mc++;
     }
 
     @Override
@@ -114,6 +116,7 @@ public class DWGraph_DS implements directed_weighted_graph{
         this._niRevers.get(key).forEach(e -> {
         	_ni.get(e).remove(key);
 		});
+        _mc++;
         // need to check if 2 vertices with a two-way edge from one to the other
         // will count as 2 edges or as one edge (for updating _edgeSize variable)
         return _graph.remove(key); //remove the node
@@ -127,6 +130,7 @@ public class DWGraph_DS implements directed_weighted_graph{
         //remove the edge
         this._edgeSize--;
         _niRevers.get(dest).remove(src);
+        _mc++;
         return _ni.get(src).remove(dest);
     }
 
