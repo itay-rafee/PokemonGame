@@ -55,6 +55,7 @@ public class GeoLocation implements geo_location {
     
     @Override
 	public boolean equals(Object gl) {
+    	if (gl == this) { return true; } 
 		if (gl instanceof GeoLocation) {return this.equals((GeoLocation) gl);} 
 		return false;
 	}

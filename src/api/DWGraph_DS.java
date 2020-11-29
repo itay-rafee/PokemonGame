@@ -1,5 +1,4 @@
 package api;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -324,6 +323,7 @@ public class DWGraph_DS implements directed_weighted_graph{
         
         @Override
     	public boolean equals(Object e) {
+        	if (e == this) { return true; } 
         	if (e instanceof EdgeData) {return this.equals((EdgeData) e);} 
     		return false;
     	}

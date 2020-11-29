@@ -240,10 +240,16 @@ class DWGraph_AlgoTest {
     }
 
     @Test
-    void save() {
-    }
-
-    @Test
-    void load() {
+    void saveAndload() throws InterruptedException {
+    	
+    	directed_weighted_graph g = graph();
+    	dw_graph_algorithms ga = new DWGraph_Algo();
+    	ga.init(g);
+    	ga.save("graph.json");
+    	dw_graph_algorithms ga2 = new DWGraph_Algo();
+    	ga2.load("graph.json");
+    	//ga.getGraph().toString(); // print graph 1
+    	//ga2.getGraph().toString(); // print graph 2
+    	assertEquals(ga.getGraph(),ga2.getGraph());
     }
 }

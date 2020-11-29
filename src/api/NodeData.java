@@ -11,8 +11,8 @@ public class NodeData implements node_data{
     private static int keys = 0;
     private int _key, _tag;
     private double _weight;
-    private geo_location _location;
     private String _info;
+    private geo_location _location;
 
     public NodeData(){
         _key = keys++;
@@ -27,6 +27,16 @@ public class NodeData implements node_data{
         _key = key;
         if (location==null) return;
         _location = location;
+    }
+    
+    public NodeData(int key, int tag, double weight, String info ,geo_location location){
+        _key = key;
+        _tag = tag;
+        _weight = weight;
+        if (info==null) _info = new String();
+        else _info = info;
+        if (location==null) _location = new GeoLocation();
+        else _location = location;
     }
     
     /* Copy Constructor */
@@ -90,6 +100,7 @@ public class NodeData implements node_data{
     
     @Override
 	public boolean equals(Object n) {
+    	if (n == this) { return true; } 
 		if (n instanceof NodeData) {return this.equals((NodeData) n);} 
 		return false;
 	}

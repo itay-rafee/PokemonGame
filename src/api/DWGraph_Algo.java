@@ -1,16 +1,22 @@
 package api;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.*;
+import java.lang.reflect.Type;
 import java.util.*;
+import java.util.Map.Entry;
 
 public class DWGraph_Algo implements dw_graph_algorithms{
     directed_weighted_graph _graph;
@@ -149,7 +155,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         while (!opList.isEmpty()) theList.add(opList.pop());
         return theList;
     }
-
+    
     //// saving json by java-json ///
     @Override
     public boolean save(String file) {
@@ -194,7 +200,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         }
         return false;
     }
-
+    
     @Override
     public boolean load(String file) {
         if(file == null) return false;
@@ -239,6 +245,41 @@ public class DWGraph_Algo implements dw_graph_algorithms{
             return false;
         }
     }
+    
+
+    /*
+    @Override
+    public boolean save(String file) {
+    	Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    	String json = gson.toJson(this._graph);
+    	
+    	try {
+    		PrintWriter pw = new PrintWriter(new File(file));
+    		pw.write(json);
+    		pw.close();
+    		return true;
+    	} catch (FileNotFoundException e) {
+    		e.printStackTrace();
+    		return false;
+    	}
+    }
+    
+    @Override
+    public boolean load(String file) {
+    	try {
+    		GsonBuilder builder = new GsonBuilder();
+        	builder.registerTypeAdapter(DWGraph_DS.class, new GraphJsonDeserializer());
+        	Gson gson = builder.create();
+        	FileReader reader = new FileReader(file);
+        	DWGraph_DS graph = gson.fromJson(reader, DWGraph_DS.class);
+        	this._graph = graph;
+        	return true;
+    	} catch (FileNotFoundException e) {
+    		e.printStackTrace();
+    		return false;
+    	}
+    }
+    */
 
     ////////// private function //////////////
 
@@ -313,4 +354,55 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         public node_data get_n(){return _n;}
         public double get_w(){return _w;}
     }
+    
+    /*
+    private static class GraphJsonDeserializer implements JsonDeserializer<DWGraph_DS>{
+		@Override
+		public DWGraph_DS deserialize(JsonElement json, Type arg1, JsonDeserializationContext arg2)
+				throws JsonParseException {
+			JsonObject jsonObject = json.getAsJsonObject();
+			directed_weighted_graph graph = new DWGraph_DS();
+			// add all the nodes from "_graph" hashmap (with GeoLocation objects).
+			JsonObject _graph = jsonObject.get("_graph").getAsJsonObject();
+			for (Map.Entry<String, JsonElement> set : _graph.entrySet()) {
+				JsonElement nodes = set.getValue(); // the value of the hashmap as json element
+				// take node variables
+				int key = nodes.getAsJsonObject().get("_key").getAsInt();
+				int tag = nodes.getAsJsonObject().get("_tag").getAsInt();
+				double weight = nodes.getAsJsonObject().get("_weight").getAsDouble();
+				String info = nodes.getAsJsonObject().get("_info").getAsString();
+				// take geo_location object variables (related to this node)
+				JsonElement geo_location = nodes.getAsJsonObject().get("_location").getAsJsonObject();
+				double gl_x = geo_location.getAsJsonObject().get("_x").getAsDouble();
+				double gl_y = geo_location.getAsJsonObject().get("_y").getAsDouble();
+				double gl_z = geo_location.getAsJsonObject().get("_z").getAsDouble();
+				//double gl_distance = locationElement.getAsJsonObject().get("_z").getAsDouble();
+				geo_location gl = new GeoLocation(gl_x, gl_y, gl_z); // distance ???
+				node_data node = new NodeData(key,tag,weight,info,gl);
+				graph.addNode(node);
+			}
+			// add all the edges from "_ni" hashmap.
+			JsonObject _ni = jsonObject.get("_ni").getAsJsonObject();
+			for (Entry<String, JsonElement> niHashMap :  _ni.entrySet()) {
+				JsonObject InnerHashMap = niHashMap.getValue().getAsJsonObject();
+				for (Entry<String, JsonElement> innerHashMap : InnerHashMap.entrySet()) {
+					JsonObject edges = innerHashMap.getValue().getAsJsonObject();  // the value of the inner hashmap as json element
+					// take edge variables
+					int eSrc = edges.getAsJsonObject().get("_src").getAsInt();
+					int eDst = edges.getAsJsonObject().get("_dest").getAsInt();
+					double weight = edges.getAsJsonObject().get("_weight").getAsDouble();
+					int tag = edges.getAsJsonObject().get("_tag").getAsInt();
+					String info = edges.getAsJsonObject().get("_info").getAsString();
+					// create the edge using the graph
+					graph.connect(eSrc, eDst, weight);
+					// return the edge created and set tag&info variables.
+					edge_data e = graph.getEdge(eSrc, eDst);
+					e.setTag(tag);
+					e.setInfo(info);
+				}
+			}
+			return (DWGraph_DS) graph;
+		}
+    }
+    */
 }
