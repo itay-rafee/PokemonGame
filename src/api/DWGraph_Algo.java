@@ -174,7 +174,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
                     JSONObject e1 = new JSONObject();
                     e1.put("src",src);
                     e1.put("w", ed.getWeight());
-                    e1.put("dest",ed.getWeight());
+                    e1.put("dest",ed.getDest());
                     Edges.put(e1);
                 }
             }
@@ -188,8 +188,8 @@ public class DWGraph_Algo implements dw_graph_algorithms{
                 e1.put("id", n.getKey());
                 Nodes1.put(e1);
             	}
-            g.put("Edge",Edges);
-            g.put("Node",Nodes1);
+            g.put("Edges",Edges);
+            g.put("Nodes",Nodes1);
             //
             pw.write(g.toString());
             pw.close();
