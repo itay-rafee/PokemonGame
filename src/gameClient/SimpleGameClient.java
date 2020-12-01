@@ -1,5 +1,8 @@
 package gameClient;
 import Server.Game_Server_Ex2;
+import api.DWGraph_DS;
+import api.GeoLocation;
+import api.NodeData;
 import api.directed_weighted_graph;
 import api.edge_data;
 import api.game_service;

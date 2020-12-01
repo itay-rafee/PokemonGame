@@ -187,7 +187,8 @@ public class DWGraph_DS implements directed_weighted_graph{
 		// System.out.println("| #############################################");
 		System.out.println("| ############### Print By Keys ###############");
 		_graph.forEach((k, v) -> {
-			System.out.print("| NodeKey = " + v.getKey() + ". NeighborsKeys = ");
+			System.out.print("| NodeKey = " + v.getKey() + 
+					" (GL:"+ v.getLocation() + ") " + ". NeighborsKeys = ");
 			this.getE(k).forEach(node -> {
 				System.out.print(node.getDest()+", ");
 				//System.out.print(" (weight:" + edges.get(v).get(node) + "), ");
@@ -196,7 +197,8 @@ public class DWGraph_DS implements directed_weighted_graph{
 		});
 		System.out.println("| ############### Print By Node ###############");
 		_graph.forEach((k, v) -> {
-			System.out.print("| NodeKey = " + v + ". NeighborsKeys = ");
+			System.out.print("| NodeKey = " + v + 
+					" (GL:"+ v.getLocation() + ") " + ". NeighborsKeys = ");
 			this.getE(k).forEach(node -> {
 				System.out.print(node+", ");
 				//System.out.print(" (weight:" + edges.get(v).get(node) + "), ");

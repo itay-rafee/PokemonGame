@@ -21,6 +21,10 @@ import java.util.List;
  *
  */
 public class MyFrame extends JFrame{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int _ind;
 	private Arena _ar;
 	private gameClient.util.Range2Range _w2f;
@@ -31,11 +35,12 @@ public class MyFrame extends JFrame{
 	public void update(Arena ar) {
 		this._ar = ar;
 		updateFrame();
+		//repaint();
 	}
 
 	private void updateFrame() {
-		Range rx = new Range(20,this.getWidth()-20);
-		Range ry = new Range(this.getHeight()-10,150);
+		Range rx = new Range(20,this.getWidth()-10);
+		Range ry = new Range(this.getHeight()-10,150); // this.getHeight()-10,150
 		Range2D frame = new Range2D(rx,ry);
 		directed_weighted_graph g = _ar.getGraph();
 		_w2f = Arena.w2f(g,frame);
@@ -60,6 +65,8 @@ public class MyFrame extends JFrame{
 		
 	}
 	private void drawGraph(Graphics g) {
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
 		directed_weighted_graph gg = _ar.getGraph();
 		Iterator<node_data> iter = gg.getV().iterator();
 		while(iter.hasNext()) {
@@ -86,10 +93,11 @@ public class MyFrame extends JFrame{
 			int r=10;
 			g.setColor(Color.green);
 			if(f.getType()<0) {g.setColor(Color.orange);}
+			int w = getWidth();
+	        int h = getHeight();
 			if(c!=null) {
-
 				geo_location fp = this._w2f.world2frame(c);
-				g.fillOval((int)fp.x()-r, (int)fp.y()-r, 2*r, 2*r);
+				g.fillOval(((int)fp.x()-r)*w/1000, ((int)fp.y()-r)*h/1000, (2*r)*w/1000, (2*r)*h/1000);
 			//	g.drawString(""+n.getKey(), fp.ix(), fp.iy()-4*r);
 				
 			}
@@ -101,6 +109,8 @@ public class MyFrame extends JFrame{
 	//	Iterator<OOP_Point3D> itr = rs.iterator();
 		g.setColor(Color.red);
 		int i=0;
+		int w = getWidth();
+        int h = getHeight();
 		while(rs!=null && i<rs.size()) {
 			geo_location c = rs.get(i).getLocation();
 			int r=8;
@@ -108,15 +118,17 @@ public class MyFrame extends JFrame{
 			if(c!=null) {
 
 				geo_location fp = this._w2f.world2frame(c);
-				g.fillOval((int)fp.x()-r, (int)fp.y()-r, 2*r, 2*r);
+				g.fillOval(((int)fp.x()-r)*w/1000, ((int)fp.y()-r)*h/1000, (2*r)*w/1000, (2*r)*h/1000);
 			}
 		}
 	}
 	private void drawNode(node_data n, int r, Graphics g) {
 		geo_location pos = n.getLocation();
 		geo_location fp = this._w2f.world2frame(pos);
-		g.fillOval((int)fp.x()-r, (int)fp.y()-r, 2*r, 2*r);
-		g.drawString(""+n.getKey(), (int)fp.x(), (int)fp.y()-4*r);
+		int w = getWidth();
+        int h = getHeight();
+		g.fillOval(((int)fp.x()-r)*w/1000, ((int)fp.y()-r)*h/1000, (2*r)*w/1000, (2*r)*h/1000);
+		g.drawString(""+n.getKey(), ((int)fp.x())*w/1000, ((int)fp.y()-4*r)*h/1000);
 	}
 	private void drawEdge(edge_data e, Graphics g) {
 		directed_weighted_graph gg = _ar.getGraph();
@@ -124,7 +136,9 @@ public class MyFrame extends JFrame{
 		geo_location d = gg.getNode(e.getDest()).getLocation();
 		geo_location s0 = this._w2f.world2frame(s);
 		geo_location d0 = this._w2f.world2frame(d);
-		g.drawLine((int)s0.x(), (int)s0.y(), (int)d0.x(), (int)d0.y());
+		int w = getWidth();
+        int h = getHeight();
+		g.drawLine((int)s0.x()*w/1000, (int)s0.y()*h/1000, (int)d0.x()*w/1000, (int)d0.y()*h/1000);
 	//	g.drawString(""+n.getKey(), fp.ix(), fp.iy()-4*r);
 	}
 }
