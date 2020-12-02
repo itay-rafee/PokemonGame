@@ -1,7 +1,9 @@
 package gameClient;
 
 import Server.Game_Server_Ex2;
+import api.DWGraph_Algo;
 import api.directed_weighted_graph;
+import api.dw_graph_algorithms;
 import api.edge_data;
 import api.game_service;
 import org.json.JSONException;
@@ -20,9 +22,9 @@ public class Ex2_Client implements Runnable{
 		client.start();
 	}
 	
-	@Override
+	//@Override
 	public void run() {
-		int scenario_num = 13;
+		int scenario_num = 11;
 		game_service game = Game_Server_Ex2.getServer(scenario_num); // you have [0,23] games
 	//	int id = 999;
 	//	game.login(id);
@@ -52,6 +54,9 @@ public class Ex2_Client implements Runnable{
 		System.out.println(res);
 		System.exit(0);
 	}
+	
+	
+	
 	/** 
 	 * Moves each of the agents along the edge,
 	 * in case the agent is on a node the next destination (next edge) is chosen (randomly).
@@ -90,6 +95,62 @@ public class Ex2_Client implements Runnable{
 		int ans = -1;
 		Collection<edge_data> ee = g.getE(src);
 		Iterator<edge_data> itr = ee.iterator();
+		
+		dw_graph_algorithms hh = new DWGraph_Algo();
+		hh.init(g);
+		double min = Integer.MAX_VALUE;
+		
+		
+		int index = -1; // here we save the index of the target pokimon on pokimons list.
+		int returnint = -1; // here we save the src of the edge that the pokimon is on.
+		double temp = -1; // here we save the minimum destination to get nearest pokimon.
+		
+		// iterate on the pokemons
+		for (int i = 0; i < _ar.getPokemons().size(); i++) {
+			// for each pokemon update the current edge which the pokemon on now.
+			Arena.updateEdge(_ar.getPokemons().get(i), _ar.getGraph());
+			// if the current agent is on the src of a edge that the Pokemon 
+			// on it go to this edge dest. (and return).
+			if (_ar.getPokemons().get(i).get_edge().getSrc()==src) {
+				return _ar.getPokemons().get(i).get_edge().getDest();
+			}
+			// else get minimum destination between agent src and pokimon edge src (temp variable)
+			temp = hh.shortestPathDist(src, _ar.getPokemons().get(i).get_edge().getSrc());
+			// switch to minimum if this pokimon is nearest.
+			if (temp<min&&!_ar.getPokemons().get(i).getUsed()) {
+				min = temp;
+				index = i;
+				returnint = _ar.getPokemons().get(i).get_edge().getSrc();
+			}
+		}
+		// mark the pokimon as 'used' (by one of the agents).
+		_ar.getPokemons().get(index).setUsed(true);
+		// here we save the next edge that the agent need to go.
+		// (using shortestPath method between agent src to pokimon src)
+		int nextone;
+		// shortestPath(src, returnint).get(0) -> current agent src.
+		// shortestPath(src, returnint).get(1) -> the next edge for the agent to go.
+		// (not null because if src==edge.src so the method return on start).
+		nextone = hh.shortestPath(src, returnint).get(1).getKey();
+		// return next edge
+		return nextone;
+		
+		
+		/* //// this is the original code ////
+		int s = ee.size();
+		int r = (int)(Math.random()*s);
+		int i=0;
+		while(i<r) {itr.next();i++;}
+		ans = itr.next().getDest();
+		return ans;
+		*/
+	}
+	
+	/*
+	private static int nextNode(directed_weighted_graph g, int src) {
+		int ans = -1;
+		Collection<edge_data> ee = g.getE(src);
+		Iterator<edge_data> itr = ee.iterator();
 		int s = ee.size();
 		int r = (int)(Math.random()*s);
 		int i=0;
@@ -97,6 +158,8 @@ public class Ex2_Client implements Runnable{
 		ans = itr.next().getDest();
 		return ans;
 	}
+	*/
+	
 	private void init(game_service game) {
 		String g = game.getGraph();
 		String fs = game.getPokemons();

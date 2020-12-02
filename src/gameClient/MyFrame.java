@@ -1,5 +1,4 @@
 package gameClient;
-
 import api.directed_weighted_graph;
 import api.edge_data;
 import api.geo_location;
@@ -8,8 +7,12 @@ import gameClient.util.Point3D;
 import gameClient.util.Range;
 import gameClient.util.Range2D;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -20,7 +23,7 @@ import java.util.List;
  * code and not to take it "as is".
  *
  */
-public class MyFrame extends JFrame{
+public class MyFrame extends JFrame {
 	/**
 	 * 
 	 */
@@ -28,33 +31,42 @@ public class MyFrame extends JFrame{
 	private int _ind;
 	private Arena _ar;
 	private gameClient.util.Range2Range _w2f;
-	MyFrame(String a) {
+    //Image pika = Toolkit.getDefaultToolkit().getImage("C:\\\\Users\\\\Almog\\\\Documents\\\\Ex2\\\\Ex2\\\\pika.png");
+    Image pika = Toolkit.getDefaultToolkit().getImage("images\\pika.png");
+    Image ash = Toolkit.getDefaultToolkit().getImage("images\\ash.png");
+    Image field = Toolkit.getDefaultToolkit().getImage("images\\field.png");
+
+    MyFrame(String a) {
 		super(a);
+		//super();
 		int _ind = 0;
 	}
+	
+	
 	public void update(Arena ar) {
 		this._ar = ar;
 		updateFrame();
 		//repaint();
 	}
-
+	
 	private void updateFrame() {
 		Range rx = new Range(20,this.getWidth()-10);
 		Range ry = new Range(this.getHeight()-10,150); // this.getHeight()-10,150
 		Range2D frame = new Range2D(rx,ry);
 		directed_weighted_graph g = _ar.getGraph();
 		_w2f = Arena.w2f(g,frame);
+		//Toolkit.getDefaultToolkit().sync();
 	}
+	
 	public void paint(Graphics g) {
 		int w = this.getWidth();
 		int h = this.getHeight();
 		g.clearRect(0, 0, w, h);
 	//	updateFrame();
-		drawPokemons(g);
 		drawGraph(g);
+		drawPokemons(g);
 		drawAgants(g);
 		drawInfo(g);
-		
 	}
 	private void drawInfo(Graphics g) {
 		List<String> str = _ar.get_info();
@@ -65,6 +77,7 @@ public class MyFrame extends JFrame{
 		
 	}
 	private void drawGraph(Graphics g) {
+		g.drawImage(field, 0, 0, this.getWidth(), this.getHeight(), this); 
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
 		directed_weighted_graph gg = _ar.getGraph();
@@ -79,6 +92,7 @@ public class MyFrame extends JFrame{
 				g.setColor(Color.gray);
 				drawEdge(e, g);
 			}
+			
 		}
 	}
 	private void drawPokemons(Graphics g) {
@@ -90,14 +104,15 @@ public class MyFrame extends JFrame{
 			
 			CL_Pokemon f = itr.next();
 			Point3D c = f.getLocation();
-			int r=10;
+			int r=25;
 			g.setColor(Color.green);
 			if(f.getType()<0) {g.setColor(Color.orange);}
 			int w = getWidth();
 	        int h = getHeight();
 			if(c!=null) {
 				geo_location fp = this._w2f.world2frame(c);
-				g.fillOval(((int)fp.x()-r)*w/1000, ((int)fp.y()-r)*h/1000, (2*r)*w/1000, (2*r)*h/1000);
+				g.drawImage(pika, ((int)fp.x()-r)*w/1000, ((int)fp.y()-r)*h/1000, (2*r)*w/1000, (2*r)*h/1000, this);
+				//g.fillOval(((int)fp.x()-r)*w/1000, ((int)fp.y()-r)*h/1000, (2*r)*w/1000, (2*r)*h/1000);
 			//	g.drawString(""+n.getKey(), fp.ix(), fp.iy()-4*r);
 				
 			}
@@ -113,12 +128,12 @@ public class MyFrame extends JFrame{
         int h = getHeight();
 		while(rs!=null && i<rs.size()) {
 			geo_location c = rs.get(i).getLocation();
-			int r=8;
+			int r=25;
 			i++;
 			if(c!=null) {
-
 				geo_location fp = this._w2f.world2frame(c);
-				g.fillOval(((int)fp.x()-r)*w/1000, ((int)fp.y()-r)*h/1000, (2*r)*w/1000, (2*r)*h/1000);
+				g.drawImage(ash, ((int)fp.x()-r)*w/1000, ((int)fp.y()-r)*h/1000, (2*r)*w/1000, (2*r)*h/1000, this);
+				//g.fillOval(((int)fp.x()-r)*w/1000, ((int)fp.y()-r)*h/1000, (2*r)*w/1000, (2*r)*h/1000);
 			}
 		}
 	}

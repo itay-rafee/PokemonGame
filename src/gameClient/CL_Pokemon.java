@@ -11,6 +11,8 @@ public class CL_Pokemon {
 	private double min_dist;
 	private int min_ro;
 	
+	private boolean used;
+	
 	public CL_Pokemon(Point3D p, int t, double v, double s, edge_data e) {
 		_type = t;
 	//	_speed = s;
@@ -62,5 +64,13 @@ public class CL_Pokemon {
 
 	public void setMin_ro(int min_ro) {
 		this.min_ro = min_ro;
+	}
+	
+	public void setUsed(boolean bool) {
+		this.used = bool;
+	}
+	
+	public boolean getUsed() {
+		return this.used;
 	}
 }
