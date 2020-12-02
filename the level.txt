@@ -1,0 +1,97 @@
+## level:0
+pok:1, agent:1
+type of pok: '-1':1 ,'1':0
+
+## level:1
+pok:2, agent:1
+type of pok: '-1':2 ,'1':0
+
+## level:2
+pok:3, agent:1
+type of pok: '-1':3 ,'1':0
+
+## level:3
+pok:4, agent:1
+type of pok: '-1':4 ,'1':0
+
+## level:4
+pok:5, agent:1
+type of pok: '-1':5 ,'1':0
+
+## level:5
+pok:6, agent:1
+type of pok: '-1':6 ,'1':0
+
+## level:6
+pok:1, agent:1
+type of pok: '-1':1 ,'1':0
+
+## level:7
+pok:2, agent:1
+type of pok: '-1':2 ,'1':0
+
+## level:8
+pok:3, agent:1
+type of pok: '-1':2 ,'1':1
+
+## level:9
+pok:4, agent:1
+type of pok: '-1':3 ,'1':1
+
+## level:10
+pok:5, agent:1
+type of pok: '-1':4 ,'1':1
+
+## level:11
+pok:6, agent:3
+type of pok: '-1':5 ,'1':1
+
+## level:12
+pok:1, agent:1
+type of pok: '-1':1 ,'1':0
+
+## level:13
+pok:2, agent:2
+type of pok: '-1':2 ,'1':0
+
+## level:14
+pok:3, agent:3
+type of pok: '-1':2 ,'1':1
+
+## level:15
+pok:4, agent:1
+type of pok: '-1':3 ,'1':1
+
+## level:16
+pok:5, agent:2
+type of pok: '-1':4 ,'1':1
+
+## level:17
+pok:6, agent:3
+type of pok: '-1':4 ,'1':2
+
+## level:18
+pok:1, agent:1
+type of pok: '-1':1 ,'1':0
+
+## level:19
+pok:2, agent:2
+type of pok: '-1':2 ,'1':0
+
+## level:20
+pok:3, agent:3
+type of pok: '-1':1 ,'1':2
+
+## level:21
+pok:4, agent:1
+type of pok: '-1':2 ,'1':2
+
+## level:22
+pok:5, agent:2
+type of pok: '-1':3 ,'1':2
+
+## level:23
+pok:6, agent:3
+type of pok: '-1':4 ,'1':2
+
+Process finished with exit code 0
