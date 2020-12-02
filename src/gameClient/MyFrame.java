@@ -30,6 +30,10 @@ public class MyFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private int _ind;
 	private Arena _ar;
+
+	private Image dbI;
+	private Graphics dbG;
+
 	private gameClient.util.Range2Range _w2f;
     //Image pika = Toolkit.getDefaultToolkit().getImage("C:\\\\Users\\\\Almog\\\\Documents\\\\Ex2\\\\Ex2\\\\pika.png");
     Image pika = Toolkit.getDefaultToolkit().getImage("images\\pika.png");
@@ -57,17 +61,27 @@ public class MyFrame extends JFrame {
 		_w2f = Arena.w2f(g,frame);
 		//Toolkit.getDefaultToolkit().sync();
 	}
-	
-	public void paint(Graphics g) {
+
+
+	public void paint(Graphics g){
+		dbI = createImage(getWidth(),getHeight());
+		dbG = dbI.getGraphics();
+		paintG(dbG);
+		g.drawImage(dbI,0,0,this);
+	}
+
+	public void paintG(Graphics g) {
 		int w = this.getWidth();
 		int h = this.getHeight();
 		g.clearRect(0, 0, w, h);
-	//	updateFrame();
+		//	updateFrame();
 		drawGraph(g);
 		drawPokemons(g);
 		drawAgants(g);
 		drawInfo(g);
+
 	}
+
 	private void drawInfo(Graphics g) {
 		List<String> str = _ar.get_info();
 		String dt = "none";
