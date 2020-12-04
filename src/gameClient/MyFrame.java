@@ -9,6 +9,10 @@ import gameClient.util.Range2D;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.LineBorder;
+
+import org.json.JSONException;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -37,8 +41,10 @@ public class MyFrame extends JFrame {
 	private gameClient.util.Range2Range _w2f;
     //Image pika = Toolkit.getDefaultToolkit().getImage("C:\\\\Users\\\\Almog\\\\Documents\\\\Ex2\\\\Ex2\\\\pika.png");
     Image pika = Toolkit.getDefaultToolkit().getImage("images\\pika.png");
+    Image bulbasaur = Toolkit.getDefaultToolkit().getImage("images\\bulbasaur.png");
     Image ash = Toolkit.getDefaultToolkit().getImage("images\\ash.png");
     Image field = Toolkit.getDefaultToolkit().getImage("images\\field.png");
+    Image pokedex = Toolkit.getDefaultToolkit().getImage("images\\pokedex.png");
 
     MyFrame(String a) {
 		super(a);
@@ -54,6 +60,10 @@ public class MyFrame extends JFrame {
 	}
 	
 	private void updateFrame() {
+		// this two lines for open the jframe window in the center of the screen
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
+		//
 		Range rx = new Range(20,this.getWidth()-10);
 		Range ry = new Range(this.getHeight()-10,150); // this.getHeight()-10,150
 		Range2D frame = new Range2D(rx,ry);
@@ -79,7 +89,7 @@ public class MyFrame extends JFrame {
 		drawPokemons(g);
 		drawAgants(g);
 		drawInfo(g);
-
+		
 	}
 
 	private void drawInfo(Graphics g) {
@@ -92,8 +102,7 @@ public class MyFrame extends JFrame {
 	}
 	private void drawGraph(Graphics g) {
 		g.drawImage(field, 0, 0, this.getWidth(), this.getHeight(), this); 
-		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-		this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
+		
 		directed_weighted_graph gg = _ar.getGraph();
 		Iterator<node_data> iter = gg.getV().iterator();
 		while(iter.hasNext()) {
@@ -106,26 +115,45 @@ public class MyFrame extends JFrame {
 				g.setColor(Color.gray);
 				drawEdge(e, g);
 			}
-			
+		}
+        try {
+        	int w = getWidth();
+            int h = getHeight();
+            // g.drawImage(pokedex, w/70, h/2+h/5, w/4, h/4+20, this);
+			g.drawImage(pokedex, (2*25)*w/1400, (2*25)*h/74, w/4, h/4+20, this);
+            //g.setColor(Color.black);
+            //g.fillRoundRect((2*25)*w/1000, (2*25)*h/63, w/8, h/9, 14, 14);
+        	g.setFont(new Font("default", Font.BOLD, h/50));
+    	    g.setColor(Color.WHITE);
+    	    // g.drawString("Grade: "+_ar.getGrade(), (2*25)*w/800, (2*25)*h/60);
+			// g.drawString("Moves: "+_ar.getMoves(), (2*25)*w/800, (2*25)*h/57);
+			g.drawString("Grade: "+_ar.getGrade(), (2*25)*w/850, (2*25)*h/64);
+			g.drawString("Moves: "+_ar.getMoves(), (2*25)*w/850, (2*25)*h/61);
+		} catch (JSONException e) {
+			e.printStackTrace();
 		}
 	}
+	
 	private void drawPokemons(Graphics g) {
 		List<CL_Pokemon> fs = _ar.getPokemons();
 		if(fs!=null) {
 		Iterator<CL_Pokemon> itr = fs.iterator();
-		
 		while(itr.hasNext()) {
-			
 			CL_Pokemon f = itr.next();
 			Point3D c = f.getLocation();
 			int r=25;
 			g.setColor(Color.green);
-			if(f.getType()<0) {g.setColor(Color.orange);}
+			//if(f.getType()<0) {g.setColor(Color.orange);}
 			int w = getWidth();
 	        int h = getHeight();
 			if(c!=null) {
 				geo_location fp = this._w2f.world2frame(c);
-				g.drawImage(pika, ((int)fp.x()-r)*w/1000, ((int)fp.y()-r)*h/1000, (2*r)*w/1000, (2*r)*h/1000, this);
+				if(f.getType()<0) {
+					g.drawImage(pika, ((int)fp.x()-r)*w/1000, ((int)fp.y()-r)*h/1000, (2*r)*w/1000, (2*r)*h/1000, this);
+				} else {
+					g.drawImage(bulbasaur, ((int)fp.x()-r)*w/1000, ((int)fp.y()-r)*h/1000, (2*r)*w/1000, (2*r)*h/1000, this);
+				}
+				//g.drawImage(pika, ((int)fp.x()-r)*w/1000, ((int)fp.y()-r)*h/1000, (2*r)*w/1000, (2*r)*h/1000, this);
 				//g.fillOval(((int)fp.x()-r)*w/1000, ((int)fp.y()-r)*h/1000, (2*r)*w/1000, (2*r)*h/1000);
 			//	g.drawString(""+n.getKey(), fp.ix(), fp.iy()-4*r);
 				
@@ -156,7 +184,9 @@ public class MyFrame extends JFrame {
 		geo_location fp = this._w2f.world2frame(pos);
 		int w = getWidth();
         int h = getHeight();
+        g.setColor(Color.blue);
 		g.fillOval(((int)fp.x()-r)*w/1000, ((int)fp.y()-r)*h/1000, (2*r)*w/1000, (2*r)*h/1000);
+		g.setColor(Color.BLUE);
 		g.drawString(""+n.getKey(), ((int)fp.x())*w/1000, ((int)fp.y()-4*r)*h/1000);
 	}
 	private void drawEdge(edge_data e, Graphics g) {
@@ -167,7 +197,13 @@ public class MyFrame extends JFrame {
 		geo_location d0 = this._w2f.world2frame(d);
 		int w = getWidth();
         int h = getHeight();
-		g.drawLine((int)s0.x()*w/1000, (int)s0.y()*h/1000, (int)d0.x()*w/1000, (int)d0.y()*h/1000);
-	//	g.drawString(""+n.getKey(), fp.ix(), fp.iy()-4*r);
+        
+        Graphics2D g2d = (Graphics2D) g.create();
+        g2d.setColor(Color.black);
+        g2d.setStroke(new BasicStroke(1.0f));
+        g2d.drawLine((int)s0.x()*w/1000, (int)s0.y()*h/1000, (int)d0.x()*w/1000, (int)d0.y()*h/1000);
+        
+		//g.drawLine((int)s0.x()*w/1000, (int)s0.y()*h/1000, (int)d0.x()*w/1000, (int)d0.y()*h/1000);
+		//g.drawString(""+n.getKey(), fp.ix(), fp.iy()-4*r);
 	}
 }

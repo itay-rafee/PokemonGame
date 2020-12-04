@@ -7,7 +7,7 @@ public class DWGraph_DS implements directed_weighted_graph{
 
     //here we put the edges with the direction
     private HashMap<Integer, HashMap<Integer, edge_data>> _ni;
-
+    
     //here we put the edges against the direction
     private HashMap<Integer, HashSet<Integer>> _niRevers;
 

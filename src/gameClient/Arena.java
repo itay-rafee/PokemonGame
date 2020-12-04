@@ -2,6 +2,7 @@ package gameClient;
 
 import api.directed_weighted_graph;
 import api.edge_data;
+import api.game_service;
 import api.geo_location;
 import api.node_data;
 import gameClient.util.Point3D;
@@ -13,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -27,8 +29,10 @@ public class Arena {
 	private List<CL_Agent> _agents;
 	private List<CL_Pokemon> _pokemons;
 	private List<String> _info;
+	private game_service game;
 	private static Point3D MIN = new Point3D(0, 100,0);
 	private static Point3D MAX = new Point3D(0, 100,0);
+	HashMap<Integer, HashMap<Integer, Boolean>> gameTrick; // added
 
 	public Arena() {;
 		_info = new ArrayList<String>();
@@ -174,5 +178,37 @@ public class Arena {
 		Range2Range ans = new Range2Range(world, frame);
 		return ans;
 	}
-
+	
+	public void setGame(game_service game) {
+		this.game=game;
+	}
+	
+	public game_service getGame(game_service game) {
+		return game;
+	}
+	
+	public int getGrade() throws JSONException {
+		String info = game.toString();
+		JSONObject line = new JSONObject(info);
+		JSONObject ttt = line.getJSONObject("GameServer");
+		int grade = ttt.getInt("grade");
+		return grade;
+	}
+	
+	public int getMoves() throws JSONException {
+		String info = game.toString();
+		JSONObject line = new JSONObject(info);
+		JSONObject ttt = line.getJSONObject("GameServer");
+		int grade = ttt.getInt("moves");
+		return grade;
+	}
+	
+	public void setgameTrick(HashMap<Integer, HashMap<Integer, Boolean>> g) {
+		this.gameTrick = g;
+	}
+	
+	public HashMap<Integer, HashMap<Integer, Boolean>> getgameTrick() {
+		return this.gameTrick;
+	}
+	
 }
