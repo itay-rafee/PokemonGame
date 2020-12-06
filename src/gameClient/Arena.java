@@ -203,6 +203,11 @@ public class Arena {
 		return grade;
 	}
 	
+	public String getTime() {
+		long time = game.timeToEnd();
+		return time/1000+"."+time%1000;
+	}
+	
 	public void setgameTrick(HashMap<Integer, HashMap<Integer, Boolean>> g) {
 		this.gameTrick = g;
 	}
@@ -210,5 +215,4 @@ public class Arena {
 	public HashMap<Integer, HashMap<Integer, Boolean>> getgameTrick() {
 		return this.gameTrick;
 	}
-	
 }

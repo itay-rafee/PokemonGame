@@ -29,7 +29,7 @@ public class Ex2_Client implements Runnable{
 	
 	//@Override
 	public void run() {
-		int scenario_num = 23;
+		int scenario_num = 11;
 		game_service game = Game_Server_Ex2.getServer(scenario_num); // you have [0,23] games
 	//	int id = 999;
 	//	game.login(id);
@@ -41,9 +41,68 @@ public class Ex2_Client implements Runnable{
 		game.startGame();
 		_win.setTitle("Ex2 - OOP: (NONE trivial Solution) "+game.toString());
 		int ind=0;
-		long dt=50;
+		long dt=20;
 		
-		/*HashMap<Integer, HashMap<Integer, Boolean>> gameTrick = new HashMap<>();
+		
+		HashMap<Integer, HashMap<Integer, Boolean>> gameTrick = new HashMap<>();
+		
+		/*
+		// map 23
+		gameTrick.put(0, new HashMap<>());
+		gameTrick.get(0).put(0, true);
+		gameTrick.get(0).put(1, true);
+		gameTrick.get(0).put(2, true);
+		gameTrick.get(0).put(3, true);
+		gameTrick.get(0).put(4, true);
+		gameTrick.get(0).put(5, true);
+		gameTrick.get(0).put(6, true);
+		gameTrick.get(0).put(7, true);
+		gameTrick.get(0).put(8, true);
+		gameTrick.get(0).put(9, true);
+		gameTrick.get(0).put(10, true);
+		gameTrick.get(0).put(11, true);
+		gameTrick.get(0).put(12, true);
+		gameTrick.get(0).put(13, true);
+		gameTrick.put(1, new HashMap<>());
+		gameTrick.get(1).put(40, true);
+		gameTrick.get(1).put(41, true);
+		gameTrick.get(1).put(42, true);
+		gameTrick.get(1).put(43, true);
+		gameTrick.get(1).put(44, true);
+		gameTrick.get(1).put(45, true);
+		gameTrick.get(1).put(46, true);
+		gameTrick.get(1).put(47, true);
+		gameTrick.put(2, new HashMap<>());
+		gameTrick.get(2).put(14, true);
+		gameTrick.get(2).put(15, true);
+		gameTrick.get(2).put(16, true);
+		gameTrick.get(2).put(17, true);
+		gameTrick.get(2).put(18, true);
+		gameTrick.get(2).put(19, true);
+		gameTrick.get(2).put(20, true);
+		//gameTrick.get(2).put(21, true);
+		gameTrick.get(2).put(22, true);
+		gameTrick.get(2).put(23, true);
+		gameTrick.get(2).put(24, true);
+		gameTrick.get(2).put(25, true);
+		gameTrick.get(2).put(26, true);
+		gameTrick.get(2).put(27, true);
+		gameTrick.get(2).put(28, true);
+		gameTrick.get(2).put(29, true);
+		gameTrick.get(2).put(30, true);
+		gameTrick.get(2).put(31, true);
+		//gameTrick.get(2).put(32, true);
+		//gameTrick.get(2).put(33, true);
+		gameTrick.get(2).put(34, true);
+		gameTrick.get(2).put(35, true);
+		gameTrick.get(2).put(36, true);
+		gameTrick.get(2).put(37, true);
+		gameTrick.get(2).put(38, true);
+		gameTrick.get(2).put(39, true);
+		*/
+		
+		
+		// map 11
 		gameTrick.put(0, new HashMap<>());
 		gameTrick.get(0).put(2, true);
 		gameTrick.get(0).put(3, true);
@@ -80,7 +139,13 @@ public class Ex2_Client implements Runnable{
 		gameTrick.get(2).put(13, true);
 		gameTrick.get(2).put(20, true);
 		gameTrick.get(2).put(30, true);
-		_ar.setgameTrick(gameTrick);*/
+		
+		
+		
+		
+		
+		
+		_ar.setgameTrick(gameTrick);
 		
 		while(game.isRunning()) {
 			moveAgants(game, gg);
@@ -160,23 +225,22 @@ public class Ex2_Client implements Runnable{
 			// if the current agent is on the src of a edge that the Pokemon 
 			// on it go to this edge dest. (and return).
 			if (_ar.getPokemons().get(i).get_edge().getSrc()==src) {
-				//_ar.getPokemons().get(index).setUsed(true);
 				return _ar.getPokemons().get(i).get_edge().getDest();
 			}
 			// else get minimum destination between agent src and pokimon edge src (temp variable)
 			temp = hh.shortestPathDist(src, _ar.getPokemons().get(i).get_edge().getSrc());
 			// switch to minimum if this pokimon is nearest.
 			if (temp<min&&!_ar.getPokemons().get(i).getUsed()) { // &&!_ar.getPokemons().get(i).getUsed()
-				//if (_ar.getgameTrick().get(ag.getID()).containsKey(_ar.getPokemons().get(i).get_edge().getSrc())) {
+				if (_ar.getgameTrick().get(ag.getID()).containsKey(_ar.getPokemons().get(i).get_edge().getSrc())) {
 					min = temp;
 					index = i;
 					returnint = _ar.getPokemons().get(i).get_edge().getSrc();
-				//}
+				}
 			}
 		}
 		// mark the pokimon as 'used' (by one of the agents).
 		
-		_ar.getPokemons().get(index).setUsed(true);
+		//_ar.getPokemons().get(index).setUsed(true);
 		
 		// here we save the next edge that the agent need to go.
 		// (using shortestPath method between agent src to pokimon src)
@@ -186,10 +250,12 @@ public class Ex2_Client implements Runnable{
 		// (not null because if src==edge.src so the method return on start).
 		
 		//nextone = hh.shortestPath(src, returnint).get(1).getKey();
+		
 		if (returnint!=-1) {
 		List<node_data> directions = hh.shortestPath(src, returnint);
 		nextone = directions.get(1).getKey();
 		}
+		
 		//try {
 		//	Thread.sleep(1000);
 		//} catch (Exception e) {

@@ -127,8 +127,14 @@ public class MyFrame extends JFrame {
     	    g.setColor(Color.WHITE);
     	    // g.drawString("Grade: "+_ar.getGrade(), (2*25)*w/800, (2*25)*h/60);
 			// g.drawString("Moves: "+_ar.getMoves(), (2*25)*w/800, (2*25)*h/57);
-			g.drawString("Grade: "+_ar.getGrade(), (2*25)*w/850, (2*25)*h/64);
-			g.drawString("Moves: "+_ar.getMoves(), (2*25)*w/850, (2*25)*h/61);
+			g.drawString("Grade: "+_ar.getGrade(), (2*25)*w/845, (2*25)*h/64);
+			g.drawString("Moves: "+_ar.getMoves(), (2*25)*w/845, (2*25)*h/62);
+			g.drawString("Time: "+_ar.getTime(), (2*25)*w/845, (2*25)*h/60);
+			g.setColor(Color.BLACK);
+			List<CL_Agent> ags = _ar.getAgents();
+			for (int i = 0; i < ags.size(); i++) {
+				g.drawString("A"+i+" Val: "+ags.get(i).getValue(), (2*25)*w/265, (2*25)*h/(64-2*i));
+			}
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -149,9 +155,9 @@ public class MyFrame extends JFrame {
 			if(c!=null) {
 				geo_location fp = this._w2f.world2frame(c);
 				if(f.getType()<0) {
-					g.drawImage(pika, ((int)fp.x()-r)*w/1000, ((int)fp.y()-r)*h/1000, (2*r)*w/1000, (2*r)*h/1000, this);
+					g.drawImage(pika, ((int)fp.x()-r)*w/1010, ((int)fp.y()-r)*h/1010, (2*r)*w/1010, (2*r)*h/1010, this);
 				} else {
-					g.drawImage(bulbasaur, ((int)fp.x()-r)*w/1000, ((int)fp.y()-r)*h/1000, (2*r)*w/1000, (2*r)*h/1000, this);
+					g.drawImage(bulbasaur, ((int)fp.x()-r)*w/1010, ((int)fp.y()-r)*h/1010, (2*r)*w/1010, (2*r)*h/1010, this);
 				}
 				//g.drawImage(pika, ((int)fp.x()-r)*w/1000, ((int)fp.y()-r)*h/1000, (2*r)*w/1000, (2*r)*h/1000, this);
 				//g.fillOval(((int)fp.x()-r)*w/1000, ((int)fp.y()-r)*h/1000, (2*r)*w/1000, (2*r)*h/1000);
@@ -174,8 +180,8 @@ public class MyFrame extends JFrame {
 			i++;
 			if(c!=null) {
 				geo_location fp = this._w2f.world2frame(c);
-				g.drawImage(ash, ((int)fp.x()-r)*w/1000, ((int)fp.y()-r)*h/1000, (2*r)*w/1000, (2*r)*h/1000, this);
-				//g.fillOval(((int)fp.x()-r)*w/1000, ((int)fp.y()-r)*h/1000, (2*r)*w/1000, (2*r)*h/1000);
+				g.drawImage(ash, ((int)fp.x()-r)*w/1010, ((int)fp.y()-r)*h/1010, (2*r)*w/1010, (2*r)*h/1010, this);
+				//g.fillOval(((int)fp.x()-r)*w/1015, ((int)fp.y()-r)*h/1015, (2*r)*w/1015, (2*r)*h/1015);
 			}
 		}
 	}
@@ -185,9 +191,9 @@ public class MyFrame extends JFrame {
 		int w = getWidth();
         int h = getHeight();
         g.setColor(Color.blue);
-		g.fillOval(((int)fp.x()-r)*w/1000, ((int)fp.y()-r)*h/1000, (2*r)*w/1000, (2*r)*h/1000);
+		g.fillOval(((int)fp.x()-r)*w/1010, ((int)fp.y()-r)*h/1010, (2*r)*w/1010, (2*r)*h/1010);
 		g.setColor(Color.BLUE);
-		g.drawString(""+n.getKey(), ((int)fp.x())*w/1000, ((int)fp.y()-4*r)*h/1000);
+		g.drawString(""+n.getKey(), ((int)fp.x())*w/1010, ((int)fp.y()-4*r)*h/1010);
 	}
 	private void drawEdge(edge_data e, Graphics g) {
 		directed_weighted_graph gg = _ar.getGraph();
@@ -201,7 +207,7 @@ public class MyFrame extends JFrame {
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.setColor(Color.black);
         g2d.setStroke(new BasicStroke(1.0f));
-        g2d.drawLine((int)s0.x()*w/1000, (int)s0.y()*h/1000, (int)d0.x()*w/1000, (int)d0.y()*h/1000);
+        g2d.drawLine((int)s0.x()*w/1010, (int)s0.y()*h/1010, (int)d0.x()*w/1010, (int)d0.y()*h/1010);
         
 		//g.drawLine((int)s0.x()*w/1000, (int)s0.y()*h/1000, (int)d0.x()*w/1000, (int)d0.y()*h/1000);
 		//g.drawString(""+n.getKey(), fp.ix(), fp.iy()-4*r);
