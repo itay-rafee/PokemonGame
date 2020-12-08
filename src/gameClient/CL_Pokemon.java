@@ -11,7 +11,12 @@ public class CL_Pokemon {
 	private double min_dist;
 	private int min_ro;
 	
+	public int pokNum;
+	public static int counter;
+	
 	private boolean used;
+	
+	private double dist = Integer.MAX_VALUE;
 	
 	public CL_Pokemon(Point3D p, int t, double v, double s, edge_data e) {
 		_type = t;
@@ -21,6 +26,7 @@ public class CL_Pokemon {
 		_pos = p;
 		min_dist = -1;
 		min_ro = -1;
+		pokNum = counter++;
 	}
 	public static CL_Pokemon init_from_json(String json) {
 		CL_Pokemon ans = null;
@@ -72,5 +78,17 @@ public class CL_Pokemon {
 	
 	public boolean getUsed() {
 		return this.used;
+	}
+	
+	public Point3D getPos() {
+		return this._pos;
+	}
+	
+	public void set_dist(double d) {
+		this.dist = d;
+	}
+	
+	public double get_dist() {
+		return this.dist;
 	}
 }

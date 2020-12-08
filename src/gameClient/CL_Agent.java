@@ -20,6 +20,7 @@ public class CL_Agent {
 		private directed_weighted_graph _gg;
 		private CL_Pokemon _curr_fruit;
 		private long _sg_dt;
+		private static int stucks = 0;
 		
 		private double _value;
 		

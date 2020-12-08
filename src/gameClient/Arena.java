@@ -32,7 +32,7 @@ public class Arena {
 	private game_service game;
 	private static Point3D MIN = new Point3D(0, 100,0);
 	private static Point3D MAX = new Point3D(0, 100,0);
-	HashMap<Integer, HashMap<Integer, Boolean>> gameTrick; // added
+	//HashMap<Integer, HashMap<Integer, Boolean>> gameTrick; // added
 
 	public Arena() {;
 		_info = new ArrayList<String>();
@@ -67,6 +67,7 @@ public class Arena {
 		
 	}
 	public List<CL_Agent> getAgents() {return _agents;}
+	
 	public List<CL_Pokemon> getPokemons() {return _pokemons;}
 
 	
@@ -208,11 +209,19 @@ public class Arena {
 		return time/1000+"."+time%1000;
 	}
 	
-	public void setgameTrick(HashMap<Integer, HashMap<Integer, Boolean>> g) {
-		this.gameTrick = g;
+	public game_service getGame() {
+		return this.game;
 	}
 	
-	public HashMap<Integer, HashMap<Integer, Boolean>> getgameTrick() {
-		return this.gameTrick;
+	public double closestAgent(CL_Pokemon p, CL_Agent a) {
+		List<CL_Agent> ag = this.getAgents();
+		double min = Double.MAX_VALUE;
+		for (int i = 0; i<ag.size(); i++) {
+			double distance = ag.get(i).getLocation().distance(p.getLocation());
+			if (ag.get(i).getID()!=a.getID()&&distance<min) {
+				min = distance;
+			}
+		}
+		return min;
 	}
 }

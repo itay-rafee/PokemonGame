@@ -1,5 +1,7 @@
 package api;
 
+import gameClient.util.Point3D;
+
 /////////////////////////////////////////
 ////////Node Location class /////////////
 /////////////////////////////////////////
@@ -47,11 +49,30 @@ public class GeoLocation implements geo_location {
         return _z;
     }
 
-    @Override
+    /*@Override
     public double distance(geo_location g) {
         /////// ?? ////////
         return _distance;
+    }*/
+    
+    @Override
+    public double distance(geo_location g) {
+        double dx = this.x() - g.x();
+        double dy = this.y() - g.y();
+        double dz = this.z() - g.z();
+        double t = (dx*dx+dy*dy+dz*dz);
+        return Math.sqrt(t);
     }
+
+    
+    public double distance(Point3D g) {
+        double dx = this.x() - g.x();
+        double dy = this.y() - g.y();
+        double dz = this.z() - g.z();
+        double t = (dx*dx+dy*dy+dz*dz);
+        return Math.sqrt(t);
+    }
+
     
     @Override
 	public boolean equals(Object gl) {
@@ -70,4 +91,6 @@ public class GeoLocation implements geo_location {
 	public String toString() {
 		return ""+_x+", "+_y+", "+_z;
 	}
+	
+	
 }

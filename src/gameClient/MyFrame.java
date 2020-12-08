@@ -14,6 +14,8 @@ import javax.swing.border.LineBorder;
 import org.json.JSONException;
 
 import java.awt.*;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -100,9 +102,29 @@ public class MyFrame extends JFrame {
 		}
 		
 	}
+	
+	private void aspectRatio(double aspectratio) {
+		final Frame _frame = this;
+		if (aspectratio>10/7.0) {
+			SwingUtilities.invokeLater(new Runnable(){
+			    public void run() {
+			      _frame.setSize(_frame.getHeight()*10/7, _frame.getHeight());
+			    }
+			  });
+		} else if (aspectratio<10/7.0) {
+			SwingUtilities.invokeLater(new Runnable(){
+			    public void run() {
+			      _frame.setSize(_frame.getWidth(), _frame.getWidth()*7/10);
+			    }
+			  });
+		}
+	}
+	
 	private void drawGraph(Graphics g) {
-		g.drawImage(field, 0, 0, this.getWidth(), this.getHeight(), this); 
+		double aspectratio = this.getWidth()/this.getHeight();
+		if (aspectratio!=10/7.0) {aspectRatio(aspectratio);}
 		
+		g.drawImage(field, 0, 0, this.getWidth(), this.getHeight(), this); 
 		directed_weighted_graph gg = _ar.getGraph();
 		Iterator<node_data> iter = gg.getV().iterator();
 		while(iter.hasNext()) {
