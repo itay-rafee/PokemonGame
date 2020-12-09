@@ -12,6 +12,12 @@ import gameClient.util.Point3D;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -25,18 +31,20 @@ public class Ex2_Client implements Runnable{
 	private static MyFrame _win;
 	private static Arena _ar;
 	private static long sleep = 100;
-	
+	private static int scenario_num;
+
 	public static void main(String[] a) {
-		Thread client = new Thread(new Ex2_Client());
-		client.start();
+		Ex2_Client e = new Ex2_Client();
+		e.openFrame();
+//		Thread client = new Thread(new Ex2_Client());
+//		client.start();
 	}
-	
+
 	//@Override
 	public void run() {
-		int scenario_num = 11;
 		game_service game = Game_Server_Ex2.getServer(scenario_num); // you have [0,23] games
-	//	int id = 999;
-	//	game.login(id);
+		//	int id = 999;
+		//	game.login(id);
 		String g = game.getGraph();
 		String pks = game.getPokemons();
 		directed_weighted_graph gg = game.getJava_Graph_Not_to_be_used();
@@ -46,12 +54,12 @@ public class Ex2_Client implements Runnable{
 		_win.setTitle("Ex2 - OOP: (NONE trivial Solution) "+game.toString());
 		int ind=0;
 		//long dt=100;
-		
+
 		String lg = game.move();
 		List<CL_Agent> log = Arena.getAgents(lg, gg);
 		_ar.setAgents(log);
 		_ar.initHashMaps();
-		
+
 		while(game.isRunning()) {
 			moveAgants(game, gg);
 			try {
@@ -64,8 +72,8 @@ public class Ex2_Client implements Runnable{
 		System.out.println(game.toString());
 		System.exit(0);
 	}
-	
-	/** 
+
+	/**
 	 * Moves each of the agents along the edge,
 	 * in case the agent is on a node the next destination (next edge) is chosen (randomly).
 	 * @param game
@@ -146,7 +154,7 @@ public class Ex2_Client implements Runnable{
 		}
 		return nextNode;
 	}
-	
+
 	private void init(game_service game) {
 		String g = game.getGraph();
 		String fs = game.getPokemons();
@@ -171,10 +179,10 @@ public class Ex2_Client implements Runnable{
 			ArrayList<CL_Pokemon> cl_fs = Arena.json2Pokemons(game.getPokemons());
 			// sort by value
 			PriorityQueue<CL_Pokemon> poks = new PriorityQueue<CL_Pokemon>(new PokemonComparator());
-			for(int a = 0;a<cl_fs.size();a++) { 
+			for(int a = 0;a<cl_fs.size();a++) {
 				Arena.updateEdge(cl_fs.get(a),gg);
 				poks.add(cl_fs.get(a));
-				}
+			}
 			for(int a = 0;a<rs;a++) {
 				int ind = a%cl_fs.size();
 				CL_Pokemon c = cl_fs.get(ind);
@@ -186,11 +194,71 @@ public class Ex2_Client implements Runnable{
 		}
 		catch (JSONException e) {e.printStackTrace();}
 	}
-	
+
 	class PokemonComparator implements Comparator<CL_Pokemon> {
 		@Override
 		public int compare(CL_Pokemon o1, CL_Pokemon o2) {
 			return Double.compare(o2.getValue(), o1.getValue()); // max first
+		}
+	}
+
+	//////// open screen //////
+
+	private void openFrame(){
+
+		JFrame f=new JFrame("Button Example");
+		final JTextField tf=new JTextField();
+		tf.setBounds(150,50, 150,20);
+		tf.setText("Enter level");
+		JButton b=new JButton("start");
+		b.setBounds(50,50,95,30);
+		b.setBackground(Color.GRAY);
+		b.setDoubleBuffered(true);
+
+		b.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				String a = tf.getText();
+				int num;
+				try{
+					num = Integer.parseInt(a);
+					scenario_num = num;
+					f.setVisible(false);
+					start();
+				}
+				catch (Exception r){
+					tf.setText("try again");
+				}
+			}
+		});
+		//f.add(b);f.add(tf);
+		JMenuBar m = new JMenuBar();
+		m.add(b);
+		m.add(tf);
+		f.setJMenuBar(m);
+		f.setSize(1000,600);
+		f.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				System.exit(0);
+			}
+		});
+		Container contentPane = f.getContentPane();
+		contentPane.add(new OpenFrame());
+		f.show();
+
+	}
+
+	public static void start() throws InterruptedException {
+		Thread client = new Thread(new Ex2_Client());
+		client.start();
+	}
+
+	private static class OpenFrame extends JPanel {
+
+		private Image openS = Toolkit.getDefaultToolkit().getImage("images\\go.jpg");
+
+		public void paintComponent(Graphics g) {
+			super.paintComponent(g);
+			g.drawImage(openS, 0, 0, this.getWidth(), this.getHeight(), this);
 		}
 	}
 }
