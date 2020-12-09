@@ -32,6 +32,8 @@ public class Ex2_Client implements Runnable{
 	private static Arena _ar;
 	private static long sleep = 100;
 	private static int scenario_num;
+	private static int count;
+
 
 	public static void main(String[] a) {
 		Ex2_Client e = new Ex2_Client();
@@ -54,6 +56,12 @@ public class Ex2_Client implements Runnable{
 		_win.setTitle("Ex2 - OOP: (NONE trivial Solution) "+game.toString());
 		int ind=0;
 		//long dt=100;
+
+		_win.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				System.exit(0);
+			}
+		});
 
 		String lg = game.move();
 		List<CL_Agent> log = Arena.getAgents(lg, gg);
@@ -209,6 +217,7 @@ public class Ex2_Client implements Runnable{
 		JFrame f=new JFrame("Button Example");
 		final JTextField tf=new JTextField();
 		tf.setBounds(150,50, 150,20);
+		tf.setBackground(Color.LIGHT_GRAY);
 		tf.setText("Enter level");
 		JButton b=new JButton("start");
 		b.setBounds(50,50,95,30);
@@ -221,12 +230,16 @@ public class Ex2_Client implements Runnable{
 				int num;
 				try{
 					num = Integer.parseInt(a);
+					game_service game = Game_Server_Ex2.getServer(num); // you have [0,23] games
+					String g = game.getGraph();
 					scenario_num = num;
 					f.setVisible(false);
 					start();
 				}
 				catch (Exception r){
-					tf.setText("try again");
+					count++;
+					if (count > 3) tf.setText("put a correct number!");
+					else tf.setText("try again");
 				}
 			}
 		});
