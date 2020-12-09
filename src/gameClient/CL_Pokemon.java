@@ -91,4 +91,8 @@ public class CL_Pokemon {
 	public double get_dist() {
 		return this.dist;
 	}
+	
+	public int getPokNum() {
+		return this.pokNum;
+	}
 }

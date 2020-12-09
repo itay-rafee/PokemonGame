@@ -32,7 +32,8 @@ public class Arena {
 	private game_service game;
 	private static Point3D MIN = new Point3D(0, 100,0);
 	private static Point3D MAX = new Point3D(0, 100,0);
-	//HashMap<Integer, HashMap<Integer, Boolean>> gameTrick; // added
+	private static HashMap<Integer, Point3D> lastPos = new HashMap<>();
+	private static HashMap<Integer, CL_Pokemon> fruits = new HashMap<>();
 
 	public Arena() {;
 		_info = new ArrayList<String>();
@@ -213,15 +214,42 @@ public class Arena {
 		return this.game;
 	}
 	
-	public double closestAgent(CL_Pokemon p, CL_Agent a) {
+	public void initHashMaps() {
 		List<CL_Agent> ag = this.getAgents();
-		double min = Double.MAX_VALUE;
+		if (ag==null) return;
 		for (int i = 0; i<ag.size(); i++) {
-			double distance = ag.get(i).getLocation().distance(p.getLocation());
-			if (ag.get(i).getID()!=a.getID()&&distance<min) {
-				min = distance;
+			Point3D p = new Point3D(-1, -1, -1);
+			lastPos.put(ag.get(i).getID(), p);
+			fruits.put(ag.get(i).getID(), new CL_Pokemon(p, -1, -1, -1, null));
+		}
+	}
+	
+	public void setAsPreviousPok(CL_Pokemon p, CL_Agent a) {
+		lastPos.put(a.getID(), p.getLocation());
+	}
+	
+	public boolean isPreviousPok(CL_Pokemon p, CL_Agent a) {
+		if (p.getLocation().distance(lastPos.get(a.getID()))<0.00000000000001) {
+			return true;
+		}
+		return false;
+	}
+	
+	public void setFruit(CL_Pokemon p, CL_Agent a) {
+		if (p!=null&&a!=null) {
+			fruits.put(a.getID(), p);
+		}
+	}
+	
+	public boolean isAvailableFruit(CL_Pokemon p, CL_Agent a) {
+		List<CL_Agent> ag = this.getAgents();
+		for (int i = 0; i<ag.size(); i++) {
+			if (ag.get(i).getID()!=a.getID()&&fruits.containsKey(ag.get(i).getID())) {
+				if (p.getPokNum()==fruits.get(ag.get(i).getID()).pokNum) {return false;}
+				double distance = fruits.get(ag.get(i).getID()).getLocation().distance(p.getLocation());
+				if (distance<0.0045) {return false;}
 			}
 		}
-		return min;
+		return true;
 	}
 }
