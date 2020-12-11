@@ -214,16 +214,22 @@ public class Ex2_Client implements Runnable{
 
 	private void openFrame(){
 
-		JFrame f=new JFrame("Button Example");
-		final JTextField tf=new JTextField();
+		JFrame f=new JFrame("Welcome!");
+		final JTextField tf=new JTextField("Enter level");
 		tf.setBounds(150,50, 150,20);
 		tf.setBackground(Color.LIGHT_GRAY);
-		tf.setText("Enter level");
-		JButton b=new JButton("start");
+		tf.addFocusListener(new java.awt.event.FocusAdapter() {
+		    public void focusGained(java.awt.event.FocusEvent evt) {
+		       if (tf.getText().equals("Enter level")||tf.getText().equals("Try again!")||
+		    		   tf.getText().equals("Put a correct number!")) {
+		    	   tf.setText("");
+		       }
+		    }
+		});
+		JButton b=new JButton("Start");
 		b.setBounds(50,50,95,30);
 		b.setBackground(Color.GRAY);
 		b.setDoubleBuffered(true);
-
 		b.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				String a = tf.getText();
@@ -238,8 +244,8 @@ public class Ex2_Client implements Runnable{
 				}
 				catch (Exception r){
 					count++;
-					if (count > 3) tf.setText("put a correct number!");
-					else tf.setText("try again");
+					if (count > 3) tf.setText("Put a correct number!");
+					else tf.setText("Try again!");
 				}
 			}
 		});
@@ -248,7 +254,9 @@ public class Ex2_Client implements Runnable{
 		m.add(b);
 		m.add(tf);
 		f.setJMenuBar(m);
-		f.setSize(1000,600);
+		f.setSize(1000,700);
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		f.setLocation(dim.width/2-f.getSize().width/2, dim.height/2-f.getSize().height/2);
 		f.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);
@@ -257,7 +265,6 @@ public class Ex2_Client implements Runnable{
 		Container contentPane = f.getContentPane();
 		contentPane.add(new OpenFrame());
 		f.show();
-
 	}
 
 	public static void start() throws InterruptedException {
@@ -266,9 +273,7 @@ public class Ex2_Client implements Runnable{
 	}
 
 	private static class OpenFrame extends JPanel {
-
 		private Image openS = Toolkit.getDefaultToolkit().getImage("images\\go.jpg");
-
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
 			g.drawImage(openS, 0, 0, this.getWidth(), this.getHeight(), this);
