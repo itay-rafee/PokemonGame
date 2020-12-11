@@ -1,14 +1,10 @@
 package gameClient;
 
 import Server.Game_Server_Ex2;
-import api.DWGraph_Algo;
-import api.directed_weighted_graph;
-import api.dw_graph_algorithms;
-import api.edge_data;
-import api.game_service;
-import api.node_data;
+import api.*;
 import gameClient.util.Point3D;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -18,28 +14,29 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Stack;
 
 public class Ex2_Client implements Runnable{
 	private static MyFrame _win;
 	private static Arena _ar;
 	private static long sleep = 100;
-	private static int scenario_num;
+
+	//can select the level of the game here
+	//or in the open frame by init the scenario_num = -1
+	private static int scenario_num = 11;
 	private static int count;
 
 
 	public static void main(String[] a) {
 		Ex2_Client e = new Ex2_Client();
-		e.openFrame();
-//		Thread client = new Thread(new Ex2_Client());
-//		client.start();
+		if (scenario_num == -1){
+			e.openFrame();
+		}
+		else {
+			Thread client = new Thread(e);
+			client.start();
+		}
 	}
 
 	//@Override
@@ -163,10 +160,135 @@ public class Ex2_Client implements Runnable{
 		return nextNode;
 	}
 
+
+	////////// init function /////////
+
 	private void init(game_service game) {
-		String g = game.getGraph();
+		initFrame(game);
+		directed_weighted_graph g = _ar.getGraph();
+		dw_graph_algorithms ga = new DWGraph_Algo(g);
+		int agentsNum = json2numAgent(game);
+		if (ga.isConnected()){
+			initAgentNearPok(game,_ar.getPokemons(),agentsNum,g.getV());
+		}
+		else{
+			initAgentDisconnectedGraph(game,_ar.getPokemons(),agentsNum);
+		}
+	}
+
+	/**
+	 * in this function we Refer to disconnected graph
+	 */
+	private void initAgentDisconnectedGraph(game_service game, List<CL_Pokemon> pokemonS, int agentsNum) {
+		HashSet<node_data> vis = new HashSet<>();
+		directed_weighted_graph g = _ar.getGraph();
+		Collection<node_data> nodes = g.getV();
+		int ageSum = 0;
+		for (node_data n : nodes) {
+			if (!vis.contains(n)){
+				Collection<node_data> group = findGroup(n.getKey(),vis);
+				int agentForGroup = agentsNum*(group.size()/g.nodeSize());
+				ageSum += agentForGroup;
+				List<CL_Pokemon> pokInGroup = findPokInGroup(pokemonS,group);
+				initAgentNearPok(game,pokInGroup,agentForGroup,group);
+			}
+		}
+
+		//if there is more agents
+		Iterator<node_data> n = nodes.iterator();
+		while (ageSum < agentsNum){
+			game.addAgent(n.next().getKey());
+			ageSum++;
+		}
+	}
+
+	/**
+	 * in this function we find the pokemons that in the group
+	 */
+	private List<CL_Pokemon> findPokInGroup(List<CL_Pokemon> pokemonS, Collection<node_data> group) {
+		List<CL_Pokemon> pokForGroup = new LinkedList<>();
+		directed_weighted_graph g = _ar.getGraph();
+		HashSet<node_data> nodes = new HashSet<>(group);
+		for (CL_Pokemon p : pokemonS) {
+			if (nodes.contains(g.getNode(p.get_edge().getSrc()))){
+				pokForGroup.add(p);
+			}
+		}
+		return pokForGroup;
+	}
+
+	/**
+	 * in this function we find the connection group of key
+	 */
+	private Collection<node_data> findGroup (int key, HashSet<node_data> vis){
+		Collection<node_data> group = new ArrayList<>();
+		directed_weighted_graph g = _ar.getGraph();
+		HashSet<node_data> ni1 = isConnectedBFS(key, g);
+		g = flipedGraph();
+		HashSet<node_data> ni2 = isConnectedBFS(key, g);
+		for (node_data n1 : ni1) {
+			if (ni2.contains(n1)) {
+				group.add(n1);
+				vis.add(n1);
+			}
+		}
+		return group;
+	}
+
+	/**
+	 * in this function we find the number of the agents
+	 */
+	private int json2numAgent(game_service game) {
+		try {
+			JSONObject line = new JSONObject(game.toString());
+			JSONObject jsonGame = line.getJSONObject("GameServer");
+			return  (int) jsonGame.get("agents");
+		}
+		catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	/**
+	 * in this function we init the agents near the pokemons
+	 */
+	private void initAgentNearPok(game_service game, List<CL_Pokemon> pokemonS, int agentsNum, Collection<node_data> nodes) {
+		directed_weighted_graph gg = _ar.getGraph();
+		int src_node = 0;  // arbitrary node, you should start at one of the pokemon
+		// sort by value
+		PriorityQueue<CL_Pokemon> poks = new PriorityQueue<CL_Pokemon>(new PokemonComparator());
+		for (CL_Pokemon pokemon : pokemonS) {
+			Arena.updateEdge(pokemon, gg);
+			poks.add(pokemon);
+		}
+		int a = 0;
+		while (a < agentsNum || a < pokemonS.size()) {
+			int nn;
+			CL_Pokemon p = poks.poll();
+			assert p != null;
+			nn = p.get_edge().getSrc();
+			game.addAgent(nn);
+			game.chooseNextEdge(a,p.get_edge().getDest());
+			a++;
+		}
+		Iterator<node_data> n = nodes.iterator();
+		while (a < agentsNum){//if there is more agent then pokemon
+			node_data nn = n.next();
+			game.addAgent(nn.getKey());
+			a++;
+		}
+	}
+
+	/**
+	 * in this function we init the frame of the game
+	 */
+	private void initFrame(game_service game) {
+		String info = game.toString();
+		System.out.println(info);
+		System.out.println(game.getPokemons());
 		String fs = game.getPokemons();
-		directed_weighted_graph gg = game.getJava_Graph_Not_to_be_used();
+		directed_weighted_graph gg = json2graph(game.getGraph());
 		//gg.init(g);
 		_ar = new Arena();
 		_ar.setGraph(gg);
@@ -175,32 +297,43 @@ public class Ex2_Client implements Runnable{
 		_win.setSize(1000, 700);
 		_win.update(_ar);
 		_win.show();
-		String info = game.toString();
-		JSONObject line;
-		try {
-			line = new JSONObject(info);
-			JSONObject ttt = line.getJSONObject("GameServer");
-			int rs = ttt.getInt("agents");
-			System.out.println(info);
-			System.out.println(game.getPokemons());
-			int src_node = 0;  // arbitrary node, you should start at one of the pokemon
-			ArrayList<CL_Pokemon> cl_fs = Arena.json2Pokemons(game.getPokemons());
-			// sort by value
-			PriorityQueue<CL_Pokemon> poks = new PriorityQueue<CL_Pokemon>(new PokemonComparator());
-			for(int a = 0;a<cl_fs.size();a++) {
-				Arena.updateEdge(cl_fs.get(a),gg);
-				poks.add(cl_fs.get(a));
-			}
-			for(int a = 0;a<rs;a++) {
-				int ind = a%cl_fs.size();
-				CL_Pokemon c = cl_fs.get(ind);
-				int nn = c.get_edge().getDest();
-				if(c.getType()<0 ) {nn = c.get_edge().getSrc();}
-				nn = poks.poll().get_edge().getSrc();
-				game.addAgent(nn);
+	}
+
+
+	/**
+	 * in this function we return the nodes that connect with startNode
+	 */
+	public HashSet<node_data> isConnectedBFS(int startNode, directed_weighted_graph g) {
+		HashSet<node_data> vis = new HashSet<>();
+		Queue<node_data> q = new LinkedList<node_data>();
+		node_data current = g.getNode(startNode);
+		q.add(current);
+		vis.add(current);
+		while (!q.isEmpty()) {
+			current = q.remove();
+			for (edge_data node : g.getE(current.getKey())) {
+				node_data dest = g.getNode(node.getDest());
+				if (!vis.contains(dest)) {
+					q.add(dest);
+					vis.add(dest);
+				}
 			}
 		}
-		catch (JSONException e) {e.printStackTrace();}
+		return vis;
+	}
+
+	/**
+	 * in this function we fliped the graph
+	 */
+	public directed_weighted_graph flipedGraph() {
+		directed_weighted_graph g = _ar.getGraph();
+		directed_weighted_graph temp = new DWGraph_DS();
+		for (node_data node : g.getV())
+			temp.addNode(node);
+		for (node_data node : g.getV())
+			for (edge_data e : g.getE(node.getKey()))
+				temp.connect(e.getDest(), e.getSrc(), e.getWeight());
+		return temp;
 	}
 
 	class PokemonComparator implements Comparator<CL_Pokemon> {
@@ -208,6 +341,46 @@ public class Ex2_Client implements Runnable{
 		public int compare(CL_Pokemon o1, CL_Pokemon o2) {
 			return Double.compare(o2.getValue(), o1.getValue()); // max first
 		}
+	}
+
+
+	private directed_weighted_graph json2graph(String s){
+		try{
+			directed_weighted_graph g = new DWGraph_DS();
+			JSONObject graphFile = new JSONObject(s);
+			JSONArray nodes = graphFile.getJSONArray("Nodes");
+
+			int t = nodes.length();
+
+			// add the nodes
+			for (int i = 0; i < t; i++) {
+				JSONObject node = nodes.getJSONObject(i);
+				String pos = node.getString("pos");
+				String[] xyz = pos.split(",");
+				double x = Double.parseDouble(xyz[0]), y = Double.parseDouble(xyz[1]), z = Double.parseDouble(xyz[2]);
+				geo_location geo = new GeoLocation(x,y,z);
+				int id = (int)node.get("id");
+				node_data n1 = new NodeData(id,geo);
+				g.addNode(n1);
+			}
+
+			JSONArray edges = graphFile.getJSONArray("Edges");
+			t = edges.length();
+
+			//add the edges
+			for (int i = 0; i < t; i++) {
+				JSONObject ed = edges.getJSONObject(i);
+				int src = ed.getInt("src"), dest = ed.getInt("dest");
+				double w = ed.getDouble("w");
+				g.connect(src,dest,w);
+			}
+
+			return g;
+		}
+		catch (JSONException e){
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	//////// open screen //////
