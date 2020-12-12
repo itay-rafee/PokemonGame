@@ -24,7 +24,7 @@ public class Ex2_Client implements Runnable{
 
 	//can select the level of the game here
 	//or in the open frame by init the scenario_num = -1
-	private static int scenario_num = 11;
+	private static int scenario_num = -1;
 	private static int count;
 
 
@@ -180,6 +180,7 @@ public class Ex2_Client implements Runnable{
 	 * in this function we Refer to disconnected graph
 	 */
 	private void initAgentDisconnectedGraph(game_service game, List<CL_Pokemon> pokemonS, int agentsNum) {
+		HashSet<Collection<node_data>> allGroup = new HashSet<>();
 		HashSet<node_data> vis = new HashSet<>();
 		directed_weighted_graph g = _ar.getGraph();
 		Collection<node_data> nodes = g.getV();
@@ -187,12 +188,28 @@ public class Ex2_Client implements Runnable{
 		for (node_data n : nodes) {
 			if (!vis.contains(n)){
 				Collection<node_data> group = findGroup(n.getKey(),vis);
-				int agentForGroup = agentsNum*(group.size()/g.nodeSize());
+				allGroup.add(group);
+			}
+		}
+
+		for (Collection<node_data> group : allGroup) {
+			List<CL_Pokemon> pokInGroup = findPokInGroup(pokemonS,group);
+			if (agentsNum > 0){
+				initAgentNearPok(game,pokInGroup,1,group);
+				agentsNum--;
+				ageSum++;
+			}
+		}
+
+		for (Collection<node_data> group : allGroup) {
+			List<CL_Pokemon> pokInGroup = findPokInGroup(pokemonS,group);
+			int agentForGroup = agentsNum*(group.size()/g.nodeSize());
+			if (agentForGroup > 0){
 				ageSum += agentForGroup;
-				List<CL_Pokemon> pokInGroup = findPokInGroup(pokemonS,group);
 				initAgentNearPok(game,pokInGroup,agentForGroup,group);
 			}
 		}
+
 
 		//if there is more agents
 		Iterator<node_data> n = nodes.iterator();
@@ -210,7 +227,7 @@ public class Ex2_Client implements Runnable{
 		directed_weighted_graph g = _ar.getGraph();
 		HashSet<node_data> nodes = new HashSet<>(group);
 		for (CL_Pokemon p : pokemonS) {
-			if (nodes.contains(g.getNode(p.get_edge().getSrc()))){
+			if (p.get_edge() != null && nodes.contains(g.getNode(p.get_edge().getSrc()))){
 				pokForGroup.add(p);
 			}
 		}
@@ -263,7 +280,7 @@ public class Ex2_Client implements Runnable{
 			poks.add(pokemon);
 		}
 		int a = 0;
-		while (a < agentsNum || a < pokemonS.size()) {
+		while (a < agentsNum && a < pokemonS.size()) {
 			int nn;
 			CL_Pokemon p = poks.poll();
 			assert p != null;
@@ -446,7 +463,7 @@ public class Ex2_Client implements Runnable{
 	}
 
 	private static class OpenFrame extends JPanel {
-		private Image openS = Toolkit.getDefaultToolkit().getImage("images\\go.jpg");
+		private Image openS = Toolkit.getDefaultToolkit().getImage("images\\go1.jpg");
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
 			g.drawImage(openS, 0, 0, this.getWidth(), this.getHeight(), this);
