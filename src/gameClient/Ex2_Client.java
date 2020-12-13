@@ -42,8 +42,8 @@ public class Ex2_Client implements Runnable{
 	//@Override
 	public void run() {
 		game_service game = Game_Server_Ex2.getServer(scenario_num); // you have [0,23] games
-		//	int id = 999;
-		//	game.login(id);
+			//int id = 203201389;
+			//game.login(id);
 		String g = game.getGraph();
 		String pks = game.getPokemons();
 		directed_weighted_graph gg = game.getJava_Graph_Not_to_be_used();
@@ -137,7 +137,7 @@ public class Ex2_Client implements Runnable{
 				return currPok.get_edge().getDest();
 			} else {
 				temp = hh.shortestPathDist(src, currPok.get_edge().getSrc());
-				if (temp<min&&_ar.isAvailableFruit(currPok, ag)) {
+				if (temp!=-1&&temp<min&&_ar.isAvailableFruit(currPok, ag)) {
 					min = temp;
 					destNode = currPok.get_edge().getSrc();
 					_ar.setFruit(currPok, ag);
@@ -416,7 +416,8 @@ public class Ex2_Client implements Runnable{
 		       }
 		    }
 		});
-		JButton b=new JButton("Start");
+		JButton b=new JButton("Login");
+		f.getRootPane().setDefaultButton(b);
 		b.setBounds(50,50,95,30);
 		b.setBackground(Color.GRAY);
 		b.setDoubleBuffered(true);

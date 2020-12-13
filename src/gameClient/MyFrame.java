@@ -141,20 +141,15 @@ public class MyFrame extends JFrame {
         try {
         	int w = getWidth();
             int h = getHeight();
-            // g.drawImage(pokedex, w/70, h/2+h/5, w/4, h/4+20, this);
 			g.drawImage(pokedex, (2*25)*w/1400, (2*25)*h/74, w/4, h/4+20, this);
-            //g.setColor(Color.black);
-            //g.fillRoundRect((2*25)*w/1000, (2*25)*h/63, w/8, h/9, 14, 14);
         	g.setFont(new Font("default", Font.BOLD, h/50));
     	    g.setColor(Color.WHITE);
-    	    // g.drawString("Grade: "+_ar.getGrade(), (2*25)*w/800, (2*25)*h/60);
-			// g.drawString("Moves: "+_ar.getMoves(), (2*25)*w/800, (2*25)*h/57);
 			g.drawString("Grade: "+_ar.getGrade(), (2*25)*w/845, (2*25)*h/64);
 			g.drawString("Moves: "+_ar.getMoves(), (2*25)*w/845, (2*25)*h/62);
 			g.drawString("Time: "+_ar.getTime(), (2*25)*w/845, (2*25)*h/60);
 			g.setColor(Color.BLACK);
 			List<CL_Agent> ags = _ar.getAgents();
-			for (int i = 0; i < ags.size(); i++) {
+			for (int i = 0; i < ags.size() && i < 3 ; i++) {
 				g.drawString("A"+i+" Val: "+ags.get(i).getValue(), (2*25)*w/265, (2*25)*h/(64-2*i));
 			}
 		} catch (JSONException e) {
