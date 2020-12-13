@@ -42,8 +42,8 @@ public class Ex2_Client implements Runnable{
 	//@Override
 	public void run() {
 		game_service game = Game_Server_Ex2.getServer(scenario_num); // you have [0,23] games
-			//int id = 203201389;
-			//game.login(id);
+		//int id = 203201389;
+		//game.login(id);
 		String g = game.getGraph();
 		String pks = game.getPokemons();
 		directed_weighted_graph gg = game.getJava_Graph_Not_to_be_used();
@@ -163,21 +163,40 @@ public class Ex2_Client implements Runnable{
 
 	////////// init function /////////
 
+	/**
+	 * About init(game_service game) method: this method init the agents
+	 *   by consideration if the graph is connected using the method initAgentNearPok()
+	 *   or disconnected by using the method initAgentDisconnectedGraph()
+	 * @param game - the game
+	 */
 	private void init(game_service game) {
 		initFrame(game);
 		directed_weighted_graph g = _ar.getGraph();
 		dw_graph_algorithms ga = new DWGraph_Algo(g);
 		int agentsNum = json2numAgent(game);
 		if (ga.isConnected()){
+
+			//while the graph is connected
 			initAgentNearPok(game,_ar.getPokemons(),agentsNum,g.getV());
 		}
 		else{
+
+			//while the graph is disconnected
 			initAgentDisconnectedGraph(game,_ar.getPokemons(),agentsNum);
 		}
 	}
 
 	/**
-	 * in this function we Refer to disconnected graph
+	 * About initAgentDisconnectedGraph(game_service game) method:
+	 *   this method init the agents
+	 *   first - we find all the graphing component
+	 *           with the method findGroup()
+	 *   after - we init 1 agent for each graphing component
+	 *   finally - we init the rest of the agents by equals
+	 *   by using the function findPokInGroup()
+	 * @param game - the game
+	 * @param pokemonS - the pokemons that in the group
+	 * @param agentsNum - the agents that we need to add
 	 */
 	private void initAgentDisconnectedGraph(game_service game, List<CL_Pokemon> pokemonS, int agentsNum) {
 		HashSet<Collection<node_data>> allGroup = new HashSet<>();
@@ -185,6 +204,8 @@ public class Ex2_Client implements Runnable{
 		directed_weighted_graph g = _ar.getGraph();
 		Collection<node_data> nodes = g.getV();
 		int ageSum = 0;
+
+		//here we fine all the graphing component of a graph
 		for (node_data n : nodes) {
 			if (!vis.contains(n)){
 				Collection<node_data> group = findGroup(n.getKey(),vis);
@@ -192,6 +213,7 @@ public class Ex2_Client implements Runnable{
 			}
 		}
 
+		//here we init 1 agent for each graphing component
 		for (Collection<node_data> group : allGroup) {
 			List<CL_Pokemon> pokInGroup = findPokInGroup(pokemonS,group);
 			if (agentsNum > 0){
@@ -201,6 +223,7 @@ public class Ex2_Client implements Runnable{
 			}
 		}
 
+		//here we init the rest of the agents by equals
 		for (Collection<node_data> group : allGroup) {
 			List<CL_Pokemon> pokInGroup = findPokInGroup(pokemonS,group);
 			int agentForGroup = agentsNum*(group.size()/g.nodeSize());
@@ -220,7 +243,13 @@ public class Ex2_Client implements Runnable{
 	}
 
 	/**
-	 * in this function we find the pokemons that in the group
+	 * About findPokInGroup() method:
+	 *   this method find the pokemons
+	 *   that in the graphing component
+	 *   this work by checking if the edge of the pokemon
+	 *   on the same edge of the group
+	 * @param pokemonS - the pokemons that in the group
+	 * @param group - the graphing component
 	 */
 	private List<CL_Pokemon> findPokInGroup(List<CL_Pokemon> pokemonS, Collection<node_data> group) {
 		List<CL_Pokemon> pokForGroup = new LinkedList<>();
@@ -235,7 +264,17 @@ public class Ex2_Client implements Runnable{
 	}
 
 	/**
-	 * in this function we find the connection group of key
+	 * About findGroup() method:
+	 *   this method find the graphing component
+	 *   of the key.
+	 *   working by two BFS algo:
+	 *     one for the right graph.
+	 *     second for the fliped graph .
+	 *   then all the element that in the two
+	 *   group is the graphing component of key
+	 * @param key - the pokemons that in the group
+	 * @param vis - the node that have a graphing component
+	 * @return group - the graphing component
 	 */
 	private Collection<node_data> findGroup (int key, HashSet<node_data> vis){
 		Collection<node_data> group = new ArrayList<>();
@@ -253,7 +292,12 @@ public class Ex2_Client implements Runnable{
 	}
 
 	/**
-	 * in this function we find the number of the agents
+	 * About json2numAgent(game_service game) method:
+	 *   this method find the agents
+	 *   that in the game by checking
+	 *   the json string of the game.
+	 * @param game - the game
+	 * @return numAgent - the graphing component
 	 */
 	private int json2numAgent(game_service game) {
 		try {
@@ -268,11 +312,19 @@ public class Ex2_Client implements Runnable{
 	}
 
 	/**
-	 * in this function we init the agents near the pokemons
+	 * About initAgentNearPok() method:
+	 *   this method init the agents near the pokemon with
+	 *   the biggest value on the graphing component
+	 *   using with PriorityQueue and the
+	 *   class PokemonComparator.
+	 * @param game - the game
+	 * @param pokemonS - the pokemons that in the group
+	 * @param agentsNum - the agents that we need to add
+	 * @param nodes - the nodes of the graphing component
 	 */
 	private void initAgentNearPok(game_service game, List<CL_Pokemon> pokemonS, int agentsNum, Collection<node_data> nodes) {
 		directed_weighted_graph gg = _ar.getGraph();
-		int src_node = 0;  // arbitrary node, you should start at one of the pokemon
+
 		// sort by value
 		PriorityQueue<CL_Pokemon> poks = new PriorityQueue<CL_Pokemon>(new PokemonComparator());
 		for (CL_Pokemon pokemon : pokemonS) {
@@ -298,7 +350,10 @@ public class Ex2_Client implements Runnable{
 	}
 
 	/**
-	 * in this function we init the frame of the game
+	 * About initFrame(game_service game) method:
+	 *   this method init the frame if the game
+	 *   and in addition init the Arena.
+	 * @param game - the game
 	 */
 	private void initFrame(game_service game) {
 		String info = game.toString();
@@ -318,7 +373,11 @@ public class Ex2_Client implements Runnable{
 
 
 	/**
-	 * in this function we return the nodes that connect with startNode
+	 * About isConnectedBFS method:
+	 *   this method we using the same BFS algo as on DWGraph_Algo.
+	 * @param startNode - the game
+	 * @param g - the game
+	 * @return vis - the group of connect
 	 */
 	public HashSet<node_data> isConnectedBFS(int startNode, directed_weighted_graph g) {
 		HashSet<node_data> vis = new HashSet<>();
@@ -340,7 +399,9 @@ public class Ex2_Client implements Runnable{
 	}
 
 	/**
-	 * in this function we fliped the graph
+	 * About flipedGraph method:
+	 *   this method we using the same flipedGraph algo as on DWGraph_Algo.
+	 * @return temp - the fliped graph
 	 */
 	public directed_weighted_graph flipedGraph() {
 		directed_weighted_graph g = _ar.getGraph();
@@ -361,6 +422,12 @@ public class Ex2_Client implements Runnable{
 	}
 
 
+	/**
+	 * About json2graph method:
+	 *   this method we using the same algo as the load method in DWGraph_Algo.
+	 * @param s - the json graph
+	 * @return g - the graph
+	 */
 	private directed_weighted_graph json2graph(String s){
 		try{
 			directed_weighted_graph g = new DWGraph_DS();
@@ -409,12 +476,12 @@ public class Ex2_Client implements Runnable{
 		tf.setBounds(150,50, 150,20);
 		tf.setBackground(Color.LIGHT_GRAY);
 		tf.addFocusListener(new java.awt.event.FocusAdapter() {
-		    public void focusGained(java.awt.event.FocusEvent evt) {
-		       if (tf.getText().equals("Enter level")||tf.getText().equals("Try again!")||
-		    		   tf.getText().equals("Put a correct number!")) {
-		    	   tf.setText("");
-		       }
-		    }
+			public void focusGained(java.awt.event.FocusEvent evt) {
+				if (tf.getText().equals("Enter level")||tf.getText().equals("Try again!")||
+						tf.getText().equals("Put a correct number!")) {
+					tf.setText("");
+				}
+			}
 		});
 		JButton b=new JButton("Login");
 		f.getRootPane().setDefaultButton(b);
