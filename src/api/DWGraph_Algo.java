@@ -1,22 +1,11 @@
 package api;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.*;
-import java.lang.reflect.Type;
 import java.util.*;
-import java.util.Map.Entry;
 
 public class DWGraph_Algo implements dw_graph_algorithms{
     directed_weighted_graph _graph;
@@ -26,14 +15,14 @@ public class DWGraph_Algo implements dw_graph_algorithms{
     }
 
     public DWGraph_Algo(directed_weighted_graph graph) {
-    	if (graph==null) _graph = new DWGraph_DS(); // better avoid null on testers
-    	else _graph = graph;
+        if (graph==null) _graph = new DWGraph_DS(); // better avoid null on testers
+        else _graph = graph;
     }
 
     @Override
     public void init(directed_weighted_graph g) {
-    	if (g==null) _graph = new DWGraph_DS(); // better avoid null on testers
-    	else _graph = g;
+        if (g==null) _graph = new DWGraph_DS(); // better avoid null on testers
+        else _graph = g;
     }
 
     @Override
@@ -43,10 +32,10 @@ public class DWGraph_Algo implements dw_graph_algorithms{
 
     @Override
     public directed_weighted_graph copy() {
-    	return new DWGraph_DS(this._graph);
+        return new DWGraph_DS(this._graph);
     }
-    
-    
+
+
     // Check if a given directed graph is strongly connected (Kosaraju using BFS).
     // The directed graph will be considered connected if the original graph is connected and
     // also if after reversing the graph is still connected!
@@ -54,22 +43,22 @@ public class DWGraph_Algo implements dw_graph_algorithms{
     // check out: https://www.geeksforgeeks.org/check-given-directed-graph-strongly-connected-set-2-kosaraju-using-bfs/
     @Override
     public boolean isConnected() {
-    	directed_weighted_graph Original = _graph; // point to original graph to init it again after all.
-    	if (!this._graph.getV().iterator().hasNext()) // check if there is at least one node.
-    		return true;
-    	// the node to start impliment BFS on original and also on the reversed graph (must be the same node).
-    	int startNode = this._graph.getV().iterator().next().getKey();
-    	boolean original = isConnectedBFS(startNode); // original graph connected result.
-    	if (original==false) return false;
-    	directed_weighted_graph Fliped = flipedGraph(); // for checking if the reversed graph connected.
-    	this.init(Fliped); // init the reversed graph temporarily (so we can call methods).
-    	boolean fliped = isConnectedBFS(startNode); // reversed graph connected result.
-    	this.init(Original); // init to original graph again.
-    	return fliped; // return true only if original&&fliped connected.
+        directed_weighted_graph Original = _graph; // point to original graph to init it again after all.
+        if (!this._graph.getV().iterator().hasNext()) // check if there is at least one node.
+            return true;
+        // the node to start impliment BFS on original and also on the reversed graph (must be the same node).
+        int startNode = this._graph.getV().iterator().next().getKey();
+        boolean original = isConnectedBFS(startNode); // original graph connected result.
+        if (original==false) return false;
+        directed_weighted_graph Fliped = flipedGraph(); // for checking if the reversed graph connected.
+        this.init(Fliped); // init the reversed graph temporarily (so we can call methods).
+        boolean fliped = isConnectedBFS(startNode); // reversed graph connected result.
+        this.init(Original); // init to original graph again.
+        return fliped; // return true only if original&&fliped connected.
     }
-    
+
     // No comments. same BFS algo as on Ex1.
-    public boolean isConnectedBFS(int startNode) { 
+    public boolean isConnectedBFS(int startNode) {
         HashMap<node_data, Boolean> vis = new HashMap<>();
         Queue<node_data> q = new LinkedList<node_data>();
         if (!this._graph.getV().iterator().hasNext())
@@ -89,16 +78,16 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         }
         return vis.size() == this._graph.getV().size();
     }
-    
+
     // copy to a new reversed graph by rotatating the edges to the opposite direction
     public directed_weighted_graph flipedGraph() {
-    	directed_weighted_graph temp = new DWGraph_DS();
-    	for (node_data node : this._graph.getV())
-    		temp.addNode(node);
-    	for (node_data node : this._graph.getV())
-    		for (edge_data e : this._graph.getE(node.getKey()))
-    			temp.connect(e.getDest(), e.getSrc(), e.getWeight());
-    	return temp;
+        directed_weighted_graph temp = new DWGraph_DS();
+        for (node_data node : this._graph.getV())
+            temp.addNode(node);
+        for (node_data node : this._graph.getV())
+            for (edge_data e : this._graph.getE(node.getKey()))
+                temp.connect(e.getDest(), e.getSrc(), e.getWeight());
+        return temp;
     }
 
     /**
@@ -116,7 +105,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         //used in shortestPath()
         HashMap<node_data,node_data> thePath = new HashMap<>();
         //call the function that return the weight
-        double w = shortestPathDist(src,dest,thePath);
+        double w = dijkstra(src,dest,thePath);
         return w;
     }
 
@@ -137,10 +126,10 @@ public class DWGraph_Algo implements dw_graph_algorithms{
             return theList;
         }
         HashMap<node_data,node_data> p = new HashMap<>();
-        double w = shortestPathDist(src,dest,p);
+        double w = dijkstra(src,dest,p);
         //if there is no path between them
         if (w == -1) return null;
-        
+
         //the list of the path that return
         node_data nodeSrc = _graph.getNode(src);
         node_data nodeDest = _graph.getNode(dest);
@@ -155,9 +144,14 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         while (!opList.isEmpty()) theList.add(opList.pop());
         return theList;
     }
-    
-    
-    //// saving json by java-json ///
+
+    /**
+     * About save(String file) method: this method saves this weighted directed
+     * graph to the given file name in json format. this method returns true - iff the file was
+     * successfully saved.
+     * @param file - the file name (may include a relative path).
+     * @return true - iff the file was successfully saved
+     */
     @Override
     public boolean save(String file) {
         if (_graph == null || file == null)return false;
@@ -188,7 +182,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
                 e1.put("pos", s);
                 e1.put("id", n.getKey());
                 Nodes1.put(e1);
-            	}
+            }
             g.put("Edges",Edges);
             g.put("Nodes",Nodes1);
             //
@@ -201,7 +195,16 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         }
         return false;
     }
-    
+
+    /**
+     * About load(String file) method: this method load a graph to this graph
+     * algorithm. if the file was successfully loaded - the underlying graph of this
+     * class will be changed (to the loaded one), in case the graph was not loaded
+     * the original graph remain "as is". this method returns true - iff the graph
+     * was successfully loaded.
+     * @param file - file name
+     * @return true - iff the graph was successfully loaded.
+     */
     @Override
     public boolean load(String file) {
         if(file == null) return false;
@@ -246,59 +249,62 @@ public class DWGraph_Algo implements dw_graph_algorithms{
             return false;
         }
     }
-    
 
-    /*
-    @Override
-    public boolean save(String file) {
-    	Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    	String json = gson.toJson(this._graph);
-    	
-    	try {
-    		PrintWriter pw = new PrintWriter(new File(file));
-    		pw.write(json);
-    		pw.close();
-    		return true;
-    	} catch (FileNotFoundException e) {
-    		e.printStackTrace();
-    		return false;
-    	}
-    }
-    
-    @Override
-    public boolean load(String file) {
-    	try {
-    		GsonBuilder builder = new GsonBuilder();
-        	builder.registerTypeAdapter(DWGraph_DS.class, new GraphJsonDeserializer());
-        	Gson gson = builder.create();
-        	FileReader reader = new FileReader(file);
-        	DWGraph_DS graph = gson.fromJson(reader, DWGraph_DS.class);
-        	this._graph = graph;
-        	return true;
-    	} catch (FileNotFoundException e) {
-    		e.printStackTrace();
-    		return false;
-    	}
-    }
-    */
+
 
     ////////// private function //////////////
 
+
     /**
-     * return the shortest path distance between
-     * src to dest by using the algorithm dijkstra
-     * we using with a PriorityQueue
-     * first we put there the src and then we put all the
-     * neighbor and the queue poll them by the weight
-     * the weight we define with the 'tag'
-     * Which is updated each time on the shortest weight
-     * @param src - the starting point
-     * @param dest - the eng point
-     * @param thePath - the node that we path
-     * @return the weight of the path between src to dest
+     * About dijkstra(int src, int dest) method:
+     * This is an auxiliary method method for two methods: (We implemented both of the methods in the same way)
+     * 	  an method to returns the length of the shortest path between src to dest.
+     * 	  an method to returns a List of the shortest path between src to dest.
+     * The method is based on dijkstra's algorithm.
+     * In this algorithm we use a couple of data structures:
+     * 	  an HashMap to store the vertices we "visit".
+     * 	  an PriorityQueue to store the Nodes sorted by their weight value to source Node.
+     * 	  an PriorityQueue to store the the neighbors of the Node on which iterations are performed (sorted).
+     * 	  an HashMap to store the Nodes for building the output path - each node with his parent.
+     * 	  an List for returning the output in the same data structure as requested.
+     * Initially we add all the Nodes to the PriorityQueue with weight = Infinity, and src weight = 0.
+     * using the dijkstra's algorithm we progress through the graph:
+     * while the PriorityQueue isn't empty:
+     * 	 mark the first Node on the queue (lowest weight value to source Node) as current.
+     * 	 delete the current Node from the PriorityQueue.
+     * 	 mark the current Node as visited (by adding the current Node to the HashMap).
+     * 		We loop on the neighbors of the current Node (by their weight) as long as the queue isn't empty:
+     * 		if a node that marked as visited founded  => remove from the neighbors PriorityQueue.
+     * 		else =>
+     * 			remove from the neighbors PriorityQueue.
+     * 			Setting 't' variable = the weight from the current Node to the source Node.
+     * 			update the weight of the current Node in case 't' is lower.
+     * 			add the current Node to the HashMap that stores the Nodes for the output path.
+     * 			// we store the Node as a key while his parent is the value. //
+     * 			// that's means that through a Node we can return to his parent (progress one level) //
+     * 			// (we need to store the shortest path = shortest levels to destination) //
+     * 			mark the Node as visited.
+     * The method will stop when the PriorityQueue is empty.
+     * At the end of the loop:
+     * 	 if the tag value of src Node = Infinity => return null (-1 for length); // can't reach destination.
+     * 	 else => do nothing. // we reach'd destination Node.
+     * Finally we build the path using the HashMap that stores the Nodes for the output path
+     * // each Node is a key while his parent is the value. (so we can build levels from dest to src). //
+     * 	start with destination Node:
+     * 		while node!=null:
+     * 			add the node to the output path List and progress to his parent through the HashMap.
+     * - for returning a List of the shortest path between src to dest:
+     * 	 we reverse the List to get src->dest path instead of dest->src path.
+     * 	 then we return the List as requested.
+     * - for returning the length of the shortest path:
+     * 	 we remove one element of the List for getting the number of edged between src to dest (length).
+     * 	 then we return the size of the List.
+     * @param src
+     * @param dest
+     * @return List<node_info>
      */
-    private double shortestPathDist(int src, int dest,
-        HashMap<node_data,node_data> thePath){//Complexity: O(n)
+    private double dijkstra(int src, int dest,
+                            HashMap<node_data,node_data> thePath){//Complexity: O(n)
         PriorityQueue<node_w> pq = new PriorityQueue<>(new nodeComp());
         // node that we already check
         HashMap<Integer, node_w> ch = new HashMap<>();
@@ -355,55 +361,5 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         public node_data get_n(){return _n;}
         public double get_w(){return _w;}
     }
-    
-    /*
-    private static class GraphJsonDeserializer implements JsonDeserializer<DWGraph_DS>{
-		@Override
-		public DWGraph_DS deserialize(JsonElement json, Type arg1, JsonDeserializationContext arg2)
-				throws JsonParseException {
-			JsonObject jsonObject = json.getAsJsonObject();
-			directed_weighted_graph graph = new DWGraph_DS();
-			// add all the nodes from "_graph" hashmap (with GeoLocation objects).
-			JsonObject _graph = jsonObject.get("_graph").getAsJsonObject();
-			for (Map.Entry<String, JsonElement> set : _graph.entrySet()) {
-				JsonElement nodes = set.getValue(); // the value of the hashmap as json element
-				// take node variables
-				int key = nodes.getAsJsonObject().get("_key").getAsInt();
-				int tag = nodes.getAsJsonObject().get("_tag").getAsInt();
-				double weight = nodes.getAsJsonObject().get("_weight").getAsDouble();
-				String info = nodes.getAsJsonObject().get("_info").getAsString();
-				// take geo_location object variables (related to this node)
-				JsonElement geo_location = nodes.getAsJsonObject().get("_location").getAsJsonObject();
-				double gl_x = geo_location.getAsJsonObject().get("_x").getAsDouble();
-				double gl_y = geo_location.getAsJsonObject().get("_y").getAsDouble();
-				double gl_z = geo_location.getAsJsonObject().get("_z").getAsDouble();
-				//double gl_distance = locationElement.getAsJsonObject().get("_z").getAsDouble();
-				geo_location gl = new GeoLocation(gl_x, gl_y, gl_z); // distance ???
-				node_data node = new NodeData(key,tag,weight,info,gl);
-				graph.addNode(node);
-			}
-			// add all the edges from "_ni" hashmap.
-			JsonObject _ni = jsonObject.get("_ni").getAsJsonObject();
-			for (Entry<String, JsonElement> niHashMap :  _ni.entrySet()) {
-				JsonObject InnerHashMap = niHashMap.getValue().getAsJsonObject();
-				for (Entry<String, JsonElement> innerHashMap : InnerHashMap.entrySet()) {
-					JsonObject edges = innerHashMap.getValue().getAsJsonObject();  // the value of the inner hashmap as json element
-					// take edge variables
-					int eSrc = edges.getAsJsonObject().get("_src").getAsInt();
-					int eDst = edges.getAsJsonObject().get("_dest").getAsInt();
-					double weight = edges.getAsJsonObject().get("_weight").getAsDouble();
-					int tag = edges.getAsJsonObject().get("_tag").getAsInt();
-					String info = edges.getAsJsonObject().get("_info").getAsString();
-					// create the edge using the graph
-					graph.connect(eSrc, eDst, weight);
-					// return the edge created and set tag&info variables.
-					edge_data e = graph.getEdge(eSrc, eDst);
-					e.setTag(tag);
-					e.setInfo(info);
-				}
-			}
-			return (DWGraph_DS) graph;
-		}
-    }
-    */
+
 }
