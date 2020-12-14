@@ -531,7 +531,8 @@ public class Ex2_Client implements Runnable{
 	}
 
 	private static class OpenFrame extends JPanel {
-		private Image openS = Toolkit.getDefaultToolkit().getImage("images\\go1.jpg");
+		Image openS = new ImageIcon(getClass().getResource("/go1.jpg")).getImage();
+		//private Image openS = Toolkit.getDefaultToolkit().getImage("images\\go1.jpg");
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
 			g.drawImage(openS, 0, 0, this.getWidth(), this.getHeight(), this);

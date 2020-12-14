@@ -41,12 +41,12 @@ public class MyFrame extends JFrame {
 	private Graphics dbG;
 
 	private gameClient.util.Range2Range _w2f;
-    //Image pika = Toolkit.getDefaultToolkit().getImage("C:\\\\Users\\\\Almog\\\\Documents\\\\Ex2\\\\Ex2\\\\pika.png");
-    Image pika = Toolkit.getDefaultToolkit().getImage("images\\pika.png");
-    Image bulbasaur = Toolkit.getDefaultToolkit().getImage("images\\bulbasaur.png");
-    Image ash = Toolkit.getDefaultToolkit().getImage("images\\ash.png");
-    Image field = Toolkit.getDefaultToolkit().getImage("images\\field.png");
-    Image pokedex = Toolkit.getDefaultToolkit().getImage("images\\pokedex.png");
+    Image pika = new ImageIcon(getClass().getResource("/pika.png")).getImage();
+    Image bulbasaur = new ImageIcon(getClass().getResource("/bulbasaur.png")).getImage();
+    Image ash = new ImageIcon(getClass().getResource("/ash.png")).getImage();
+    Image field = new ImageIcon(getClass().getResource("/field.png")).getImage();
+	Image pokedex = new ImageIcon(getClass().getResource("/pokedex.png")).getImage();
+
 
     MyFrame(String a) {
 		super(a);
