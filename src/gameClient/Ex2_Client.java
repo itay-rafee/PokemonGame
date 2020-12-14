@@ -25,7 +25,9 @@ public class Ex2_Client implements Runnable{
 	//can select the level of the game here
 	//or in the open frame by init the scenario_num = -1
 	private static int scenario_num = -1;
-	private static int count;
+	private static int count = 0;
+	private static int id = 0;
+
 
 
 	public static void main(String[] a) {
@@ -43,7 +45,7 @@ public class Ex2_Client implements Runnable{
 	public void run() {
 		game_service game = Game_Server_Ex2.getServer(scenario_num); // you have [0,23] games
 		//int id = 203201389;
-		//game.login(id);
+		if (count != 0) game.login(id);
 		String g = game.getGraph();
 		String pks = game.getPokemons();
 		directed_weighted_graph gg = game.getJava_Graph_Not_to_be_used();
@@ -472,13 +474,13 @@ public class Ex2_Client implements Runnable{
 	private void openFrame(){
 
 		JFrame f=new JFrame("Welcome!");
-		final JTextField tf=new JTextField("Enter level");
+		final JTextField tf=new JTextField("Enter ID");
 		tf.setBounds(150,50, 150,20);
 		tf.setBackground(Color.LIGHT_GRAY);
 		tf.addFocusListener(new java.awt.event.FocusAdapter() {
 			public void focusGained(java.awt.event.FocusEvent evt) {
 				if (tf.getText().equals("Enter level")||tf.getText().equals("Try again!")||
-						tf.getText().equals("Put a correct number!")) {
+						tf.getText().equals("Put a correct number!")||tf.getText().equals("Enter ID")) {
 					tf.setText("");
 				}
 			}
@@ -492,19 +494,33 @@ public class Ex2_Client implements Runnable{
 			public void actionPerformed(ActionEvent e){
 				String a = tf.getText();
 				int num;
-				try{
-					num = Integer.parseInt(a);
-					game_service game = Game_Server_Ex2.getServer(num); // you have [0,23] games
-					String g = game.getGraph();
-					scenario_num = num;
-					f.setVisible(false);
-					start();
+				if (count == 0){
+					try{
+						id = Integer.parseInt(a);
+						count = 1;
+						tf.setText("Enter level");
+						b.setText("Start");
+					}
+					catch (Exception r){
+						tf.setText("Try again!");
+					}
 				}
-				catch (Exception r){
-					count++;
-					if (count > 3) tf.setText("Put a correct number!");
-					else tf.setText("Try again!");
+				else{
+					try{
+						num = Integer.parseInt(a);
+						game_service game = Game_Server_Ex2.getServer(num); // you have [0,23] games
+						String g = game.getGraph();
+						scenario_num = num;
+						f.setVisible(false);
+						start();
+					}
+					catch (Exception r){
+						count++;
+						if (count > 3) tf.setText("Put a correct number!");
+						else tf.setText("Try again!");
+					}
 				}
+
 			}
 		});
 		//f.add(b);f.add(tf);
