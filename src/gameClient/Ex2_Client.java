@@ -137,7 +137,7 @@ public class Ex2_Client implements Runnable{
 				return currPok.get_edge().getDest();
 			} else {
 				temp = hh.shortestPathDist(src, currPok.get_edge().getSrc());
-				if (temp!=-1&&temp<min&&_ar.isAvailableFruit(currPok, ag)) {
+				if (temp<min&&temp!=-1&&_ar.isAvailableFruit(currPok, ag)) {
 					min = temp;
 					destNode = currPok.get_edge().getSrc();
 					_ar.setFruit(currPok, ag);
