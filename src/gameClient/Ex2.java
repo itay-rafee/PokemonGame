@@ -2,7 +2,6 @@ package gameClient;
 
 import Server.Game_Server_Ex2;
 import api.*;
-import gameClient.util.Point3D;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,7 +16,7 @@ import java.awt.event.WindowEvent;
 import java.util.*;
 import java.util.List;
 
-public class Ex2_Client implements Runnable{
+public class Ex2 implements Runnable{
 	private static MyFrame _win;
 	private static Arena _ar;
 	private static long sleep = 100;
@@ -31,7 +30,7 @@ public class Ex2_Client implements Runnable{
 
 
 	public static void main(String[] a) {
-		Ex2_Client e = new Ex2_Client();
+		Ex2 e = new Ex2();
 		if (scenario_num == -1){
 			e.openFrame();
 		}
@@ -471,6 +470,25 @@ public class Ex2_Client implements Runnable{
 
 	//////// open screen //////
 
+	/**
+	 * About openFrame() method:
+	 *  in this method we define a JFrame that
+	 *  contains all the elements that help us to
+	 *  create a good looking open screen.
+	 *  We define a 'text field' that we can read
+	 *  the ID at the beginning and the level of the
+	 *  game after.
+	 *  We define a 'button' that after we read the ID
+	 *  or the level of the game we can click on it and
+	 *  it lead as to the next window in addition we can
+	 *  click on the 'Enter' in the keyboard and it is
+	 *  make the same effect.
+	 *  in case of the ID or the level of the game
+	 *  isn't correct then appear 'Try again' ro
+	 *  'Put a correct number!' in the 'text field'.
+	 *  also we can leave the game by click on the button
+	 *  of the exit in the top right corner.
+	 */
 	private void openFrame(){
 
 		JFrame f = new JFrame("Welcome!");
@@ -541,11 +559,22 @@ public class Ex2_Client implements Runnable{
 		f.show();
 	}
 
+	/**
+	 * About function start():
+	 *  in this function we start the Thread
+	 *  that turns on the run function of the game
+	 */
 	public static void start() throws InterruptedException {
-		Thread client = new Thread(new Ex2_Client());
+		Thread client = new Thread(new Ex2());
 		client.start();
 	}
 
+	/**
+	 * About OpenFrame class:
+	 *  in this class we define the open image that appeared
+	 *  in the open screen of the game using the 'extends JPanel'
+	 *  and put it in the center of the screen.
+	 */
 	private static class OpenFrame extends JPanel {
 		Image openS = new ImageIcon(getClass().getResource("/go1.jpg")).getImage();
 		//private Image openS = Toolkit.getDefaultToolkit().getImage("images\\go1.jpg");

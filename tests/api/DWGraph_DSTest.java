@@ -25,6 +25,18 @@ class DWGraph_DSTest {
         }
     }
 
+    void buildEdge_2(directed_weighted_graph g, int e){
+        for (node_data n : g.getV()) {
+            g.connect(n.getKey(),e,1.0);
+        }
+    }
+
+    void buildEdge_3(directed_weighted_graph g, int e){
+        for (node_data n : g.getV()) {
+            g.connect(e,n.getKey(),1.0);
+        }
+    }
+
     //define graphs
     @BeforeEach
     void setUp() {
@@ -207,12 +219,13 @@ class DWGraph_DSTest {
             _g0.addNode(new NodeData(i,new GeoLocation()));
         }
         mc += t;
-        buildEdge(_g0,t-1);
+        buildEdge_2(_g0,0);
+        buildEdge_3(_g0,0);
         mc += t-1;
-        for (int i = 0; i < 50; i++) {
-            _g0.removeEdge(i,i+1);
-        }
-        mc += 50;
+        mc += t-1;
+        _g0.removeNode(0);
+        mc += t-1;
+        mc += t;
         assertEquals(mc,_g0.getMC());
     }
 

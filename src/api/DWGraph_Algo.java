@@ -147,6 +147,9 @@ public class DWGraph_Algo implements dw_graph_algorithms{
     }
 
     /**
+     * About shortestPathDist() method:
+     * in this method we using the algo dijkstra()
+     * that return the shortest path distance
      * returns the length of the shortest path between src to dest
      * if no such path --> returns -1
      * @param src - start node
@@ -166,7 +169,10 @@ public class DWGraph_Algo implements dw_graph_algorithms{
     }
 
     /**
-     * return the shortest path between src to dest
+     * About shortestPath() method:
+     * in this method we want to return all the nodes
+     * one by one in order that gets the shortest path
+     * in other words we return the shortest path between src to dest
      * by using the algorithm Dijkstra
      * @param src  - start node
      * @param dest - end (target) node
@@ -393,7 +399,10 @@ public class DWGraph_Algo implements dw_graph_algorithms{
     }
 
     /**
+     * About nodeComp class:
      * in this class we define the Comparator that compare between the nodes
+     * this comparison run by compare the weight of the
+     * object type node_w
      */
     private static class nodeComp implements Comparator<node_w> {//define comparator
         @Override
@@ -401,7 +410,22 @@ public class DWGraph_Algo implements dw_graph_algorithms{
             return Double.compare(o1.get_w(), o2.get_w());
         }
     }
-    
+
+
+    /**
+     * About the node_w class:
+     * in this class we have two object:
+     *   _w type double
+     *   _n type node_date
+     * for every node we define the weight
+     * that the node path from the src
+     * this class is running for the function:
+     *    shortestPathDist()
+     *    shortestPath()
+     * In addition we define the method:
+     *    get_n -> return the node
+     *    get_w -> return the weight
+     */
     private static class node_w {
         private double _w;
         private node_data _n;
