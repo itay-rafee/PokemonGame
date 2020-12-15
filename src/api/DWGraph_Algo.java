@@ -9,38 +9,66 @@ import java.util.*;
 
 public class DWGraph_Algo implements dw_graph_algorithms{
     directed_weighted_graph _graph;
-
+    
+    /* Constructor */
     public DWGraph_Algo() {
         _graph = new DWGraph_DS();
     }
-
+    
+    /* Constructor */
     public DWGraph_Algo(directed_weighted_graph graph) {
-        if (graph==null) _graph = new DWGraph_DS(); // better avoid null on testers
+        if (graph==null) _graph = new DWGraph_DS();
         else _graph = graph;
     }
 
+    /**
+	 * About init(directed_weighted_graph g) method:
+	 * this method init the graph on which this set of algorithms operates on.
+	 * if the given graph=null the method init an empty graph.
+	 * @param g
+	 */
     @Override
     public void init(directed_weighted_graph g) {
         if (g==null) _graph = new DWGraph_DS(); // better avoid null on testers
         else _graph = g;
     }
-
+    
+    /**
+	 * About getGraph() method:
+	 * this method return the underlying graph of which this class works.
+	 * @return
+	 */
     @Override
     public directed_weighted_graph getGraph() {
         return _graph;
     }
-
+    
+    /**
+	 * About copy() method: this method compute a deep copy of this weighted graph.
+	 * the method uses DWGraph_DS copy constructor to implement deep copy.
+	 * @return
+	 */
     @Override
     public directed_weighted_graph copy() {
         return new DWGraph_DS(this._graph);
     }
-
-
-    // Check if a given directed graph is strongly connected (Kosaraju using BFS).
-    // The directed graph will be considered connected if the original graph is connected and
-    // also if after reversing the graph is still connected!
-    // (reversing the graph by rotatating the edges in the opposite direction)
-    // check out: https://www.geeksforgeeks.org/check-given-directed-graph-strongly-connected-set-2-kosaraju-using-bfs/
+    /**
+	 * About isConnected() method:
+	 * this method returns true if there is a valid path from EVERY node
+	 * to each (strongly connected) by Kosaraju algorithm (using BFS).
+	 * The directed graph will be considered connected if the original graph
+	 * is connected and also if after reversing the graph it still connected!
+	 * (reversing the graph by rotatating the edges in the opposite direction)
+	 * Source: https://www.geeksforgeeks.org/check-given-directed-graph-strongly-
+	 * connected-set-2-kosaraju-using-bfs/
+	 * if the graph is empty the function returns true.
+	 * Otherwise the function selects a random vertex from which it checks whether
+	 * the graph is connected using isConnectedBFS(int startNode) method [below].
+	 * if true - the method calls flipedGraph() method [below] and check
+	 * if the reversed graph is also connected from the same vertex.
+	 * If indeed the 2 conditions are true then the graph is strongly connected.
+	 * @return boolean
+	 */
     @Override
     public boolean isConnected() {
         directed_weighted_graph Original = _graph; // point to original graph to init it again after all.
@@ -57,7 +85,28 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         return fliped; // return true only if original&&fliped connected.
     }
 
-    // No comments. same BFS algo as on Ex1.
+    /**
+	 * About isConnectedBFS(int startNode) method:
+	 * this method returns true if there is a valid path from startNode node to others.
+	 * The method is based on the BFS algorithm.
+	 * In this algorithm we use a data structure of a queue to store the vertices we "visit".
+	 * In addition, we use a data structure of a HashMap to store the Nodes we "visited" before.
+	 * so that we don't loop this Nodes again.
+	 * Initially we use an iterator on a random Node in the graph and adding the Node to the queue.
+	 * using the BFS algorithm we progress through the neighbor list of the first Node in the queue:
+	 * 	mark the first Node on the queue as current.
+	 * 	delete the current Node from the queue. 
+	 * 	mark the current Node as visited (by adding the current Node to the HashMap).
+	 * 	We loop on the neighbors of the current Node as long as the queue isn't empty:
+	 * 		if we found a node that marked as visited => do nothing.
+	 * 		else => we add the Node to the queue and mark the Node as visited.
+	 * The method will stop when the loop "visits" all the Nodes that
+	 * were connected to the first Node (where we started).
+	 * If we visited the same number of Nodes as the total number of
+	 * Nodes in the graph then indeed there is a valid path
+	 * from startNode node to each.
+	 * @return boolean
+	 */
     public boolean isConnectedBFS(int startNode) {
         HashMap<node_data, Boolean> vis = new HashMap<>();
         Queue<node_data> q = new LinkedList<node_data>();
@@ -78,8 +127,15 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         }
         return vis.size() == this._graph.getV().size();
     }
-
-    // copy to a new reversed graph by rotatating the edges to the opposite direction
+    
+    /**
+	 * About flipedGraph() method:
+	 * this method returns a copy of this graph with reverse edges
+	 * the implementation of this method is by copying the nodes to a new graph
+	 * and then iterate on each node and copy it edges while rotating
+	 * the edges to the opposite direction (switching between source and destination).
+	 * @return directed_weighted_graph
+	 */
     public directed_weighted_graph flipedGraph() {
         directed_weighted_graph temp = new DWGraph_DS();
         for (node_data node : this._graph.getV())
@@ -155,7 +211,6 @@ public class DWGraph_Algo implements dw_graph_algorithms{
     @Override
     public boolean save(String file) {
         if (_graph == null || file == null)return false;
-        int counter = 0;
         try {
             PrintWriter pw = new PrintWriter(new File(file));
             JSONObject g = new JSONObject();
@@ -208,16 +263,16 @@ public class DWGraph_Algo implements dw_graph_algorithms{
     @Override
     public boolean load(String file) {
         if(file == null) return false;
-        try{
+        try {
             BufferedReader br = new BufferedReader(new FileReader(file));
             String s = "", s1 = "";
-            while ((s1 = br.readLine()) != null)s = s + s1;
+            while ((s1 = br.readLine()) != null) s = s + s1;
             directed_weighted_graph g = new DWGraph_DS();
             JSONObject graphFile = new JSONObject(s);
             JSONArray nodes = graphFile.getJSONArray("Nodes");
-
+            
             int t = nodes.length();
-
+            
             // add the nodes
             for (int i = 0; i < t; i++) {
                 JSONObject node = nodes.getJSONObject(i);
@@ -229,7 +284,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
                 node_data n1 = new NodeData(id,geo);
                 g.addNode(n1);
             }
-
+            
             JSONArray edges = graphFile.getJSONArray("Edges");
             t = edges.length();
 
@@ -240,20 +295,16 @@ public class DWGraph_Algo implements dw_graph_algorithms{
                 double w = ed.getDouble("w");
                 g.connect(src,dest,w);
             }
-
             _graph = g;
+            br.close();
             return true;
-        }
-        catch (IOException | JSONException e){
+        } catch (IOException | JSONException e) {
             System.out.println("as is");
             return false;
         }
     }
 
-
-
     ////////// private function //////////////
-
 
     /**
      * About dijkstra(int src, int dest) method:
@@ -299,12 +350,12 @@ public class DWGraph_Algo implements dw_graph_algorithms{
      * - for returning the length of the shortest path:
      * 	 we remove one element of the List for getting the number of edged between src to dest (length).
      * 	 then we return the size of the List.
+     * Complexity: O(n).
      * @param src
      * @param dest
      * @return List<node_info>
      */
-    private double dijkstra(int src, int dest,
-                            HashMap<node_data,node_data> thePath){//Complexity: O(n)
+    private double dijkstra(int src, int dest, HashMap<node_data,node_data> thePath) {
         PriorityQueue<node_w> pq = new PriorityQueue<>(new nodeComp());
         // node that we already check
         HashMap<Integer, node_w> ch = new HashMap<>();
@@ -350,7 +401,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
             return Double.compare(o1.get_w(), o2.get_w());
         }
     }
-
+    
     private static class node_w {
         private double _w;
         private node_data _n;
@@ -361,5 +412,4 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         public node_data get_n(){return _n;}
         public double get_w(){return _w;}
     }
-
 }

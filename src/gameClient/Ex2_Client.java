@@ -473,8 +473,8 @@ public class Ex2_Client implements Runnable{
 
 	private void openFrame(){
 
-		JFrame f=new JFrame("Welcome!");
-		final JTextField tf=new JTextField("Enter ID");
+		JFrame f = new JFrame("Welcome!");
+		final JTextField tf = new JTextField("Enter ID");
 		tf.setBounds(150,50, 150,20);
 		tf.setBackground(Color.LIGHT_GRAY);
 		tf.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -485,7 +485,7 @@ public class Ex2_Client implements Runnable{
 				}
 			}
 		});
-		JButton b=new JButton("Login");
+		JButton b = new JButton("Login");
 		f.getRootPane().setDefaultButton(b);
 		b.setBounds(50,50,95,30);
 		b.setBackground(Color.GRAY);

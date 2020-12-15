@@ -4,19 +4,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class DWGraph_DS implements directed_weighted_graph{
-
-    //here we put the edges with the direction
-    private HashMap<Integer, HashMap<Integer, edge_data>> _ni;
-    
-    //here we put the edges against the direction
-    private HashMap<Integer, HashSet<Integer>> _niRevers;
-
-    //here we put the node
-    private HashMap<Integer,node_data> _graph;
-
+    private HashMap<Integer,node_data> _graph; // nodes of this graph
+    private HashMap<Integer, HashMap<Integer, edge_data>> _ni; // edges of this graph
+    private HashMap<Integer, HashSet<Integer>> _niRevers; // edges against the direction
     private int _edgeSize;
     private int _mc;
-
+    
+    /* Copy Constructor */
     public DWGraph_DS(){
         _graph = new HashMap<>();
         _ni = new HashMap<>();
@@ -25,8 +19,18 @@ public class DWGraph_DS implements directed_weighted_graph{
         _mc = 0;
     }
     
-    /* Copy Constructor (Hard Copy) */
-	/* This constructor is mainly used by copy() method in DWGraph_Algo class */
+    /* 
+	 * Copy Constructor (Hard Copy) */
+	/** This constructor is mainly used by copy() method in WGraph_Algo class
+	 * The implement this method is by Hashtables represents nodes, edges and reversed edges.
+	 * In the first loop initialize the Hashtables:
+	 * 		first add each vertex to each Hashtable.
+	 *  then perform iterations on the neighbors of the vertices of the old graph
+	 *  and isomorphically add to the new graph the same list of edges by the edge_data
+	 *  copy constructor.
+	 *  Finally copy the 'MC', 'degree' variables.
+	 *  (MC = The number of actions required to create the graph [g.nodeSize() + g.edgeSize()]).
+	 */
     public DWGraph_DS(directed_weighted_graph g){
     	this();
     	Collection<node_data> gNi = g.getV();
@@ -45,18 +49,44 @@ public class DWGraph_DS implements directed_weighted_graph{
 		this._mc = g.nodeSize() + g.edgeSize();
 		this._edgeSize = g.edgeSize();
     }
-
+    
+    /**
+	 * About getNode(int key) method: this method return the node_data by the
+	 * node_id. the method return null if none as requested.
+	 * @param key - the node_id
+     * @return the node_data by the node_id, null if none.
+	 */
     @Override
     public node_data getNode(int key) {
         return _graph.get(key); // exception is better instead of null if no such node
     }
-
+    
+    /**
+	 * About getEdge(int src, int dest) method: 
+	 * this method return the edge_data object.
+	 * the method return -1 if node1 or node2 aren't in the graph.
+	 * the method return -1 if node1==node2 (There is no edge from a Node to itself).
+	 * the method return null in case there is no such edge.
+	 * the implementation of the method is simply by 'get' method in '_graph' Hashmap
+	 * [O(1)].
+	 * @param src
+     * @param dest
+     * @return
+	 */
     @Override
     public edge_data getEdge(int src, int dest) {
     	if (!_graph.containsKey(src)||!_graph.containsKey(dest)||src==dest) return null; // exception is better
         return _ni.get(src).get(dest); // exception is better instead of null if no edge
     }
-
+    
+    /**
+	 * About addNode(node_data n) method:
+	 * this method add a new node to the graph with the given node_data object.
+	 * if n==null or there is already a node with such a key no action performed.
+	 * the method is implemented by adding the node to each Hashmaps in this class.
+	 * if the method is implemented we update the MC (Mode Count).
+	 * @param key
+	 */
     @Override
     public void addNode(node_data n) {
     	// if n==null or this graph contains node with such key -> do nothing.
@@ -67,10 +97,19 @@ public class DWGraph_DS implements directed_weighted_graph{
         _ni.put(key,new HashMap<>());
         // define new place to the node in the _ni
         _niRevers.put(key,new HashSet<>());
-
         _mc++;
     }
-
+    
+    /**
+	 * About connect(int node1, int node2, double w) method:
+	 * this method connect an edge between node1 and node2, with an edge with weight>=0.
+	 * the method implemented only if node1 or node2 in the graph, node1!=node2 and w>=0. 
+	 * if the edge node1-node2 already exists the method updates the weight of the edge.
+	 * (in case the existing edge weight == w no action performed).
+	 * if there is no such edge the method adds each Node to the list of neighbors
+	 * [Hashmap] of the other Node [O(1)] and updates 'degree' variable.
+	 * if any action performed the method updates 'MC' variable.
+	 */
     @Override
     public void connect(int src, int dest, double w) {
     	if (!_graph.containsKey(src)||!_graph.containsKey(dest)||src==dest||w<0) return; // w==0 valid input? read interface
@@ -86,41 +125,79 @@ public class DWGraph_DS implements directed_weighted_graph{
     	}
         _mc++;
     }
-
+    
+    /**
+	 * About getV() method: This method return a pointer (shallow copy) for the
+	 * collection representing all the nodes in the graph. the method is implemented
+	 * by returning '_graph' HashMap values.
+	 * @return Collection<node_data>
+	 */
     @Override
     public Collection<node_data> getV() {
         return _graph.values();
     }
-
+    
+    /**
+	 * About getE(int node_id) method: This method returns a collection containing
+	 * all the edges connected to node_id. the method returning null if
+	 * node_id isn't in the graph. The implementation of the method is simply by
+	 * returning the HashMap values of node_id neighbors.
+	 * @return Collection<node_data>
+	 */
     @Override
     public Collection<edge_data> getE(int node_id) {
     	if (!_graph.containsKey(node_id)) return null; // returning null ???
         return _ni.get(node_id).values();
     }
     
-    // Solution 1
-    // another solution on commit no. 736f2897
+    /**
+	 * About removeNode(int key) method: this method delete the node (with the given
+	 * ID) from the graph - and removes all edges which starts or ends at this node.
+	 * the method return null if the Node isn't in the graph as requested. otherwise
+	 * the method performs an iteration on all the neighbors of the Node [O(n)]
+	 * and removes his connected edges one by one
+	 * while each step updates the MC (Mode Count). 
+	 * afterwards the method removes the Node itself [O(1)] while returning
+	 * pointer to the node and update the MC (Mode Count) once again.
+	 * (another solution on commit no. 736f2897)
+	 * @return the data of the removed node (null if none).
+     * @param key
+	 */
  	@Override
     public node_data removeNode(int key) {
-        //while the node not exists
+        // while the node not exists
         if (!_graph.containsKey(key)) return null;
-        //delete the reversed edges (src=key dest=keyNeighbors) from _niRevers
+        // delete the reversed edges to other nodes marked by _niRevers
         this._ni.get(key).forEach((k,v) -> {
         	_niRevers.get(k).remove(key);
+        	// (no need to update mc\edgeSize because _niRevers used for mark only)
 		});
-        _edgeSize -= _ni.get(key).size(); //delete the edge from key to others
+        //delete the edge from key to others
+        int niSize = _ni.get(key).size();
         _ni.remove(key);
+        _edgeSize -= niSize; 
+        _mc += niSize;
         //delete the edge from others to key
         _edgeSize -= this._niRevers.get(key).size();
         this._niRevers.get(key).forEach(e -> {
         	_ni.get(e).remove(key);
+        	_mc++;
 		});
         _mc++;
-        // need to check if 2 vertices with a two-way edge from one to the other
-        // will count as 2 edges or as one edge (for updating _edgeSize variable)
-        return _graph.remove(key); //remove the node
+        // remove the node
+        return _graph.remove(key);
     }
-
+ 	
+ 	/**
+	 * About removeEdge(int src, int dest) method: This method delete the edge
+	 * from the graph. the method returns null if src node or dest node aren't in
+	 * the graph. if src node and dest node are neighbors the method removes the edge
+	 * between them by removing each Node from the list of neighbors [Hashmap] of
+	 * the other one [O(1)]. afterwards the method update Degree variable used for
+	 * counting the edges and also update the MC (Mode Count).
+	 * @param src
+     * @param dest
+	 */
     @Override
     public edge_data removeEdge(int src, int dest) {
         //while the edge not exists
@@ -133,21 +210,47 @@ public class DWGraph_DS implements directed_weighted_graph{
         return _ni.get(src).remove(dest);
     }
 
+    /**
+	 * About nodeSize() method: this method return the number of vertices (nodes) in
+	 * the graph. The implementation of the method is simply by returning '_graph'
+	 * size [O(1)].
+	 * @return
+	 */
     @Override
     public int nodeSize() {
         return _graph.size();
     }
 
+    /**
+	 * About edgeSize() method: this method return the number of edges
+	 * (directional graph). The implementation of the method is simply by
+	 * returning node neighbors size [Hashmap > O(1)].
+	 * @return
+	 */
     @Override
     public int edgeSize() {
         return _edgeSize;
     }
 
+    /**
+	 * About getMC() method: this method return the Mode Count - for testing changes
+	 * in the graph. The implementation of the method is simply by returning 'MC'
+	 * variable.
+	 * @return
+	 */
     @Override
     public int getMC() {
         return _mc;
     }
     
+    /**
+	 * About equals(Object g) method: this is an auxiliary method mainly for testing
+	 * copy()/save()/load() methods. the method returns false if the input object
+	 * isn't instanceof directed_weighted_graph.
+	 * otherwise calls equals(directed_weighted_graph g) method [below].
+	 * @param g
+	 * @return boolean
+	 */
     @Override
 	public boolean equals(Object g) {
     	if (g == this) { return true; } 
@@ -157,6 +260,23 @@ public class DWGraph_DS implements directed_weighted_graph{
 		return false;
 	}
 
+    /**
+	 * About equals(directed_weighted_graph g) method:
+	 * this method compares this graph with the input graph.
+	 * if this nodes size != g nodes size or this edges size != g edges size - return false
+	 * (the graphs obviously not equals).
+	 * otherwise the method performs iteration on all g vertices:
+	 * 		for each vertex - the method check if this graph contains vertex with same key
+	 * 		and checks equality using node 'equals' method.
+	 * 		if g vertex neighbors size != this vertex neighbors size - return false
+	 * 		(the graphs obviously not equals).
+	 * 		otherwise, the method perform iteration on the vertex neighbors and checks existence
+	 * 		and equality of each neighbor using edge 'equals' method.
+	 * 	# There is no need to check equation between MC variables because the purpose of the test
+	 * 	# is equality between the graphs and not for the number of operations performed on them.
+	 * @param g
+	 * @return boolean
+	 */
 	public boolean equals(directed_weighted_graph g) {
 		Collection<node_data> gNi = g.getV();
 		if (this.edgeSize() != g.edgeSize() || this._graph.size() != gNi.size())
@@ -178,9 +298,10 @@ public class DWGraph_DS implements directed_weighted_graph{
 		return true;
 	}
 	
-	/* toString() method */
-	/* The implementation of this method is mainly for testing purposes */
-	/* The method is overridden so that the interface does not need to be changed */
+	/*
+	 toString() method 
+	 The implementation of this method is mainly for testing purposes 
+	 The method is overridden so that the interface does not need to be changed 
 	@Override
 	public String toString() { // Print by keys printGraph
 		System.out.println(" ______________________________________________");
@@ -208,22 +329,22 @@ public class DWGraph_DS implements directed_weighted_graph{
 		System.out.println("|______________________________________________");
 		return "";
 	}
+	*/
 
-    /////////////////////////////////////////
-    //////// Edge Location class ////////////
-    /////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////
+	///////////////////////// Edge Location class /////////////////////////
+	///////////////////////////////////////////////////////////////////////
     public class EdgeLocation implements edge_location{
-    	// This class should be accessible from outside 
-    	// (the reason is because there are no setters in the inner class and also in the outer class)
-    	// and hence this class is public
         private edge_data _edge;
         private double _ratio;
         
+        /* Constructor */
         public EdgeLocation(){
         	_edge = new EdgeData(); // EdgeData should be public to implement this
         	_ratio = 0;
         }
         
+        /* Constructor */
         public EdgeLocation(edge_data e, double r){
         	_edge = e;
         	_ratio = r;
@@ -236,29 +357,36 @@ public class DWGraph_DS implements directed_weighted_graph{
         	_ratio = el.getRatio();
         }
         
+        /**
+    	 * About getEdge() method:
+    	 * this method return the edge_data (object) associated with this EdgeLocation.
+    	 * @return
+    	 */
         @Override
         public edge_data getEdge() {
             return _edge;
         }
-
+        
+        /**
+    	 * About getRatio() method:
+    	 * this method returns the ratio variable of this EdgeLocation.
+    	 * @return
+    	 */
         @Override
         public double getRatio() {
             return _ratio;
         }
     }
 
-    /////////////////////////////////////////
-    //////////////// Edge class /////////////
-    /////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////
+    ////////////////////////////// Edge class //////////////////////////////
+    ////////////////////////////////////////////////////////////////////////
     public class EdgeData implements edge_data{
-    	// This class should be accessible from outside
-    	// (the reason is that when we approach the neighbors of an vertex from outside this class
-    	// we get a list of edges. The only option to get the vertices is through this class [getDest() method]).
-    	// and hence this class is public
         private int _src, _dest, _tag;
         private double _weight;
         private String _info;
         
+        /* Constructor */
         public EdgeData(){
             _src = 0;
             _dest = 0;
@@ -267,6 +395,7 @@ public class DWGraph_DS implements directed_weighted_graph{
             _info = "";
         }
         
+        /* Constructor */
         public EdgeData(int src, int dest, double weight){
             _src = src;
             _dest = dest;
@@ -287,42 +416,84 @@ public class DWGraph_DS implements directed_weighted_graph{
             _info = new String(e.getInfo());
         }
 
+        /**
+    	 * About getSrc() method:
+    	 * this method return the source node key of this edge.
+    	 * @return
+    	 */
         @Override
         public int getSrc() {
             return _src;
         }
 
+        /**
+    	 * About getDest() method:
+    	 * this method return the destination node key of this edge.
+    	 * @return
+    	 */
         @Override
         public int getDest() {
             return _dest;
         }
 
+        /**
+    	 * About getWeight() method:
+    	 * this method returns the weight variable which can be used by algorithms.
+    	 * @return
+    	 */
         @Override
         public double getWeight() {
             return _weight;
         }
 
+        /**
+    	 * About getInfo(String s) method: this method returns the remark (meta
+    	 * data) associated with this edge.
+    	 * @return
+    	 */
         @Override
         public String getInfo() {
             return _info;
         }
 
+        /**
+    	 * About setInfo(String s) method: this method allows changing the remark (meta
+    	 * data) associated with this edge.
+    	 * @param s
+    	 */
         @Override
         public void setInfo(String s) {
         	// if (s==null) return; // risky on tests if accessible from outside
             _info = s;
         }
 
+        /**
+    	 * About getTag() method: this method returns the temporal data (aka distance,
+    	 * color, or state) which can be used by algorithms
+    	 * @return
+    	 */
         @Override
         public int getTag() {
             return _tag;
         }
 
+        /**
+    	 * About setTag(int t) method: this method allow setting the "tag" value for
+    	 * temporal marking an edge (common practice for marking by algorithms).
+    	 * @param t - the new value of the tag
+    	 */
         @Override
         public void setTag(int t) {
             _tag = t;
         }
         
+        /**
+    	 * About equals(Object n) method: the method returns false if the input object
+    	 * isn't instanceof EdgeData. otherwise calls equals(EdgeData e)
+    	 * method [below].
+    	 * @param e
+    	 * @return boolean
+    	 */
         @Override
     	public boolean equals(Object e) {
         	if (e == this) { return true; } 
@@ -330,11 +501,14 @@ public class DWGraph_DS implements directed_weighted_graph{
     		return false;
     	}
 
+        /**
+    	 * About equals(EdgeData e) method: this method compares
+    	 * this edge with the input edge. The implementation of the method is simply by
+    	 * checking equality of each edge variables.
+    	 * @param e
+    	 * @return boolean
+    	 */
         public boolean equals(EdgeData e) {
-    		//System.out.println("this.src = "+this._src+"."+" e.src = "+e._src);
-    		//System.out.println("this.dest = "+this._dest+"."+" e.dest = "+e._dest);
-    		//System.out.println("this.tag = "+this._tag+"."+" e.tag = "+e._tag);
-    		//System.out.println("this.weight = "+this._weight+"."+" e.weight = "+e._weight);
     		if (this._src==e._src&&this._dest==e._dest&&this._tag==e._tag
     				&&this._weight==e._weight&&this._info.equals(e._info))
     			return true;
