@@ -21,7 +21,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         else _graph = graph;
     }
 
-    /**
+	/**
 	 * About init(directed_weighted_graph g) method:
 	 * this method init the graph on which this set of algorithms operates on.
 	 * if the given graph=null the method init an empty graph.
@@ -33,7 +33,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         else _graph = g;
     }
     
-    /**
+	/**
 	 * About getGraph() method:
 	 * this method return the underlying graph of which this class works.
 	 * @return
@@ -43,7 +43,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         return _graph;
     }
     
-    /**
+	/**
 	 * About copy() method: this method compute a deep copy of this weighted graph.
 	 * the method uses DWGraph_DS copy constructor to implement deep copy.
 	 * @return
@@ -52,7 +52,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
     public directed_weighted_graph copy() {
         return new DWGraph_DS(this._graph);
     }
-    /**
+	/**
 	 * About isConnected() method:
 	 * this method returns true if there is a valid path from EVERY node
 	 * to each (strongly connected) by Kosaraju algorithm (using BFS).
@@ -85,7 +85,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         return fliped; // return true only if original&&fliped connected.
     }
 
-    /**
+	/**
 	 * About isConnectedBFS(int startNode) method:
 	 * this method returns true if there is a valid path from startNode node to others.
 	 * The method is based on the BFS algorithm.
@@ -128,7 +128,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         return vis.size() == this._graph.getV().size();
     }
     
-    /**
+	/**
 	 * About flipedGraph() method:
 	 * this method returns a copy of this graph with reverse edges
 	 * the implementation of this method is by copying the nodes to a new graph
