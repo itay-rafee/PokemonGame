@@ -19,8 +19,7 @@ public class DWGraph_DS implements directed_weighted_graph{
         _mc = 0;
     }
     
-    /* 
-	 * Copy Constructor (Hard Copy) */
+    	/* Copy Constructor (Hard Copy) */
 	/** This constructor is mainly used by copy() method in WGraph_Algo class
 	 * The implement this method is by Hashtables represents nodes, edges and reversed edges.
 	 * In the first loop initialize the Hashtables:
@@ -36,14 +35,14 @@ public class DWGraph_DS implements directed_weighted_graph{
     	Collection<node_data> gNi = g.getV();
     	gNi.forEach(node -> {
         	node_data temp = new NodeData((NodeData) node);
-			_graph.put(temp.getKey(), temp);
-			_ni.put(temp.getKey(), new HashMap<>());
-			_niRevers.put(temp.getKey(), new HashSet<>());
+		_graph.put(temp.getKey(), temp);
+		_ni.put(temp.getKey(), new HashMap<>());
+		_niRevers.put(temp.getKey(), new HashSet<>());
 		});
     	gNi.forEach(node -> {
-			g.getE(node.getKey()).forEach(e -> {
-				this._ni.get(e.getSrc()).put(e.getDest(), new EdgeData(e));
-				this._niRevers.get(e.getDest()).add(e.getSrc());
+		g.getE(node.getKey()).forEach(e -> {
+			this._ni.get(e.getSrc()).put(e.getDest(), new EdgeData(e));
+			this._niRevers.get(e.getDest()).add(e.getSrc());
 			});
 		});
 		this._mc = g.nodeSize() + g.edgeSize();
