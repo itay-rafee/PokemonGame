@@ -49,7 +49,7 @@ public class DWGraph_DS implements directed_weighted_graph{
 		this._edgeSize = g.edgeSize();
     }
     
-    /**
+        /**
 	 * About getNode(int key) method: this method return the node_data by the
 	 * node_id. the method return null if none as requested.
 	 * @param key - the node_id
@@ -60,7 +60,7 @@ public class DWGraph_DS implements directed_weighted_graph{
         return _graph.get(key); // exception is better instead of null if no such node
     }
     
-    /**
+        /**
 	 * About getEdge(int src, int dest) method: 
 	 * this method return the edge_data object.
 	 * the method return -1 if node1 or node2 aren't in the graph.
@@ -78,7 +78,7 @@ public class DWGraph_DS implements directed_weighted_graph{
         return _ni.get(src).get(dest); // exception is better instead of null if no edge
     }
     
-    /**
+        /**
 	 * About addNode(node_data n) method:
 	 * this method add a new node to the graph with the given node_data object.
 	 * if n==null or there is already a node with such a key no action performed.
@@ -99,7 +99,7 @@ public class DWGraph_DS implements directed_weighted_graph{
         _mc++;
     }
     
-    /**
+        /**
 	 * About connect(int node1, int node2, double w) method:
 	 * this method connect an edge between node1 and node2, with an edge with weight>=0.
 	 * the method implemented only if node1 or node2 in the graph, node1!=node2 and w>=0. 
@@ -125,7 +125,7 @@ public class DWGraph_DS implements directed_weighted_graph{
         _mc++;
     }
     
-    /**
+        /**
 	 * About getV() method: This method return a pointer (shallow copy) for the
 	 * collection representing all the nodes in the graph. the method is implemented
 	 * by returning '_graph' HashMap values.
@@ -136,7 +136,7 @@ public class DWGraph_DS implements directed_weighted_graph{
         return _graph.values();
     }
     
-    /**
+        /**
 	 * About getE(int node_id) method: This method returns a collection containing
 	 * all the edges connected to node_id. the method returning null if
 	 * node_id isn't in the graph. The implementation of the method is simply by
@@ -149,7 +149,7 @@ public class DWGraph_DS implements directed_weighted_graph{
         return _ni.get(node_id).values();
     }
     
-    /**
+        /**
 	 * About removeNode(int key) method: this method delete the node (with the given
 	 * ID) from the graph - and removes all edges which starts or ends at this node.
 	 * the method return null if the Node isn't in the graph as requested. otherwise
@@ -187,7 +187,7 @@ public class DWGraph_DS implements directed_weighted_graph{
         return _graph.remove(key);
     }
  	
- 	/**
+        /**
 	 * About removeEdge(int src, int dest) method: This method delete the edge
 	 * from the graph. the method returns null if src node or dest node aren't in
 	 * the graph. if src node and dest node are neighbors the method removes the edge
@@ -209,7 +209,7 @@ public class DWGraph_DS implements directed_weighted_graph{
         return _ni.get(src).remove(dest);
     }
 
-    /**
+        /**
 	 * About nodeSize() method: this method return the number of vertices (nodes) in
 	 * the graph. The implementation of the method is simply by returning '_graph'
 	 * size [O(1)].
@@ -220,7 +220,7 @@ public class DWGraph_DS implements directed_weighted_graph{
         return _graph.size();
     }
 
-    /**
+        /**
 	 * About edgeSize() method: this method return the number of edges
 	 * (directional graph). The implementation of the method is simply by
 	 * returning node neighbors size [Hashmap > O(1)].
@@ -231,7 +231,7 @@ public class DWGraph_DS implements directed_weighted_graph{
         return _edgeSize;
     }
 
-    /**
+        /**
 	 * About getMC() method: this method return the Mode Count - for testing changes
 	 * in the graph. The implementation of the method is simply by returning 'MC'
 	 * variable.
@@ -242,7 +242,7 @@ public class DWGraph_DS implements directed_weighted_graph{
         return _mc;
     }
     
-    /**
+        /**
 	 * About equals(Object g) method: this is an auxiliary method mainly for testing
 	 * copy()/save()/load() methods. the method returns false if the input object
 	 * isn't instanceof directed_weighted_graph.
@@ -259,7 +259,7 @@ public class DWGraph_DS implements directed_weighted_graph{
 		return false;
 	}
 
-    /**
+        /**
 	 * About equals(directed_weighted_graph g) method:
 	 * this method compares this graph with the input graph.
 	 * if this nodes size != g nodes size or this edges size != g edges size - return false
