@@ -24,9 +24,12 @@ public class Ex2 implements Runnable{
 	//can select the level of the game here
 	//or in the open frame by init the scenario_num = -1
 	private static int scenario_num = -1;
+
+	//Object for the open screen
 	private static int count = 0;
 	private static int id = 0;
-
+	private static boolean endOfGame = false;
+	private static int[] data = new int[4];
 
 
 	public static void main(String[] a) {
@@ -76,7 +79,12 @@ public class Ex2 implements Runnable{
 			catch(Exception e) {e.printStackTrace();}
 		}
 		System.out.println(game.toString());
-		System.exit(0);
+
+		_win.setVisible(false);
+		setData();
+		openFrame();
+
+		//System.exit(0);
 	}
 
 	/**
@@ -468,6 +476,27 @@ public class Ex2 implements Runnable{
 		return null;
 	}
 
+	/**
+	 * About setData method:
+	 *   this method we using to set the data of
+	 *   the id, scenario_num, grade and moves.
+	 *   this is the resulte of the game.
+	 *   used to show it on the open screen after the
+	 *   game is over.
+	 */
+	private void setData(){
+		count = 0;
+		endOfGame = true;
+		data[0] = id;
+		data[1] = scenario_num;
+		try {
+			data[2] = _ar.getGrade();
+			data[3] = _ar.getMoves();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
 	//////// open screen //////
 
 	/**
@@ -574,13 +603,28 @@ public class Ex2 implements Runnable{
 	 *  in this class we define the open image that appeared
 	 *  in the open screen of the game using the 'extends JPanel'
 	 *  and put it in the center of the screen.
+	 *  After we play we write the results in the screen
 	 */
 	private static class OpenFrame extends JPanel {
 		Image openS = new ImageIcon(getClass().getResource("/go1.jpg")).getImage();
 		//private Image openS = Toolkit.getDefaultToolkit().getImage("images\\go1.jpg");
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
-			g.drawImage(openS, 0, 0, this.getWidth(), this.getHeight(), this);
+			int w = this.getWidth();
+			int h = this.getHeight();
+			g.drawImage(openS, 0, 0, w, h, this);
+			if (endOfGame == true) {
+				g.drawRect(23*w/50,(2*25)*h/74,w/5,h/5);
+				Font font = new Font("Verdana", Font.TYPE1_FONT, 17);
+				g.setFont(font);
+				g.drawString("Lest Results:",w/2, (2*25)*h/71);
+				font = new Font("Verdana", Font.CENTER_BASELINE, 15);
+				g.setFont(font);
+				g.drawString("ID: "+data[0], w/2, (2*25)*h/68);
+				g.drawString("Level: "+data[1], w/2, (2*25)*h/65);
+				g.drawString("Grade: "+data[2], w/2, (2*25)*h/62);
+				g.drawString("Moves: "+data[3], w/2, (2*25)*h/59);
+			}
 		}
 	}
 }
