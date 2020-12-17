@@ -21,9 +21,7 @@ public class CL_Agent {
 		private CL_Pokemon _curr_fruit;
 		private long _sg_dt;
 		private static int stucks = 0;
-		
 		private double _value;
-		
 		
 		public CL_Agent(directed_weighted_graph g, int start_node) {
 			_gg = g;
@@ -108,15 +106,12 @@ public class CL_Agent {
 			// TODO Auto-generated method stub
 			return _pos;
 		}
-
 		
 		public double getValue() {
 			// TODO Auto-generated method stub
 			return this._value;
 		}
-
-
-
+		
 		public int getNextNode() {
 			int ans = -2;
 			if(this._curr_edge==null) {

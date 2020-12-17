@@ -27,16 +27,11 @@ import java.util.List;
  * game on a graph - you are welcome to use this class - yet keep in mind
  * that the code is not well written in order to force you improve the
  * code and not to take it "as is".
- *
  */
 public class MyFrame extends JFrame {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private int _ind;
 	private Arena _ar;
-
 	private Image dbI;
 	private Graphics dbG;
 
@@ -46,14 +41,12 @@ public class MyFrame extends JFrame {
     Image ash = new ImageIcon(getClass().getResource("/ash.png")).getImage();
     Image field = new ImageIcon(getClass().getResource("/field.png")).getImage();
 	Image pokedex = new ImageIcon(getClass().getResource("/pokedex.png")).getImage();
-
-
+	
     MyFrame(String a) {
 		super(a);
 		//super();
 		int _ind = 0;
 	}
-	
 	
 	public void update(Arena ar) {
 		this._ar = ar;
@@ -65,7 +58,6 @@ public class MyFrame extends JFrame {
 		// this two lines for open the jframe window in the center of the screen
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
-		//
 		Range rx = new Range(20,this.getWidth()-10);
 		Range ry = new Range(this.getHeight()-10,150); // this.getHeight()-10,150
 		Range2D frame = new Range2D(rx,ry);
@@ -73,15 +65,14 @@ public class MyFrame extends JFrame {
 		_w2f = Arena.w2f(g,frame);
 		//Toolkit.getDefaultToolkit().sync();
 	}
-
-
+	
 	public void paint(Graphics g){
 		dbI = createImage(getWidth(),getHeight());
 		dbG = dbI.getGraphics();
 		paintG(dbG);
 		g.drawImage(dbI,0,0,this);
 	}
-
+	
 	public void paintG(Graphics g) {
 		int w = this.getWidth();
 		int h = this.getHeight();
@@ -91,7 +82,6 @@ public class MyFrame extends JFrame {
 		drawPokemons(g);
 		drawAgants(g);
 		drawInfo(g);
-		
 	}
 
 	private void drawInfo(Graphics g) {
@@ -100,7 +90,6 @@ public class MyFrame extends JFrame {
 		for(int i=0;i<str.size();i++) {
 			g.drawString(str.get(i)+" dt: "+dt,100,60+i*20);
 		}
-		
 	}
 	
 	private void aspectRatio(double aspectratio) {
@@ -123,7 +112,6 @@ public class MyFrame extends JFrame {
 	private void drawGraph(Graphics g) {
 		double aspectratio = this.getWidth()/this.getHeight();
 		if (aspectratio!=10/7.0) {aspectRatio(aspectratio);}
-		
 		g.drawImage(field, 0, 0, this.getWidth(), this.getHeight(), this); 
 		directed_weighted_graph gg = _ar.getGraph();
 		Iterator<node_data> iter = gg.getV().iterator();
@@ -166,7 +154,6 @@ public class MyFrame extends JFrame {
 			Point3D c = f.getLocation();
 			int r=25;
 			g.setColor(Color.green);
-			//if(f.getType()<0) {g.setColor(Color.orange);}
 			int w = getWidth();
 	        int h = getHeight();
 			if(c!=null) {
@@ -175,15 +162,12 @@ public class MyFrame extends JFrame {
 					g.drawImage(pika, ((int)fp.x()-r)*w/1010, ((int)fp.y()-r)*h/1010, (2*r)*w/1010, (2*r)*h/1010, this);
 				} else {
 					g.drawImage(bulbasaur, ((int)fp.x()-r)*w/1010, ((int)fp.y()-r)*h/1010, (2*r)*w/1010, (2*r)*h/1010, this);
+					}
 				}
-				//g.drawImage(pika, ((int)fp.x()-r)*w/1000, ((int)fp.y()-r)*h/1000, (2*r)*w/1000, (2*r)*h/1000, this);
-				//g.fillOval(((int)fp.x()-r)*w/1000, ((int)fp.y()-r)*h/1000, (2*r)*w/1000, (2*r)*h/1000);
-			//	g.drawString(""+n.getKey(), fp.ix(), fp.iy()-4*r);
-				
 			}
 		}
-		}
 	}
+	
 	private void drawAgants(Graphics g) {
 		List<CL_Agent> rs = _ar.getAgents();
 	//	Iterator<OOP_Point3D> itr = rs.iterator();
@@ -198,10 +182,10 @@ public class MyFrame extends JFrame {
 			if(c!=null) {
 				geo_location fp = this._w2f.world2frame(c);
 				g.drawImage(ash, ((int)fp.x()-r)*w/1010, ((int)fp.y()-r)*h/1010, (2*r)*w/1010, (2*r)*h/1010, this);
-				//g.fillOval(((int)fp.x()-r)*w/1015, ((int)fp.y()-r)*h/1015, (2*r)*w/1015, (2*r)*h/1015);
 			}
 		}
 	}
+	
 	private void drawNode(node_data n, int r, Graphics g) {
 		geo_location pos = n.getLocation();
 		geo_location fp = this._w2f.world2frame(pos);
@@ -220,13 +204,9 @@ public class MyFrame extends JFrame {
 		geo_location d0 = this._w2f.world2frame(d);
 		int w = getWidth();
         int h = getHeight();
-        
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.setColor(Color.black);
         g2d.setStroke(new BasicStroke(1.0f));
         g2d.drawLine((int)s0.x()*w/1010, (int)s0.y()*h/1010, (int)d0.x()*w/1010, (int)d0.y()*h/1010);
-        
-		//g.drawLine((int)s0.x()*w/1000, (int)s0.y()*h/1000, (int)d0.x()*w/1000, (int)d0.y()*h/1000);
-		//g.drawString(""+n.getKey(), fp.ix(), fp.iy()-4*r);
 	}
 }

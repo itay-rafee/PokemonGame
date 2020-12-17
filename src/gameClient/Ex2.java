@@ -11,6 +11,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.*;
@@ -46,8 +49,8 @@ public class Ex2 implements Runnable{
 	//@Override
 	public void run() {
 		game_service game = Game_Server_Ex2.getServer(scenario_num); // you have [0,23] games
-		//int id = 203201389;
-		if (count != 0) game.login(id);
+		//int id = 999;
+		if (count == 1) game.login(id);
 		String g = game.getGraph();
 		String pks = game.getPokemons();
 		directed_weighted_graph gg = game.getJava_Graph_Not_to_be_used();
@@ -519,63 +522,75 @@ public class Ex2 implements Runnable{
 	 *  of the exit in the top right corner.
 	 */
 	private void openFrame(){
-
 		JFrame f = new JFrame("Welcome!");
-		final JTextField tf = new JTextField("Enter ID");
-		tf.setBounds(150,50, 150,20);
+		f.setSize(1000,700);
+		final JTextField tf = new JTextField("Enter ID"); // Enter ID (skip to play offline)
+		tf.setMaximumSize(new Dimension(300, 40));
+		tf.setBounds(f.getWidth()/2-150,f.getHeight()/15*7,300,40);
+		tf.setHorizontalAlignment(JTextField.CENTER);
 		tf.setBackground(Color.LIGHT_GRAY);
+		f.setFocusable(true);
 		tf.addFocusListener(new java.awt.event.FocusAdapter() {
 			public void focusGained(java.awt.event.FocusEvent evt) {
 				if (tf.getText().equals("Enter level")||tf.getText().equals("Try again!")||
-						tf.getText().equals("Put a correct number!")||tf.getText().equals("Enter ID")) {
+						tf.getText().equals("Put a correct number!")||
+						tf.getText().equals("Enter ID")
+						/*||tf.getText().equals("Enter ID (skip to play offline)")*/) {
 					tf.setText("");
 				}
 			}
 		});
 		JButton b = new JButton("Login");
 		f.getRootPane().setDefaultButton(b);
-		b.setBounds(50,50,95,30);
+		b.setBounds(f.getWidth()/2-150,f.getHeight()/15*7+40,300,40);
 		b.setBackground(Color.GRAY);
 		b.setDoubleBuffered(true);
 		b.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				String a = tf.getText();
 				int num;
-				if (count == 0){
-					try{
+				if (count == 0) {
+					try {
 						id = Integer.parseInt(a);
 						count = 1;
 						tf.setText("Enter level");
 						b.setText("Start");
+						f.requestFocus();
+					} catch (Exception r) {
+						/*if (a.equals("Enter ID (skip to play offline)")||a.equals("")) {
+							id = -1;
+							count = -1;
+							tf.setText("Enter level");
+							b.setText("Start");
+							f.requestFocus();
+						} else*/ tf.setText("Try again!");
+						f.requestFocus();
 					}
-					catch (Exception r){
-						tf.setText("Try again!");
-					}
-				}
-				else{
-					try{
+				} else {
+					try {
 						num = Integer.parseInt(a);
 						game_service game = Game_Server_Ex2.getServer(num); // you have [0,23] games
 						String g = game.getGraph();
 						scenario_num = num;
 						f.setVisible(false);
 						start();
-					}
-					catch (Exception r){
+					} catch (Exception r){
 						count++;
 						if (count > 3) tf.setText("Put a correct number!");
 						else tf.setText("Try again!");
+						f.requestFocus();
 					}
 				}
-
 			}
 		});
-		//f.add(b);f.add(tf);
-		JMenuBar m = new JMenuBar();
-		m.add(b);
-		m.add(tf);
-		f.setJMenuBar(m);
-		f.setSize(1000,700);
+		f.addComponentListener(new ComponentAdapter() {
+		    public void componentMoved(ComponentEvent e) {
+		    	tf.setBounds(f.getWidth()/2-150,f.getHeight()/15*7, 300,40);
+		    	b.setBounds(f.getWidth()/2-150,f.getHeight()/15*7+40, 300,40);
+		    }
+		});
+		f.add(b);
+		f.add(tf);
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		f.setLocation(dim.width/2-f.getSize().width/2, dim.height/2-f.getSize().height/2);
 		f.addWindowListener(new WindowAdapter() {
@@ -606,24 +621,25 @@ public class Ex2 implements Runnable{
 	 *  After we play we write the results in the screen
 	 */
 	private static class OpenFrame extends JPanel {
+		private static final long serialVersionUID = 1L;
 		Image openS = new ImageIcon(getClass().getResource("/go1.jpg")).getImage();
-		//private Image openS = Toolkit.getDefaultToolkit().getImage("images\\go1.jpg");
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
 			int w = this.getWidth();
 			int h = this.getHeight();
 			g.drawImage(openS, 0, 0, w, h, this);
 			if (endOfGame == true) {
-				g.drawRect(23*w/50,(2*25)*h/74,w/5,h/5);
-				Font font = new Font("Verdana", Font.TYPE1_FONT, 17);
+				g.drawRect(w/2-w/10+10,(2*25)*h/75,w/5,h/5);
+				Font font = new Font("Verdana", Font.TYPE1_FONT, w/60);
 				g.setFont(font);
-				g.drawString("Lest Results:",w/2, (2*25)*h/71);
-				font = new Font("Verdana", Font.CENTER_BASELINE, 15);
+				g.drawString("Last Results:",w/2-w/10+30, (2*25)*h/71);
+				font = new Font("Verdana", Font.CENTER_BASELINE, w/60);
 				g.setFont(font);
-				g.drawString("ID: "+data[0], w/2, (2*25)*h/68);
-				g.drawString("Level: "+data[1], w/2, (2*25)*h/65);
-				g.drawString("Grade: "+data[2], w/2, (2*25)*h/62);
-				g.drawString("Moves: "+data[3], w/2, (2*25)*h/59);
+				/*if (id != -1)*/ g.drawString("ID: "+data[0], w/2-w/10+30, (2*25)*h/68);
+				/*else g.drawString("ID: Offline", w/2-w/10+30, (2*25)*h/68);*/
+				g.drawString("Level: "+data[1], w/2-w/10+30, (2*25)*h/65);
+				g.drawString("Grade: "+data[2], w/2-w/10+30, (2*25)*h/62);
+				g.drawString("Moves: "+data[3], w/2-w/10+30, (2*25)*h/59);
 			}
 		}
 	}
