@@ -1,12 +1,8 @@
 package gameClient;
 import Server.Game_Server_Ex2;
-import api.DWGraph_DS;
-import api.GeoLocation;
-import api.NodeData;
 import api.directed_weighted_graph;
 import api.edge_data;
 import api.game_service;
-import api.node_data;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -27,7 +23,7 @@ public class SimpleGameClient {
 		String g = game.getGraph();
 		directed_weighted_graph gg = game.getJava_Graph_Not_to_be_used();
 		//game.login(12345);  // please use your ID only as a key. uncomment this will upload your results to the server
-		node_data nn = gg.getNode(10);
+		/*node_data nn = gg.getNode(10);*/
 		String info = game.toString();
 		System.out.println(info);
 		System.out.println(g);
@@ -37,7 +33,7 @@ public class SimpleGameClient {
 		game.startGame();
 		int i=0;
 		while(game.isRunning()) {
-			long t = game.timeToEnd();
+			/*long t = game.timeToEnd();*/
 			String lg = game.move();
 			List<CL_Agent> log = Arena.getAgents(lg, gg);
 			for(int a=0;a< log.size();a++) {

@@ -13,7 +13,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.*;
@@ -174,7 +173,6 @@ public class Ex2 implements Runnable{
 
 
 	////////// init function /////////
-
 	/**
 	 * About init(game_service game) method: this method init the agents
 	 *   by consideration if the graph is connected using the method initAgentNearPok()
@@ -367,6 +365,7 @@ public class Ex2 implements Runnable{
 	 *   and in addition init the Arena.
 	 * @param game - the game
 	 */
+	@SuppressWarnings("deprecation")
 	private void initFrame(game_service game) {
 		String info = game.toString();
 		System.out.println(info);
@@ -521,6 +520,7 @@ public class Ex2 implements Runnable{
 	 *  also we can leave the game by click on the button
 	 *  of the exit in the top right corner.
 	 */
+	@SuppressWarnings("deprecation")
 	private void openFrame(){
 		JFrame f = new JFrame("Welcome!");
 		f.setSize(1000,700);

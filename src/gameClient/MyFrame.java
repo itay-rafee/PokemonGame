@@ -7,18 +7,11 @@ import gameClient.util.Point3D;
 import gameClient.util.Range;
 import gameClient.util.Range2D;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 
 import org.json.JSONException;
 
 import java.awt.*;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -30,7 +23,7 @@ import java.util.List;
  */
 public class MyFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
-	private int _ind;
+	/*private int _ind;*/
 	private Arena _ar;
 	private Image dbI;
 	private Graphics dbG;
@@ -45,7 +38,7 @@ public class MyFrame extends JFrame {
     MyFrame(String a) {
 		super(a);
 		//super();
-		int _ind = 0;
+		/*int _ind = 0;*/
 	}
 	
 	public void update(Arena ar) {

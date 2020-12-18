@@ -9,10 +9,10 @@ import org.json.JSONObject;
 
 public class CL_Agent {
 		public static final double EPS = 0.0001;
-		private static int _count = 0;
-		private static int _seed = 3331;
+		/*private static int _count = 0;
+		private static int _seed = 3331;*/
 		private int _id;
-	//	private long _key;
+		/*private long _key;*/
 		private geo_location _pos;
 		private double _speed;
 		private edge_data _curr_edge;
@@ -20,7 +20,6 @@ public class CL_Agent {
 		private directed_weighted_graph _gg;
 		private CL_Pokemon _curr_fruit;
 		private long _sg_dt;
-		private static int stucks = 0;
 		private double _value;
 		
 		public CL_Agent(directed_weighted_graph g, int start_node) {
