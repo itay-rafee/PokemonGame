@@ -589,8 +589,8 @@ public class Ex2 implements Runnable{
 		    public void componentMoved(ComponentEvent e) {
 		    	int w = f.getWidth();
 		    	int h = f.getHeight();
-		    	tf.setBounds(w/2-150,h/15*7, w/3,h/17);
-		    	b.setBounds(w/2-150,h/15*7+40, w/3,h/17);
+		    	tf.setBounds(w/2-2*w/11,h/15*7, w/3,h/17);
+		    	b.setBounds(w/2-2*w/11,h/15*7+h/17, w/3,h/17);
 		    }
 		});
 		f.add(b);
@@ -633,7 +633,7 @@ public class Ex2 implements Runnable{
 			int h = this.getHeight();
 			g.drawImage(openS, 0, 0, w, h, this);
 			if (endOfGame == true) {
-				g.drawRect(w/2-w/10+10,(2*25)*h/75,w/5,h/5);
+				g.drawRect(w/2-w/10,(2*25)*h/75,w/5,h/5);
 				Font font = new Font("Verdana", Font.TYPE1_FONT, w/60);
 				g.setFont(font);
 				g.drawString("Last Results:",w/2-w/10+30, (2*25)*h/71);
