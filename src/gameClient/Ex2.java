@@ -2,18 +2,15 @@ package gameClient;
 
 import Server.Game_Server_Ex2;
 import api.*;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.*;
@@ -23,17 +20,14 @@ public class Ex2 implements Runnable{
 	private static MyFrame _win;
 	private static Arena _ar;
 	private static long sleep = 100;
-
 	//can select the level of the game here
 	//or in the open frame by init the scenario_num = -1
 	private static int scenario_num = -1;
-
 	//Object for the open screen
 	private static int count = 0;
 	private static int id = 0;
 	private static boolean endOfGame = false;
 	private static int[] data = new int[4];
-
 
 	public static void main(String[] args) {
 		if (args.length == 2){
@@ -63,14 +57,11 @@ public class Ex2 implements Runnable{
 		game.startGame();
 		_win.setTitle("Ex2 - OOP: (NONE trivial Solution) "+game.toString());
 		int ind=0;
-		//long dt=100;
-
 		_win.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);
 			}
 		});
-
 		String lg = game.move();
 		List<CL_Agent> log = Arena.getAgents(lg, gg);
 		_ar.setAgents(log);
@@ -86,11 +77,9 @@ public class Ex2 implements Runnable{
 			catch(Exception e) {e.printStackTrace();}
 		}
 		System.out.println(game.toString());
-
 		_win.setVisible(false);
 		setData();
 		openFrame();
-
 		//System.exit(0);
 	}
 
@@ -105,8 +94,6 @@ public class Ex2 implements Runnable{
 		String lg = game.move();
 		List<CL_Agent> log = Arena.getAgents(lg, gg);
 		_ar.setAgents(log);
-		//List<CL_Agent> log = _ar.getAgents();
-		//ArrayList<OOP_Point3D> rs = new ArrayList<OOP_Point3D>();
 		String fs =  game.getPokemons();
 		List<CL_Pokemon> ffs = Arena.json2Pokemons(fs);
 		_ar.setPokemons(ffs);
@@ -122,14 +109,28 @@ public class Ex2 implements Runnable{
 				System.out.println("Agent: "+id+", val: "+v+"   turned to node: "+dest);
 			}
 		}
-		/*try {
-			Thread.sleep(100*speed);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}*/
 	}
 	/**
-	 * a very simple random walk implementation!
+	 * About nextNode(directed_weighted_graph g, int src, CL_Agent ag) method:
+	 * This method calculates the next vertex to which the agent approaches.
+	 * For this method we used the isAvailableFruit() method in the Arena class
+	 * which marks a certain area in the graph as an area that only a specific agent
+	 * can access. The area is dynamic according to the Pokemon marked as the "fruit"
+	 * of the agent (As explained there).
+	 * The implementation of the method is by iteration between all the Pokemons
+	 * in the game.
+	 * If the agent is on the src vertex of a edge on which Pokemon is located
+	 * then the function returns the dest of that edge as the next vertex to which
+	 * the agent approaches. Otherwise, the function goes iterated over the rest of
+	 * the Pokemon and calculates the closest Pokemon to the agent with the
+	 * shortestPathDist() method (by the dijkstra algorithm) in DWGraph_Algo class
+	 * and marks the nearest Pokemon marked as available by the isAvailableFruit()
+	 * method implemented in the Arena class.
+	 * Once such a Pokemon is found the method calculate the path from the agent
+	 * to the Pokemon and return the second vertex in the path
+	 * (since the agent is on the first vertex).
+	 * Otherwise, since no Pokemon is found then the agent will move randomly until
+	 * a relevant Pokemon appears.
 	 * @param g
 	 * @param src
 	 * @return
@@ -178,7 +179,6 @@ public class Ex2 implements Runnable{
 
 
 	////////// init function /////////
-
 	/**
 	 * About init(game_service game) method: this method init the agents
 	 *   by consideration if the graph is connected using the method initAgentNearPok()
@@ -191,12 +191,10 @@ public class Ex2 implements Runnable{
 		dw_graph_algorithms ga = new DWGraph_Algo(g);
 		int agentsNum = json2numAgent(game);
 		if (ga.isConnected()){
-
 			//while the graph is connected
 			initAgentNearPok(game,_ar.getPokemons(),agentsNum,g.getV());
 		}
 		else{
-
 			//while the graph is disconnected
 			initAgentDisconnectedGraph(game,_ar.getPokemons(),agentsNum);
 		}
@@ -220,7 +218,6 @@ public class Ex2 implements Runnable{
 		directed_weighted_graph g = _ar.getGraph();
 		Collection<node_data> nodes = g.getV();
 		int ageSum = 0;
-
 		//here we fine all the graphing component of a graph
 		for (node_data n : nodes) {
 			if (!vis.contains(n)){
@@ -248,7 +245,6 @@ public class Ex2 implements Runnable{
 				initAgentNearPok(game,pokInGroup,agentForGroup,group);
 			}
 		}
-
 
 		//if there is more agents
 		Iterator<node_data> n = nodes.iterator();
@@ -339,7 +335,6 @@ public class Ex2 implements Runnable{
 	 */
 	public void initAgentNearPok(game_service game, List<CL_Pokemon> pokemonS, int agentsNum, Collection<node_data> nodes) {
 		directed_weighted_graph gg = _ar.getGraph();
-
 		// sort by value
 		PriorityQueue<CL_Pokemon> poks = new PriorityQueue<CL_Pokemon>(new PokemonComparator());
 		for (CL_Pokemon pokemon : pokemonS) {
@@ -370,6 +365,7 @@ public class Ex2 implements Runnable{
 	 *   and in addition init the Arena.
 	 * @param game - the game
 	 */
+	@SuppressWarnings("deprecation")
 	public void initFrame(game_service game) {
 		String info = game.toString();
 		System.out.println(info);
@@ -385,7 +381,6 @@ public class Ex2 implements Runnable{
 		_win.update(_ar);
 		_win.show();
 	}
-
 
 	/**
 	 * About isConnectedBFS method:
@@ -435,7 +430,6 @@ public class Ex2 implements Runnable{
 		}
 	}
 
-
 	/**
 	 * About json2graph method:
 	 *   this method we using the same algo as the load method in DWGraph_Algo.
@@ -447,9 +441,7 @@ public class Ex2 implements Runnable{
 			directed_weighted_graph g = new DWGraph_DS();
 			JSONObject graphFile = new JSONObject(s);
 			JSONArray nodes = graphFile.getJSONArray("Nodes");
-
 			int t = nodes.length();
-
 			// add the nodes
 			for (int i = 0; i < t; i++) {
 				JSONObject node = nodes.getJSONObject(i);
@@ -461,10 +453,8 @@ public class Ex2 implements Runnable{
 				node_data n1 = new NodeData(id,geo);
 				g.addNode(n1);
 			}
-
 			JSONArray edges = graphFile.getJSONArray("Edges");
 			t = edges.length();
-
 			//add the edges
 			for (int i = 0; i < t; i++) {
 				JSONObject ed = edges.getJSONObject(i);
@@ -503,7 +493,6 @@ public class Ex2 implements Runnable{
 	}
 
 	//////// open screen //////
-
 	/**
 	 * About openFrame() method:
 	 *  in this method we define a JFrame that
@@ -523,6 +512,7 @@ public class Ex2 implements Runnable{
 	 *  also we can leave the game by click on the button
 	 *  of the exit in the top right corner.
 	 */
+	@SuppressWarnings("deprecation")
 	public void openFrame(){
 		JFrame f = new JFrame("Welcome!");
 		f.setSize(1000,700);
@@ -536,8 +526,7 @@ public class Ex2 implements Runnable{
 			public void focusGained(java.awt.event.FocusEvent evt) {
 				if (tf.getText().equals("Enter level")||tf.getText().equals("Try again!")||
 						tf.getText().equals("Put a correct number!")||
-						tf.getText().equals("Enter ID")
-						/*||tf.getText().equals("Enter ID (skip to play offline)")*/) {
+						tf.getText().equals("Enter ID")) {
 					tf.setText("");
 				}
 			}
@@ -559,13 +548,7 @@ public class Ex2 implements Runnable{
 						b.setText("Start");
 						f.requestFocus();
 					} catch (Exception r) {
-						/*if (a.equals("Enter ID (skip to play offline)")||a.equals("")) {
-							id = -1;
-							count = -1;
-							tf.setText("Enter level");
-							b.setText("Start");
-							f.requestFocus();
-						} else*/ tf.setText("Try again!");
+						tf.setText("Try again!");
 						f.requestFocus();
 					}
 				} else {
@@ -639,8 +622,7 @@ public class Ex2 implements Runnable{
 				g.drawString("Last Results:",w/2-w/10+30, (2*25)*h/71);
 				font = new Font("Verdana", Font.CENTER_BASELINE, w/60);
 				g.setFont(font);
-				/*if (id != -1)*/ g.drawString("ID: "+data[0], w/2-w/10+30, (2*25)*h/68);
-				/*else g.drawString("ID: Offline", w/2-w/10+30, (2*25)*h/68);*/
+				g.drawString("ID: "+data[0], w/2-w/10+30, (2*25)*h/68);
 				g.drawString("Level: "+data[1], w/2-w/10+30, (2*25)*h/65);
 				g.drawString("Grade: "+data[2], w/2-w/10+30, (2*25)*h/62);
 				g.drawString("Moves: "+data[3], w/2-w/10+30, (2*25)*h/59);

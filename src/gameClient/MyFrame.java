@@ -6,11 +6,8 @@ import api.node_data;
 import gameClient.util.Point3D;
 import gameClient.util.Range;
 import gameClient.util.Range2D;
-
 import javax.swing.*;
-
 import org.json.JSONException;
-
 import java.awt.*;
 import java.util.Iterator;
 import java.util.List;
@@ -70,7 +67,7 @@ public class MyFrame extends JFrame {
 		int w = this.getWidth();
 		int h = this.getHeight();
 		g.clearRect(0, 0, w, h);
-		//	updateFrame();
+		// updateFrame();
 		drawGraph(g);
 		drawPokemons(g);
 		drawAgants(g);
@@ -118,8 +115,8 @@ public class MyFrame extends JFrame {
 				g.setColor(Color.gray);
 				drawEdge(e, g);
 			}
-		}
-        try {
+		} 
+		try {
         	int w = getWidth();
             int h = getHeight();
 			g.drawImage(pokedex, (2*25)*w/1400, (2*25)*h/74, w/4, h/4+20, this);
