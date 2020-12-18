@@ -15,7 +15,17 @@ public class NodeData implements node_data {
         _tag = 0;
         _info = "";
     }
-    
+
+    /* Constructor */
+    public NodeData(int key){
+        _key = key;
+        _location = new GeoLocation();
+        _weight = 0;
+        _tag = 0;
+        _info = "";
+    }
+
+
     /* Constructor */
     public NodeData(int key,geo_location location){
     	this();

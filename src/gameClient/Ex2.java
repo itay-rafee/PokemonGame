@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.*;
@@ -34,7 +35,12 @@ public class Ex2 implements Runnable{
 	private static int[] data = new int[4];
 
 
-	public static void main(String[] a) {
+	public static void main(String[] args) {
+		if (args.length == 2){
+			id = Integer.parseInt(args[0]);
+			scenario_num = Integer.parseInt(args[1]);
+			count = 1;
+		}
 		Ex2 e = new Ex2();
 		if (scenario_num == -1){
 			e.openFrame();
@@ -48,8 +54,7 @@ public class Ex2 implements Runnable{
 	//@Override
 	public void run() {
 		game_service game = Game_Server_Ex2.getServer(scenario_num); // you have [0,23] games
-		//int id = 999;
-		if (count == 1) game.login(id);
+		if (count > 0) game.login(id);
 		String g = game.getGraph();
 		String pks = game.getPokemons();
 		directed_weighted_graph gg = game.getJava_Graph_Not_to_be_used();
@@ -173,13 +178,14 @@ public class Ex2 implements Runnable{
 
 
 	////////// init function /////////
+
 	/**
 	 * About init(game_service game) method: this method init the agents
 	 *   by consideration if the graph is connected using the method initAgentNearPok()
 	 *   or disconnected by using the method initAgentDisconnectedGraph()
 	 * @param game - the game
 	 */
-	private void init(game_service game) {
+	public void init(game_service game) {
 		initFrame(game);
 		directed_weighted_graph g = _ar.getGraph();
 		dw_graph_algorithms ga = new DWGraph_Algo(g);
@@ -208,7 +214,7 @@ public class Ex2 implements Runnable{
 	 * @param pokemonS - the pokemons that in the group
 	 * @param agentsNum - the agents that we need to add
 	 */
-	private void initAgentDisconnectedGraph(game_service game, List<CL_Pokemon> pokemonS, int agentsNum) {
+	public void initAgentDisconnectedGraph(game_service game, List<CL_Pokemon> pokemonS, int agentsNum) {
 		HashSet<Collection<node_data>> allGroup = new HashSet<>();
 		HashSet<node_data> vis = new HashSet<>();
 		directed_weighted_graph g = _ar.getGraph();
@@ -218,7 +224,7 @@ public class Ex2 implements Runnable{
 		//here we fine all the graphing component of a graph
 		for (node_data n : nodes) {
 			if (!vis.contains(n)){
-				Collection<node_data> group = findGroup(n.getKey(),vis);
+				Collection<node_data> group = findGroup(n.getKey(),vis,g);
 				allGroup.add(group);
 			}
 		}
@@ -261,7 +267,7 @@ public class Ex2 implements Runnable{
 	 * @param pokemonS - the pokemons that in the group
 	 * @param group - the graphing component
 	 */
-	private List<CL_Pokemon> findPokInGroup(List<CL_Pokemon> pokemonS, Collection<node_data> group) {
+	public List<CL_Pokemon> findPokInGroup(List<CL_Pokemon> pokemonS, Collection<node_data> group) {
 		List<CL_Pokemon> pokForGroup = new LinkedList<>();
 		directed_weighted_graph g = _ar.getGraph();
 		HashSet<node_data> nodes = new HashSet<>(group);
@@ -286,12 +292,11 @@ public class Ex2 implements Runnable{
 	 * @param vis - the node that have a graphing component
 	 * @return group - the graphing component
 	 */
-	private Collection<node_data> findGroup (int key, HashSet<node_data> vis){
+	public Collection<node_data> findGroup (int key, HashSet<node_data> vis, directed_weighted_graph g){
 		Collection<node_data> group = new ArrayList<>();
-		directed_weighted_graph g = _ar.getGraph();
 		HashSet<node_data> ni1 = isConnectedBFS(key, g);
-		g = flipedGraph();
-		HashSet<node_data> ni2 = isConnectedBFS(key, g);
+		directed_weighted_graph g2 = flipedGraph(g);
+		HashSet<node_data> ni2 = isConnectedBFS(key, g2);
 		for (node_data n1 : ni1) {
 			if (ni2.contains(n1)) {
 				group.add(n1);
@@ -309,7 +314,7 @@ public class Ex2 implements Runnable{
 	 * @param game - the game
 	 * @return numAgent - the graphing component
 	 */
-	private int json2numAgent(game_service game) {
+	public int json2numAgent(game_service game) {
 		try {
 			JSONObject line = new JSONObject(game.toString());
 			JSONObject jsonGame = line.getJSONObject("GameServer");
@@ -332,7 +337,7 @@ public class Ex2 implements Runnable{
 	 * @param agentsNum - the agents that we need to add
 	 * @param nodes - the nodes of the graphing component
 	 */
-	private void initAgentNearPok(game_service game, List<CL_Pokemon> pokemonS, int agentsNum, Collection<node_data> nodes) {
+	public void initAgentNearPok(game_service game, List<CL_Pokemon> pokemonS, int agentsNum, Collection<node_data> nodes) {
 		directed_weighted_graph gg = _ar.getGraph();
 
 		// sort by value
@@ -365,8 +370,7 @@ public class Ex2 implements Runnable{
 	 *   and in addition init the Arena.
 	 * @param game - the game
 	 */
-	@SuppressWarnings("deprecation")
-	private void initFrame(game_service game) {
+	public void initFrame(game_service game) {
 		String info = game.toString();
 		System.out.println(info);
 		System.out.println(game.getPokemons());
@@ -414,8 +418,7 @@ public class Ex2 implements Runnable{
 	 *   this method we using the same flipedGraph algo as on DWGraph_Algo.
 	 * @return temp - the fliped graph
 	 */
-	public directed_weighted_graph flipedGraph() {
-		directed_weighted_graph g = _ar.getGraph();
+	public directed_weighted_graph flipedGraph(directed_weighted_graph g) {
 		directed_weighted_graph temp = new DWGraph_DS();
 		for (node_data node : g.getV())
 			temp.addNode(node);
@@ -439,7 +442,7 @@ public class Ex2 implements Runnable{
 	 * @param s - the json graph
 	 * @return g - the graph
 	 */
-	private directed_weighted_graph json2graph(String s){
+	public directed_weighted_graph json2graph(String s){
 		try{
 			directed_weighted_graph g = new DWGraph_DS();
 			JSONObject graphFile = new JSONObject(s);
@@ -520,8 +523,7 @@ public class Ex2 implements Runnable{
 	 *  also we can leave the game by click on the button
 	 *  of the exit in the top right corner.
 	 */
-	@SuppressWarnings("deprecation")
-	private void openFrame(){
+	public void openFrame(){
 		JFrame f = new JFrame("Welcome!");
 		f.setSize(1000,700);
 		final JTextField tf = new JTextField("Enter ID"); // Enter ID (skip to play offline)
@@ -585,8 +587,10 @@ public class Ex2 implements Runnable{
 		});
 		f.addComponentListener(new ComponentAdapter() {
 		    public void componentMoved(ComponentEvent e) {
-		    	tf.setBounds(f.getWidth()/2-150,f.getHeight()/15*7, 300,40);
-		    	b.setBounds(f.getWidth()/2-150,f.getHeight()/15*7+40, 300,40);
+		    	int w = f.getWidth();
+		    	int h = f.getHeight();
+		    	tf.setBounds(w/2-150,h/15*7, w/3,h/17);
+		    	b.setBounds(w/2-150,h/15*7+40, w/3,h/17);
 		    }
 		});
 		f.add(b);
