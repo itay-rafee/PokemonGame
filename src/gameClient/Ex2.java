@@ -30,13 +30,21 @@ public class Ex2 implements Runnable{
 	private static int[] data = new int[4];
 
 	public static void main(String[] args) {
-		if (args.length == 2){
-			id = Integer.parseInt(args[0]);
-			scenario_num = Integer.parseInt(args[1]);
-			count = 1;
+		if (args.length >= 2){
+			try{
+				id = Integer.parseInt(args[0]);
+				scenario_num = Integer.parseInt(args[1]);
+				count = 1;
+				game_service game = Game_Server_Ex2.getServer(scenario_num);
+			}
+			catch (Exception e){
+				System.out.println("Invalid Data!");
+				Ex2 ex2 = new Ex2();
+				ex2.openFrame();
+			}
 		}
 		Ex2 e = new Ex2();
-		if (scenario_num == -1){
+		if (count == 0){
 			e.openFrame();
 		}
 		else {
