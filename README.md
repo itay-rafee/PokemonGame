@@ -6,9 +6,10 @@ Object Oriented Course Assignment - Creating and Implementing Directed Weighted 
 In this project we were asked to implement an directed weighted graph with the algorithms of Graph Theory.
 We will briefly explain the algorithms, the data structures we used and the complexities of the operations.
 
+* <h3>Note! "images" folder should be 'src' type</h3>
 
 <table align="center">
-<td><h3>Final implementation of the methods:</h3>  
+<td><h3>Final implementation of the methods: (read more on the Wiki page)</h3>  
 <p align="center"><img src="https://github.com/itay-rafee/Ex2/raw/main/images/pokJar.jpg" width="650"/></p>
 </td>
 </table>
@@ -55,7 +56,7 @@ Therefore, the appropriate data structure fo performing operations on a very lar
 (such as returning a vertex value, checking neighbors between vertices etc.)
 
 ```diff 
-@@ <b>HashMap<Integer,node_data> _graph;</b> @@ (for receiving any vertex by key).
+@@ HashMap<Integer,node_data> _graph; @@ (for receiving any vertex by key).
 ``` 
 ```diff 
 @@ HashMap<Integer, HashMap<Integer, edge_data>> _ni; @@ (for receiving any vertex neighbors as keys while value = edge).
