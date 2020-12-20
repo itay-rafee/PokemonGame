@@ -145,8 +145,8 @@ public class Ex2 implements Runnable{
 	 * Otherwise, since no Pokemon is found then the agent will move randomly until
 	 * a relevant Pokemon appears.
 	 * Note! 
-	 *   In advanced stages when the agent runs fast and the side he is running
-	 *   on does not weigh much, the agent cannot "catch" the Pokemon on that side.
+	 *   In advanced stages when the agent runs fast and the edge he is running
+	 *   on does not weigh much, the agent cannot "catch" the Pokemon on that edge.
 	 *   This happens because the number of calls to the server is not frequent enough
 	 *   so that the server does not receive the information that the agent is close
 	 *   to this Pokemon to "catch" it.
