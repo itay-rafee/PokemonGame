@@ -1,0 +1,517 @@
+package api;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+
+public class DWGraph_DS implements directed_weighted_graph{
+    private HashMap<Integer,node_data> _graph; // nodes of this graph
+    private HashMap<Integer, HashMap<Integer, edge_data>> _ni; // edges of this graph
+    private HashMap<Integer, HashSet<Integer>> _niRevers; // edges against the direction
+    private int _edgeSize;
+    private int _mc;
+    
+    /* Copy Constructor */
+    public DWGraph_DS(){
+        _graph = new HashMap<>();
+        _ni = new HashMap<>();
+        _niRevers = new HashMap<>();
+        _edgeSize = 0;
+        _mc = 0;
+    }
+    
+    	/* Copy Constructor (Hard Copy) */
+	/** This constructor is mainly used by copy() method in WGraph_Algo class
+	 * The implement this method is by Hashtables represents nodes, edges and reversed edges.
+	 * In the first loop initialize the Hashtables:
+	 * 		first add each vertex to each Hashtable.
+	 *  then perform iterations on the neighbors of the vertices of the old graph
+	 *  and isomorphically add to the new graph the same list of edges by the edge_data
+	 *  copy constructor.
+	 *  Finally copy the 'MC', 'degree' variables.
+	 *  (MC = The number of actions required to create the graph [g.nodeSize() + g.edgeSize()]).
+	 */
+    public DWGraph_DS(directed_weighted_graph g){
+    	this();
+    	Collection<node_data> gNi = g.getV();
+    	gNi.forEach(node -> {
+        	node_data temp = new NodeData((NodeData) node);
+		_graph.put(temp.getKey(), temp);
+		_ni.put(temp.getKey(), new HashMap<>());
+		_niRevers.put(temp.getKey(), new HashSet<>());
+		});
+    	gNi.forEach(node -> {
+		g.getE(node.getKey()).forEach(e -> {
+			this._ni.get(e.getSrc()).put(e.getDest(), new EdgeData(e));
+			this._niRevers.get(e.getDest()).add(e.getSrc());
+			});
+		});
+		this._mc = g.nodeSize() + g.edgeSize();
+		this._edgeSize = g.edgeSize();
+    }
+    
+        /**
+	 * About getNode(int key) method: this method return the node_data by the
+	 * node_id. the method return null if none as requested.
+	 * @param key - the node_id
+     * @return the node_data by the node_id, null if none.
+	 */
+    @Override
+    public node_data getNode(int key) {
+        return _graph.get(key); // exception is better instead of null if no such node
+    }
+    
+        /**
+	 * About getEdge(int src, int dest) method: 
+	 * this method return the edge_data object.
+	 * the method return -1 if node1 or node2 aren't in the graph.
+	 * the method return -1 if node1==node2 (There is no edge from a Node to itself).
+	 * the method return null in case there is no such edge.
+	 * the implementation of the method is simply by 'get' method in '_graph' Hashmap
+	 * [O(1)].
+	 * @param src
+     * @param dest
+     * @return
+	 */
+    @Override
+    public edge_data getEdge(int src, int dest) {
+    	if (!_graph.containsKey(src)||!_graph.containsKey(dest)||src==dest) return null; // exception is better
+        return _ni.get(src).get(dest); // exception is better instead of null if no edge
+    }
+    
+        /**
+	 * About addNode(node_data n) method:
+	 * this method add a new node to the graph with the given node_data object.
+	 * if n==null or there is already a node with such a key no action performed.
+	 * the method is implemented by adding the node to each Hashmaps in this class.
+	 * if the method is implemented we update the MC (Mode Count).
+	 * @param key
+	 */
+    @Override
+    public void addNode(node_data n) {
+    	// if n==null or this graph contains node with such key -> do nothing.
+    	if (n==null||this._graph.containsKey(n.getKey())) return;
+        int key = n.getKey();
+        _graph.put(key,n);
+        // define new place to the node in the _ni
+        _ni.put(key,new HashMap<>());
+        // define new place to the node in the _ni
+        _niRevers.put(key,new HashSet<>());
+        _mc++;
+    }
+    
+        /**
+	 * About connect(int node1, int node2, double w) method:
+	 * this method connect an edge between node1 and node2, with an edge with weight>=0.
+	 * the method implemented only if node1 or node2 in the graph, node1!=node2 and w>=0. 
+	 * if the edge node1-node2 already exists the method updates the weight of the edge.
+	 * (in case the existing edge weight == w no action performed).
+	 * if there is no such edge the method adds each Node to the list of neighbors
+	 * [Hashmap] of the other Node [O(1)] and updates 'degree' variable.
+	 * if any action performed the method updates 'MC' variable.
+	 */
+    @Override
+    public void connect(int src, int dest, double w) {
+    	if (!_graph.containsKey(src)||!_graph.containsKey(dest)||src==dest||w<0) return; // w==0 valid input? read interface
+    	HashMap<Integer, edge_data> srcNi = _ni.get(src);
+    	edge_data e = new EdgeData(src,dest,w);
+    	if (srcNi.containsKey(dest)) { // edge existe, check the weight
+    		if (srcNi.get(dest).getWeight()==w) return; // same as input >> do nothing (MC stays the same)
+    		srcNi.put(dest,e); // update edge only
+    	} else { // there no such edge
+    		srcNi.put(dest,e);
+    		_niRevers.get(dest).add(src);
+    		_edgeSize++; // a new edge added
+    	}
+        _mc++;
+    }
+    
+        /**
+	 * About getV() method: This method return a pointer (shallow copy) for the
+	 * collection representing all the nodes in the graph. the method is implemented
+	 * by returning '_graph' HashMap values.
+	 * @return Collection<node_data>
+	 */
+    @Override
+    public Collection<node_data> getV() {
+        return _graph.values();
+    }
+    
+        /**
+	 * About getE(int node_id) method: This method returns a collection containing
+	 * all the edges connected to node_id. the method returning null if
+	 * node_id isn't in the graph. The implementation of the method is simply by
+	 * returning the HashMap values of node_id neighbors.
+	 * @return Collection<node_data>
+	 */
+    @Override
+    public Collection<edge_data> getE(int node_id) {
+    	if (!_graph.containsKey(node_id)) return null; // returning null ???
+        return _ni.get(node_id).values();
+    }
+    
+        /**
+	 * About removeNode(int key) method: this method delete the node (with the given
+	 * ID) from the graph - and removes all edges which starts or ends at this node.
+	 * the method return null if the Node isn't in the graph as requested. otherwise
+	 * the method performs an iteration on all the neighbors of the Node [O(n)]
+	 * and removes his connected edges one by one
+	 * while each step updates the MC (Mode Count). 
+	 * afterwards the method removes the Node itself [O(1)] while returning
+	 * pointer to the node and update the MC (Mode Count) once again.
+	 * (another solution on commit no. 736f2897)
+	 * @return the data of the removed node (null if none).
+     * @param key
+	 */
+ 	@Override
+    public node_data removeNode(int key) {
+        // while the node not exists
+        if (!_graph.containsKey(key)) return null;
+        // delete the reversed edges to other nodes marked by _niRevers
+        this._ni.get(key).forEach((k,v) -> {
+        	_niRevers.get(k).remove(key);
+        	// (no need to update mc\edgeSize because _niRevers used for mark only)
+		});
+        //delete the edge from key to others
+        int niSize = _ni.get(key).size();
+        _ni.remove(key);
+        _edgeSize -= niSize; 
+        _mc += niSize;
+        //delete the edge from others to key
+        _edgeSize -= this._niRevers.get(key).size();
+        this._niRevers.get(key).forEach(e -> {
+        	_ni.get(e).remove(key);
+        	_mc++;
+		});
+        _mc++;
+        // remove the node
+        return _graph.remove(key);
+    }
+ 	
+        /**
+	 * About removeEdge(int src, int dest) method: This method delete the edge
+	 * from the graph. the method returns null if src node or dest node aren't in
+	 * the graph. if src node and dest node are neighbors the method removes the edge
+	 * between them by removing each Node from the list of neighbors [Hashmap] of
+	 * the other one [O(1)]. afterwards the method update Degree variable used for
+	 * counting the edges and also update the MC (Mode Count).
+	 * @param src
+     * @param dest
+	 */
+    @Override
+    public edge_data removeEdge(int src, int dest) {
+        //while the edge not exists
+        if (!_graph.containsKey(src) || !_graph.containsKey(dest)
+                || !_ni.get(src).containsKey(dest)) return null;
+        //remove the edge
+        this._edgeSize--;
+        _niRevers.get(dest).remove(src);
+        _mc++;
+        return _ni.get(src).remove(dest);
+    }
+
+        /**
+	 * About nodeSize() method: this method return the number of vertices (nodes) in
+	 * the graph. The implementation of the method is simply by returning '_graph'
+	 * size [O(1)].
+	 * @return
+	 */
+    @Override
+    public int nodeSize() {
+        return _graph.size();
+    }
+
+        /**
+	 * About edgeSize() method: this method return the number of edges
+	 * (directional graph). The implementation of the method is simply by
+	 * returning node neighbors size [Hashmap > O(1)].
+	 * @return
+	 */
+    @Override
+    public int edgeSize() {
+        return _edgeSize;
+    }
+
+        /**
+	 * About getMC() method: this method return the Mode Count - for testing changes
+	 * in the graph. The implementation of the method is simply by returning 'MC'
+	 * variable.
+	 * @return
+	 */
+    @Override
+    public int getMC() {
+        return _mc;
+    }
+    
+        /**
+	 * About equals(Object g) method: this is an auxiliary method mainly for testing
+	 * copy()/save()/load() methods. the method returns false if the input object
+	 * isn't instanceof directed_weighted_graph.
+	 * otherwise calls equals(directed_weighted_graph g) method [below].
+	 * @param g
+	 * @return boolean
+	 */
+    @Override
+	public boolean equals(Object g) {
+    	if (g == this) { return true; } 
+    	if (g instanceof directed_weighted_graph) {
+			return this.equals((directed_weighted_graph) g);
+		}
+		return false;
+	}
+
+        /**
+	 * About equals(directed_weighted_graph g) method:
+	 * this method compares this graph with the input graph.
+	 * if this nodes size != g nodes size or this edges size != g edges size - return false
+	 * (the graphs obviously not equals).
+	 * otherwise the method performs iteration on all g vertices:
+	 * 		for each vertex - the method check if this graph contains vertex with same key
+	 * 		and checks equality using node 'equals' method.
+	 * 		if g vertex neighbors size != this vertex neighbors size - return false
+	 * 		(the graphs obviously not equals).
+	 * 		otherwise, the method perform iteration on the vertex neighbors and checks existence
+	 * 		and equality of each neighbor using edge 'equals' method.
+	 * 	# There is no need to check equation between MC variables because the purpose of the test
+	 * 	# is equality between the graphs and not for the number of operations performed on them.
+	 * @param g
+	 * @return boolean
+	 */
+	public boolean equals(directed_weighted_graph g) {
+		Collection<node_data> gNi = g.getV();
+		if (this.edgeSize() != g.edgeSize() || this._graph.size() != gNi.size())
+			return false;
+		node_data tempOne;
+		edge_data tempTwo;
+		for (node_data node : gNi) {
+			tempOne = this._graph.get(node.getKey());
+			if (tempOne == null || !tempOne.equals(node))
+				return false;
+			Collection<edge_data> nodeE = g.getE(node.getKey());
+			if (nodeE.size() != _ni.get(node.getKey()).size()) {return false;}
+			for (edge_data e : nodeE) {
+				tempTwo = _ni.get(tempOne.getKey()).get(e.getDest());
+				if (tempTwo == null || !e.equals(tempTwo))
+					return false;
+			}
+		}
+		return true;
+	}
+	
+	/*
+	 toString() method 
+	 The implementation of this method is mainly for testing purposes 
+	 The method is overridden so that the interface does not need to be changed 
+	@Override
+	public String toString() { // Print by keys printGraph
+		System.out.println(" ______________________________________________");
+		// System.out.println("| #############################################");
+		System.out.println("| ############### Print By Keys ###############");
+		_graph.forEach((k, v) -> {
+			System.out.print("| NodeKey = " + v.getKey() + 
+					" (GL:"+ v.getLocation() + ") " + ". NeighborsKeys = ");
+			this.getE(k).forEach(node -> {
+				System.out.print(node.getDest()+", ");
+				//System.out.print(" (weight:" + edges.get(v).get(node) + "), ");
+			});
+			System.out.println();
+		});
+		System.out.println("| ############### Print By Node ###############");
+		_graph.forEach((k, v) -> {
+			System.out.print("| NodeKey = " + v + 
+					" (GL:"+ v.getLocation() + ") " + ". NeighborsKeys = ");
+			this.getE(k).forEach(node -> {
+				System.out.print(node+", ");
+				//System.out.print(" (weight:" + edges.get(v).get(node) + "), ");
+			});
+			System.out.println();
+		});
+		System.out.println("|______________________________________________");
+		return "";
+	}
+	*/
+
+	///////////////////////////////////////////////////////////////////////
+	///////////////////////// Edge Location class /////////////////////////
+	///////////////////////////////////////////////////////////////////////
+    public class EdgeLocation implements edge_location{
+        private edge_data _edge;
+        private double _ratio;
+        
+        /* Constructor */
+        public EdgeLocation(){
+        	_edge = new EdgeData(); // EdgeData should be public to implement this
+        	_ratio = 0;
+        }
+        
+        /* Constructor */
+        public EdgeLocation(edge_data e, double r){
+        	_edge = e;
+        	_ratio = r;
+        }
+        
+        /* Copy Constructor */
+		/* This constructor is mainly used by deep copy methods */
+        public EdgeLocation(EdgeLocation el){
+        	_edge = new EdgeData(el.getEdge());
+        	_ratio = el.getRatio();
+        }
+        
+        /**
+    	 * About getEdge() method:
+    	 * this method return the edge_data (object) associated with this EdgeLocation.
+    	 * @return
+    	 */
+        @Override
+        public edge_data getEdge() {
+            return _edge;
+        }
+        
+        /**
+    	 * About getRatio() method:
+    	 * this method returns the ratio variable of this EdgeLocation.
+    	 * @return
+    	 */
+        @Override
+        public double getRatio() {
+            return _ratio;
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////
+    ////////////////////////////// Edge class //////////////////////////////
+    ////////////////////////////////////////////////////////////////////////
+    public class EdgeData implements edge_data{
+        private int _src, _dest, _tag;
+        private double _weight;
+        private String _info;
+        
+        /* Constructor */
+        public EdgeData(){
+            _src = 0;
+            _dest = 0;
+            _weight = 0;
+            _tag = 0;
+            _info = "";
+        }
+        
+        /* Constructor */
+        public EdgeData(int src, int dest, double weight){
+            _src = src;
+            _dest = dest;
+            _weight = weight;
+            _tag = 0;
+            _info = "";
+        }
+        
+        /* Copy Constructor */
+		/* This constructor is mainly used by deep copy methods */
+        public EdgeData(edge_data e){
+        	this();
+        	if (e==null) return;
+        	_src = e.getSrc();
+            _dest = e.getDest();
+            _weight = e.getWeight();
+            _tag = e.getTag();
+            _info = new String(e.getInfo());
+        }
+
+        /**
+    	 * About getSrc() method:
+    	 * this method return the source node key of this edge.
+    	 * @return
+    	 */
+        @Override
+        public int getSrc() {
+            return _src;
+        }
+
+        /**
+    	 * About getDest() method:
+    	 * this method return the destination node key of this edge.
+    	 * @return
+    	 */
+        @Override
+        public int getDest() {
+            return _dest;
+        }
+
+        /**
+    	 * About getWeight() method:
+    	 * this method returns the weight variable which can be used by algorithms.
+    	 * @return
+    	 */
+        @Override
+        public double getWeight() {
+            return _weight;
+        }
+
+        /**
+    	 * About getInfo(String s) method: this method returns the remark (meta
+    	 * data) associated with this edge.
+    	 * @return
+    	 */
+        @Override
+        public String getInfo() {
+            return _info;
+        }
+
+        /**
+    	 * About setInfo(String s) method: this method allows changing the remark (meta
+    	 * data) associated with this edge.
+    	 * @param s
+    	 */
+        @Override
+        public void setInfo(String s) {
+        	// if (s==null) return; // risky on tests if accessible from outside
+            _info = s;
+        }
+
+        /**
+    	 * About getTag() method: this method returns the temporal data (aka distance,
+    	 * color, or state) which can be used by algorithms
+    	 * @return
+    	 */
+        @Override
+        public int getTag() {
+            return _tag;
+        }
+
+        /**
+    	 * About setTag(int t) method: this method allow setting the "tag" value for
+    	 * temporal marking an edge (common practice for marking by algorithms).
+    	 * @param t - the new value of the tag
+    	 */
+        @Override
+        public void setTag(int t) {
+            _tag = t;
+        }
+        
+        /**
+    	 * About equals(Object n) method: the method returns false if the input object
+    	 * isn't instanceof EdgeData. otherwise calls equals(EdgeData e)
+    	 * method [below].
+    	 * @param e
+    	 * @return boolean
+    	 */
+        @Override
+    	public boolean equals(Object e) {
+        	if (e == this) { return true; } 
+        	if (e instanceof EdgeData) {return this.equals((EdgeData) e);} 
+    		return false;
+    	}
+
+        /**
+    	 * About equals(EdgeData e) method: this method compares
+    	 * this edge with the input edge. The implementation of the method is simply by
+    	 * checking equality of each edge variables.
+    	 * @param e
+    	 * @return boolean
+    	 */
+        public boolean equals(EdgeData e) {
+    		if (this._src==e._src&&this._dest==e._dest&&this._tag==e._tag
+    				&&this._weight==e._weight&&this._info.equals(e._info))
+    			return true;
+    		return false;
+    	}
+    }
+}
