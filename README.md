@@ -9,9 +9,19 @@ We will briefly explain the algorithms, the data structures we used and the comp
 * <h3>Note! "images" folder should be 'src' type</h3>
 
 <table align="center">
-<td><h3>Final implementation of the methods: (read more on the Wiki page)</h3>  
-<p align="center"><img src="https://github.com/itay-rafee/Ex2/raw/main/data/images/pokJar.jpg" width="650"/></p>
+<tr><td>
+
+<p align="center"><img src="https://github.com/itay-rafee/Ex2/raw/main/data/images/pokJar.jpg"/></p>
+
 </td>
+
+<td> 
+
+<p align="center"><img src="https://github.com/itay-rafee/Ex2/raw/main/data/images/login.jpg"/></p>
+
+</td></tr>
+</table>
+	
 </table>
 <table align="center">
 <tr><td>
