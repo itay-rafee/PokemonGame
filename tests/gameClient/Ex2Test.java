@@ -3,12 +3,9 @@ package gameClient;
 import Server.Game_Server_Ex2;
 import api.*;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
 import java.util.Collection;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.HashSet;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class Ex2Test {
 
