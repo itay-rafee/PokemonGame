@@ -26,11 +26,11 @@ public class MyFrame extends JFrame {
 	private Graphics dbG;
 
 	private gameClient.util.Range2Range _w2f;
-    Image pika = new ImageIcon(getClass().getResource("/pika.png")).getImage();
-    Image bulbasaur = new ImageIcon(getClass().getResource("/bulbasaur.png")).getImage();
-    Image ash = new ImageIcon(getClass().getResource("/ash.png")).getImage();
-    Image field = new ImageIcon(getClass().getResource("/field.png")).getImage();
-	Image pokedex = new ImageIcon(getClass().getResource("/pokedex.png")).getImage();
+    Image pika = new ImageIcon(getClass().getResource("/images/pika.png")).getImage();
+    Image bulbasaur = new ImageIcon(getClass().getResource("/images/bulbasaur.png")).getImage();
+    Image ash = new ImageIcon(getClass().getResource("/images/ash.png")).getImage();
+    Image field = new ImageIcon(getClass().getResource("/images/field.png")).getImage();
+	Image pokedex = new ImageIcon(getClass().getResource("/images/pokedex.png")).getImage();
 	
 	/* Constructor */
     MyFrame(String a) {
