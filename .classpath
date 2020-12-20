@@ -3,7 +3,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="tests"/>
-	<classpathentry kind="src" path="images"/>
+	<classpathentry kind="src" path="data/images"/>
 	<classpathentry kind="lib" path="libs/annotations-13.0.jar"/>
 	<classpathentry kind="lib" path="libs/Ex2_Server_v0.12.jar"/>
 	<classpathentry kind="lib" path="libs/gson-2.8.6.jar"/>
