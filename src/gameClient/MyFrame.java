@@ -26,11 +26,13 @@ public class MyFrame extends JFrame {
 	private Graphics dbG;
 
 	private gameClient.util.Range2Range _w2f;
-    Image pika = new ImageIcon(getClass().getResource("/pika.png")).getImage();
-    Image bulbasaur = new ImageIcon(getClass().getResource("/bulbasaur.png")).getImage();
-    Image ash = new ImageIcon(getClass().getResource("/ash.png")).getImage();
-    Image field = new ImageIcon(getClass().getResource("/field.png")).getImage();
-	Image pokedex = new ImageIcon(getClass().getResource("/pokedex.png")).getImage();
+
+	Image pika = Toolkit.getDefaultToolkit().getImage("images\\pika.png");
+	Image bulbasaur = Toolkit.getDefaultToolkit().getImage("images\\bulbasaur.png");
+	Image ash = Toolkit.getDefaultToolkit().getImage("images\\ash.png");
+	Image field = Toolkit.getDefaultToolkit().getImage("images\\field.png");
+	Image pokedex = Toolkit.getDefaultToolkit().getImage("images\\pokedex.png");
+
 	
 	/* Constructor */
     MyFrame(String a) {
@@ -157,13 +159,15 @@ public class MyFrame extends JFrame {
 			g.drawImage(pokedex, (2*25)*w/1400, (2*25)*h/74, w/4, h/4+20, this);
         	g.setFont(new Font("default", Font.BOLD, h/50));
     	    g.setColor(Color.WHITE);
-			g.drawString("Grade: "+_ar.getGrade(), (2*25)*w/845, (2*25)*h/64);
-			g.drawString("Moves: "+_ar.getMoves(), (2*25)*w/845, (2*25)*h/62);
-			g.drawString("Time: "+_ar.getTime(), (2*25)*w/845, (2*25)*h/60);
-			g.setColor(Color.BLACK);
-			List<CL_Agent> ags = _ar.getAgents();
-			for (int i = 0; i < ags.size() && i < 3 ; i++) {
-				g.drawString("A"+i+" Val: "+ags.get(i).getValue(), (2*25)*w/265, (2*25)*h/(64-2*i));
+    	    if (_ar.getGame() != null){
+				g.drawString("Grade: "+_ar.getGrade(), (2*25)*w/845, (2*25)*h/64);
+				g.drawString("Moves: "+_ar.getMoves(), (2*25)*w/845, (2*25)*h/62);
+				g.drawString("Time: "+_ar.getTime(), (2*25)*w/845, (2*25)*h/60);
+				g.setColor(Color.BLACK);
+				List<CL_Agent> ags = _ar.getAgents();
+				for (int i = 0; i < ags.size() && i < 3 ; i++) {
+					g.drawString("A"+i+" Val: "+ags.get(i).getValue(), (2*25)*w/265, (2*25)*h/(64-2*i));
+				}
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
