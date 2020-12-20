@@ -32,18 +32,28 @@ public class MyFrame extends JFrame {
     Image field = new ImageIcon(getClass().getResource("/field.png")).getImage();
 	Image pokedex = new ImageIcon(getClass().getResource("/pokedex.png")).getImage();
 	
+	/* Constructor */
     MyFrame(String a) {
 		super(a);
 		//super();
 		/*int _ind = 0;*/
 	}
 	
+    /**
+	 * About update(Arena ar) method:
+	 * The method init this._ar to the input Arena object
+	 * and calls updateFrame() method
+	 */
 	public void update(Arena ar) {
 		this._ar = ar;
 		updateFrame();
 		//repaint();
 	}
 	
+	/**
+	 * About updateFrame() method:
+	 * The method update the frame while it opens
+	 */
 	private void updateFrame() {
 		// this two lines for open the jframe window in the center of the screen
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -56,13 +66,23 @@ public class MyFrame extends JFrame {
 		//Toolkit.getDefaultToolkit().sync();
 	}
 	
-	public void paint(Graphics g){
+	/**
+	 * About paint(Graphics g) method:
+	 * The method paint the frame using double buffer
+	 * @param g
+	 */
+	public void paint(Graphics g) {
 		dbI = createImage(getWidth(),getHeight());
 		dbG = dbI.getGraphics();
 		paintG(dbG);
 		g.drawImage(dbI,0,0,this);
 	}
 	
+	/**
+	 * About paintG(Graphics g) method:
+	 * The method paint the frame by calling draw objects methods
+	 * @param g
+	 */
 	public void paintG(Graphics g) {
 		int w = this.getWidth();
 		int h = this.getHeight();
@@ -73,7 +93,12 @@ public class MyFrame extends JFrame {
 		drawAgants(g);
 		drawInfo(g);
 	}
-
+	
+	/**
+	 * About drawInfo(Graphics g) method:
+	 * The method adjusts the info string according to the resizing of the window
+	 * @param g
+	 */
 	private void drawInfo(Graphics g) {
 		List<String> str = _ar.get_info();
 		String dt = "none";
@@ -82,6 +107,11 @@ public class MyFrame extends JFrame {
 		}
 	}
 	
+	/**
+	 * About aspectRatio(double aspectratio) method:
+	 * The method adjusts the aspect ratio according to the input Graphics
+	 * @param aspectratio
+	 */
 	private void aspectRatio(double aspectratio) {
 		final Frame _frame = this;
 		if (aspectratio>10/7.0) {
@@ -99,6 +129,11 @@ public class MyFrame extends JFrame {
 		}
 	}
 	
+	/**
+	 * About drawGraph(Graphics g) method:
+	 * The method draw the graph according to the input Graphics
+	 * @param g
+	 */
 	private void drawGraph(Graphics g) {
 		double aspectratio = this.getWidth()/this.getHeight();
 		if (aspectratio!=10/7.0) {aspectRatio(aspectratio);}
@@ -135,6 +170,11 @@ public class MyFrame extends JFrame {
 		}
 	}
 	
+	/**
+	 * About drawPokemons(Graphics g) method:
+	 * The method draw the pokemons according to the input Graphics
+	 * @param g
+	 */
 	private void drawPokemons(Graphics g) {
 		List<CL_Pokemon> fs = _ar.getPokemons();
 		if(fs!=null) {
@@ -158,6 +198,11 @@ public class MyFrame extends JFrame {
 		}
 	}
 	
+	/**
+	 * About drawAgants(Graphics g) method:
+	 * The method draw the agants according to the input Graphics
+	 * @param g
+	 */
 	private void drawAgants(Graphics g) {
 		List<CL_Agent> rs = _ar.getAgents();
 	//	Iterator<OOP_Point3D> itr = rs.iterator();
@@ -176,6 +221,13 @@ public class MyFrame extends JFrame {
 		}
 	}
 	
+	/**
+	 * About drawNode(node_data n, int r, Graphics g) method:
+	 * The method draw the nodes according to the input Graphics
+	 * @param n
+	 * @param r
+	 * @param g
+	 */
 	private void drawNode(node_data n, int r, Graphics g) {
 		geo_location pos = n.getLocation();
 		geo_location fp = this._w2f.world2frame(pos);
@@ -186,6 +238,13 @@ public class MyFrame extends JFrame {
 		g.setColor(Color.BLUE);
 		g.drawString(""+n.getKey(), ((int)fp.x())*w/1010, ((int)fp.y()-4*r)*h/1010);
 	}
+	
+	/**
+	 * About drawEdge(edge_data e, Graphics g) method:
+	 * The method draw the edges according to the input Graphics
+	 * @param e
+	 * @param g
+	 */
 	private void drawEdge(edge_data e, Graphics g) {
 		directed_weighted_graph gg = _ar.getGraph();
 		geo_location s = gg.getNode(e.getSrc()).getLocation();

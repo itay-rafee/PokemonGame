@@ -28,7 +28,12 @@ public class Ex2 implements Runnable{
 	private static int id = 0;
 	private static boolean endOfGame = false;
 	private static int[] data = new int[4];
-
+	
+	/**
+	 * In the main function we check if the arguments received by the code line are
+	 * correct in order to run the class.
+	 * Otherwise the login window is activated automatically.
+	 */
 	public static void main(String[] args) {
 		if (args.length >= 2){
 			try{
@@ -36,6 +41,7 @@ public class Ex2 implements Runnable{
 				scenario_num = Integer.parseInt(args[1]);
 				count = 1;
 				game_service game = Game_Server_Ex2.getServer(scenario_num);
+				String g = game.getGraph();
 			}
 			catch (Exception e){
 				System.out.println("Invalid Data!");
@@ -53,37 +59,36 @@ public class Ex2 implements Runnable{
 		}
 	}
 
-	//@Override
+	/**
+	 * In this function we manage the game by the thread with frequent calls
+	 * to the server.
+	 *  The function activates a visual interface for the game display.
+	 */
 	public void run() {
 		game_service game = Game_Server_Ex2.getServer(scenario_num); // you have [0,23] games
 		if (count > 0) game.login(id);
 		String g = game.getGraph();
 		String pks = game.getPokemons();
-		directed_weighted_graph gg = game.getJava_Graph_Not_to_be_used();
+		directed_weighted_graph gg =  json2graph(g); // game.getJava_Graph_Not_to_be_used();
 		init(game);
 		_ar.setGame(game); // added
 		game.startGame();
 		_win.setTitle("Ex2 - OOP: (NONE trivial Solution) "+game.toString());
 		int ind=0;
 		_win.addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				System.exit(0);
-			}
+			public void windowClosing(WindowEvent e) {System.exit(0);}
 		});
 		String lg = game.move();
 		List<CL_Agent> log = Arena.getAgents(lg, gg);
 		_ar.setAgents(log);
 		_ar.initHashMaps();
-
 		while(game.isRunning()) {
 			moveAgants(game, gg);
 			try {
 				if(ind%1==0) {_win.repaint();}
 				Thread.sleep(sleep);
 				ind++;
-			}
-			catch(Exception e) {e.printStackTrace();}
-		}
+			} catch(Exception e) {e.printStackTrace();}}
 		System.out.println(game.toString());
 		_win.setVisible(false);
 		setData();
@@ -139,9 +144,24 @@ public class Ex2 implements Runnable{
 	 * (since the agent is on the first vertex).
 	 * Otherwise, since no Pokemon is found then the agent will move randomly until
 	 * a relevant Pokemon appears.
+	 * Note! 
+	 *   In advanced stages when the agent runs fast and the side he is running
+	 *   on does not weigh much, the agent cannot "catch" the Pokemon on that side.
+	 *   This happens because the number of calls to the server is not frequent enough
+	 *   so that the server does not receive the information that the agent is close
+	 *   to this Pokemon to "catch" it.
+	 *   How to solve this problem?
+	 *   In this method when we run iteratively on the list of Pokemon (as we explained)
+	 *   we check whether the Pokemon that the agent is trying to "catch" is the same
+	 *   Pokemon that the agent tried to catch before.
+	 *   If so, the agent is probably unable to catch the Pokemon because of the problem
+	 *   we described above.
+	 *   Then the algorithm will temporarily accelerate the number of calls to the server
+	 *   until the next call to the nextNode function which will return the number of
+	 *   calls to the server to the default.
 	 * @param g
 	 * @param src
-	 * @return
+	 * @return nextNode
 	 */
 	private static int nextNode(directed_weighted_graph g, int src, CL_Agent ag) {
 		sleep = 100;
