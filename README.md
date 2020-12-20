@@ -20,7 +20,7 @@ We will briefly explain the algorithms, the data structures we used and the comp
 
 <td> 
 
-<p align="center"><img src="https://github.com/itay-rafee/Ex2/raw/main/data/images/login.jpg"/></p>
+<p align="center"><img src="https://github.com/itay-rafee/Ex2/raw/main/data/images/login.png"/></p>
 
 </td></tr>
 </table>
