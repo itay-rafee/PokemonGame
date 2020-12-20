@@ -36,7 +36,7 @@ A > E > F > D
 ```jsonc
 Directed Weighted Graph illustration:
 ```
-<p align="center"><img src="https://github.com/itay-rafee/Ex2/raw/main/images/dwgraph.png"/></p>
+<p align="center"><img src="https://github.com/itay-rafee/Ex2/raw/main/data/images/dwgraph.png"/></p>
 
 <!--
 <p align="center">
