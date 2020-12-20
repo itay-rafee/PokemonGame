@@ -39,9 +39,9 @@ public class Ex2 implements Runnable{
 			try{
 				id = Integer.parseInt(args[0]);
 				scenario_num = Integer.parseInt(args[1]);
-				count = 1;
 				game_service game = Game_Server_Ex2.getServer(scenario_num);
 				String g = game.getGraph();
+				count = 1;
 			}
 			catch (Exception e){
 				System.out.println("Invalid Data!");
