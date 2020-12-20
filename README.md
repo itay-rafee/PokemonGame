@@ -46,7 +46,7 @@ Directed Weighted Graph illustration:
 </td></tr>
 </table>
 
-* <h3>"images" folder should be 'src' type</h3>
+* Note! <h3>"images" folder should be 'src' type</h3>
 
 <h2> DWGraph_DS Class (Represents a graph): </h2>
 
