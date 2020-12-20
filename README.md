@@ -10,7 +10,7 @@ We will briefly explain the algorithms, the data structures we used and the comp
 
 <table align="center">
 <td><h3>Final implementation of the methods: (read more on the Wiki page)</h3>  
-<p align="center"><img src="https://github.com/itay-rafee/Ex2/raw/main/images/pokJar.jpg" width="650"/></p>
+<p align="center"><img src="https://github.com/itay-rafee/Ex2/raw/main/data/images/pokJar.jpg" width="650"/></p>
 </td>
 </table>
 <table align="center">
