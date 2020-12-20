@@ -637,7 +637,7 @@ public class Ex2 implements Runnable{
 	 */
 	private static class OpenFrame extends JPanel {
 		private static final long serialVersionUID = 1L;
-		Image openS = new ImageIcon("images\\go1.jpg").getImage();
+		Image openS = new ImageIcon(getClass().getResource("/images/go1.jpg")).getImage();
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
 			int w = this.getWidth();
