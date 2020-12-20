@@ -46,6 +46,8 @@ Directed Weighted Graph illustration:
 </td></tr>
 </table>
 
+* "images" folder should be 'src' type
+
 <h2> DWGraph_DS Class (Represents a graph): </h2>
 
 In this class we were asked to implement a class representing directed weighted graph
@@ -55,7 +57,7 @@ Therefore, the appropriate data structure fo performing operations on a very lar
 (such as returning a vertex value, checking neighbors between vertices etc.)
 
 ```diff 
-@@ <b>HashMap<Integer,node_data> _graph;</b> @@ (for receiving any vertex by key).
+@@ HashMap<Integer,node_data> _graph; @@ (for receiving any vertex by key).
 ``` 
 ```diff 
 @@ HashMap<Integer, HashMap<Integer, edge_data>> _ni; @@ (for receiving any vertex neighbors as keys while value = edge).
