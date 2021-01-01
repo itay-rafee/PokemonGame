@@ -244,15 +244,11 @@ public class Ex2 implements Runnable{
 		HashSet<Collection<node_data>> allGroup = new HashSet<>();
 		HashSet<node_data> vis = new HashSet<>();
 		directed_weighted_graph g = _ar.getGraph();
+		DWGraph_Algo ga = new DWGraph_Algo(g);
 		Collection<node_data> nodes = g.getV();
 		int ageSum = 0;
 		//here we fine all the graphing component of a graph
-		for (node_data n : nodes) {
-			if (!vis.contains(n)){
-				Collection<node_data> group = findGroup(n.getKey(),vis,g);
-				allGroup.add(group);
-			}
-		}
+		allGroup = ga.connected_component();
 
 		//here we init 1 agent for each graphing component
 		for (Collection<node_data> group : allGroup) {
@@ -303,32 +299,7 @@ public class Ex2 implements Runnable{
 		return pokForGroup;
 	}
 
-	/**
-	 * About findGroup() method:
-	 *   this method find the graphing component
-	 *   of the key.
-	 *   working by two BFS algo:
-	 *     one for the right graph.
-	 *     second for the fliped graph .
-	 *   then all the element that in the two
-	 *   group is the graphing component of key
-	 * @param key - the pokemons that in the group
-	 * @param vis - the node that have a graphing component
-	 * @return group - the graphing component
-	 */
-	public Collection<node_data> findGroup (int key, HashSet<node_data> vis, directed_weighted_graph g){
-		Collection<node_data> group = new ArrayList<>();
-		HashSet<node_data> ni1 = isConnectedBFS(key, g);
-		directed_weighted_graph g2 = flipedGraph(g);
-		HashSet<node_data> ni2 = isConnectedBFS(key, g2);
-		for (node_data n1 : ni1) {
-			if (ni2.contains(n1)) {
-				group.add(n1);
-				vis.add(n1);
-			}
-		}
-		return group;
-	}
+
 
 	/**
 	 * About json2numAgent(game_service game) method:
@@ -410,48 +381,9 @@ public class Ex2 implements Runnable{
 		_win.show();
 	}
 
-	/**
-	 * About isConnectedBFS method:
-	 *   this method we using the same BFS algo as on DWGraph_Algo.
-	 * @param startNode - the game
-	 * @param g - the game
-	 * @return vis - the group of connect
-	 */
-	public HashSet<node_data> isConnectedBFS(int startNode, directed_weighted_graph g) {
-		HashSet<node_data> vis = new HashSet<>();
-		Queue<node_data> q = new LinkedList<node_data>();
-		node_data current = g.getNode(startNode);
-		q.add(current);
-		vis.add(current);
-		while (!q.isEmpty()) {
-			current = q.remove();
-			for (edge_data node : g.getE(current.getKey())) {
-				node_data dest = g.getNode(node.getDest());
-				if (!vis.contains(dest)) {
-					q.add(dest);
-					vis.add(dest);
-				}
-			}
-		}
-		return vis;
-	}
 
-	/**
-	 * About flipedGraph method:
-	 *   this method we using the same flipedGraph algo as on DWGraph_Algo.
-	 * @return temp - the fliped graph
-	 */
-	public directed_weighted_graph flipedGraph(directed_weighted_graph g) {
-		directed_weighted_graph temp = new DWGraph_DS();
-		for (node_data node : g.getV())
-			temp.addNode(node);
-		for (node_data node : g.getV())
-			for (edge_data e : g.getE(node.getKey()))
-				temp.connect(e.getDest(), e.getSrc(), e.getWeight());
-		return temp;
-	}
 
-	class PokemonComparator implements Comparator<CL_Pokemon> {
+	static class PokemonComparator implements Comparator<CL_Pokemon> {
 		@Override
 		public int compare(CL_Pokemon o1, CL_Pokemon o2) {
 			return Double.compare(o2.getValue(), o1.getValue()); // max first

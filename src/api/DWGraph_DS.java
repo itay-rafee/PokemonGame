@@ -84,7 +84,7 @@ public class DWGraph_DS implements directed_weighted_graph{
 	 * if n==null or there is already a node with such a key no action performed.
 	 * the method is implemented by adding the node to each Hashmaps in this class.
 	 * if the method is implemented we update the MC (Mode Count).
-	 * @param key
+	 * @param n
 	 */
     @Override
     public void addNode(node_data n) {
