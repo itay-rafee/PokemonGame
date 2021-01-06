@@ -28,7 +28,7 @@ class Ex2Test {
         DWGraph_Algo ga = new DWGraph_Algo(g);
 
         //here we fine all the graphing component of a graph
-        allGroup = ga.connected_component();
+        allGroup = ga.connected_components();
         assertEquals(allGroup.size(),10);
         for (int i = 10; i < 100; i += 10) {
             g.connect(i-1,i,1);
@@ -36,7 +36,7 @@ class Ex2Test {
         }
 
         //here we fine all the graphing component of a graph
-        allGroup = ga.connected_component();
+        allGroup = ga.connected_components();
 
         assertEquals(allGroup.size(),1);
 

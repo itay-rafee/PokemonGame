@@ -57,7 +57,9 @@ public class DWGraph_DS implements directed_weighted_graph{
 	 */
     @Override
     public node_data getNode(int key) {
-        return _graph.get(key); // exception is better instead of null if no such node
+        if (_graph.containsKey(key))
+        	return _graph.get(key);
+        return null;
     }
     
         /**

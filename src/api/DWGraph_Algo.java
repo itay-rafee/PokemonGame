@@ -176,7 +176,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         return findGroup(id1,new HashSet<>());
     }
 
-    public HashSet<Collection<node_data>> connected_component(){
+    public HashSet<Collection<node_data>> connected_components(){
         HashSet<Collection<node_data>> allGroup = new HashSet<>();
         HashSet<node_data> vis = new HashSet<>();
         Collection<node_data> nodes = _graph.getV();
@@ -353,10 +353,13 @@ public class DWGraph_Algo implements dw_graph_algorithms{
             // add the nodes
             for (int i = 0; i < t; i++) {
                 JSONObject node = nodes.getJSONObject(i);
-                String pos = node.getString("pos");
-                String[] xyz = pos.split(",");
-                double x = Double.parseDouble(xyz[0]), y = Double.parseDouble(xyz[1]), z = Double.parseDouble(xyz[2]);
-                geo_location geo = new GeoLocation(x,y,z);
+                geo_location geo = new GeoLocation();
+                if (node.has("pos")){
+                    String pos = node.getString("pos");
+                    String[] xyz = pos.split(",");
+                    double x = Double.parseDouble(xyz[0]), y = Double.parseDouble(xyz[1]), z = Double.parseDouble(xyz[2]);
+                    geo = new GeoLocation(x,y,z);
+                }
                 int id = (int)node.get("id");
                 node_data n1 = new NodeData(id,geo);
                 g.addNode(n1);

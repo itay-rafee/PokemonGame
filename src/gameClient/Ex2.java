@@ -248,7 +248,7 @@ public class Ex2 implements Runnable{
 		Collection<node_data> nodes = g.getV();
 		int ageSum = 0;
 		//here we fine all the graphing component of a graph
-		allGroup = ga.connected_component();
+		allGroup = ga.connected_components();
 
 		//here we init 1 agent for each graphing component
 		for (Collection<node_data> group : allGroup) {
