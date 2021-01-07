@@ -34,7 +34,7 @@ class RunTimeTest {
         float time1 = (float)totalTime / big_n;
         System.out.println("Time for shortest_path function: " + time1 / 5);
 
-        // connected_components function
+        // connected_component function
         startTime = System.nanoTime();
         for (int i = 0; i < 5; i++) {
             ga.connected_component(arr[i]);
@@ -48,17 +48,34 @@ class RunTimeTest {
     }
 
     @Test
-    void graph_with_100_nodes_test() throws InterruptedException {
-        String file_name = "data/graph_100";
+    void graph_with_10_nodes_test() throws InterruptedException {
+        String file_name = "data/G_10_80_0.json";
         int min = 0;
-        int[] arr = {99, 98, 96, 94, 93};
+        int[] arr = {9, 8, 7, 6, 5};
         check(file_name, min, arr);
 
     }
 
     @Test
+    void graph_with_100_nodes_test() {
+        String file_name = "data/G_100_800_0.json";
+        int min = 0;
+        int[] arr = {99, 98, 97, 96, 95};
+        check(file_name, min, arr);
+
+    }
+
+    @Test
+    void graph_with_1000_nodes_test() {
+        String file_name = "data/G_1000_8000_0.json";
+        int min = 0;
+        int[] arr = {999, 998, 997, 996, 995};
+        check(file_name, min, arr);
+    }
+
+    @Test
     void graph_with_10_thousand_nodes_test() {
-        String file_name = "data/graph_10_thousand";
+        String file_name = "data/G_10000_80000_0.json";
         int min = 0;
         int[] arr = {9999, 9998, 9997, 9996, 9995};
         check(file_name, min, arr);
@@ -66,10 +83,19 @@ class RunTimeTest {
     }
 
     @Test
-    void graph_with_million_nodes_test() {
-        String file_name = "data/graph_million";
+    void graph_with_20_thousand_nodes_test() {
+        String file_name = "data/G_20000_160000_0.json";
         int min = 0;
-        int[] arr = {};
+        int[] arr = {19999, 19998, 19997, 19996, 19995};
+        check(file_name, min, arr);
+
+    }
+
+    @Test
+    void graph_with_30_thousand_nodes_test() {
+        String file_name = "data/G_30000_240000_0.json";
+        int min = 0;
+        int[] arr = {29999, 29998, 29997, 29996, 29995};
         check(file_name, min, arr);
     }
 
