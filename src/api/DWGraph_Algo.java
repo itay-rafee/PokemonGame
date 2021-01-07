@@ -205,6 +205,10 @@ public class DWGraph_Algo implements dw_graph_algorithms{
      */
     public Collection<node_data> findGroup (int key, HashSet<node_data> vis){
         Collection<node_data> group = new ArrayList<>();
+        if (_graph.getE(key).isEmpty()){
+            group.add(_graph.getNode(key));
+            return group;
+        }
         HashSet<node_data> ni1 = isConnectedBFS(key, _graph);
         directed_weighted_graph g2 = flipedGraph();
         HashSet<node_data> ni2 = isConnectedBFS(key, g2);
