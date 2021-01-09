@@ -57,7 +57,9 @@ public class DWGraph_DS implements directed_weighted_graph{
 	 */
     @Override
     public node_data getNode(int key) {
-        return _graph.get(key); // exception is better instead of null if no such node
+        if (_graph.containsKey(key))
+        	return _graph.get(key);
+        return null;
     }
     
         /**
@@ -84,7 +86,7 @@ public class DWGraph_DS implements directed_weighted_graph{
 	 * if n==null or there is already a node with such a key no action performed.
 	 * the method is implemented by adding the node to each Hashmaps in this class.
 	 * if the method is implemented we update the MC (Mode Count).
-	 * @param key
+	 * @param n
 	 */
     @Override
     public void addNode(node_data n) {

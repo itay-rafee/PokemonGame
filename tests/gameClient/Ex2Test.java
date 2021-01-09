@@ -5,6 +5,8 @@ import api.*;
 import org.junit.jupiter.api.Test;
 import java.util.Collection;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.util.HashSet;
 
 class Ex2Test {
@@ -22,33 +24,19 @@ class Ex2Test {
                 g.connect(j+1,j,1);
             }
         }
-        HashSet<Collection<node_data>> allGroup = new HashSet<>();
-        HashSet<node_data> vis = new HashSet<>();
-        Collection<node_data> nodes = g.getV();
+        HashSet<Collection<node_data>> allGroup;
+        DWGraph_Algo ga = new DWGraph_Algo(g);
 
         //here we fine all the graphing component of a graph
-        for (node_data n : nodes) {
-            if (!vis.contains(n)){
-                Collection<node_data> group = e.findGroup(n.getKey(),vis,g);
-                allGroup.add(group);
-            }
-        }
+        allGroup = ga.connected_components();
         assertEquals(allGroup.size(),10);
         for (int i = 10; i < 100; i += 10) {
             g.connect(i-1,i,1);
             g.connect(i,i-1,1);
         }
 
-        allGroup = new HashSet<>();
-        vis = new HashSet<>();
-
         //here we fine all the graphing component of a graph
-        for (node_data n : nodes) {
-            if (!vis.contains(n)){
-                Collection<node_data> group = e.findGroup(n.getKey(),vis,g);
-                allGroup.add(group);
-            }
-        }
+        allGroup = ga.connected_components();
 
         assertEquals(allGroup.size(),1);
 
@@ -71,8 +59,8 @@ class Ex2Test {
 
     @Test
     void isConnectedBFS() {
-        Ex2 e = new Ex2();
         directed_weighted_graph g = new DWGraph_DS();
+        DWGraph_Algo ga = new DWGraph_Algo(g);
         for (int i = 0; i < 10; i++) {
             g.addNode(new NodeData(i));
         }
@@ -80,24 +68,24 @@ class Ex2Test {
             g.connect(i,i+1,1);
         }
         for (int i = 0; i < 10; i++) {
-            HashSet<node_data> c = e.isConnectedBFS(i, g);
+            HashSet<node_data> c = ga.isConnectedBFS(i, g);
             assertEquals(c.size(),10-i);
         }
     }
 
     @Test
     void flipedGraph() {
-        Ex2 e = new Ex2();
         directed_weighted_graph g = new DWGraph_DS();
+        DWGraph_Algo ga = new DWGraph_Algo(g);
         for (int i = 0; i < 10; i++) {
             g.addNode(new NodeData(i));
         }
         for (int i = 0; i < 9; i++) {
             g.connect(i,i+1,1);
         }
-        g = e.flipedGraph(g);
+        g = ga.flipedGraph();
         for (int i = 0; i < 10; i++) {
-            HashSet<node_data> c = e.isConnectedBFS(i, g);
+            HashSet<node_data> c = ga.isConnectedBFS(i, g);
             assertEquals(c.size(),i+1);
         }
     }
@@ -105,10 +93,11 @@ class Ex2Test {
     @Test
     void json2graph() {
         Ex2 e = new Ex2();
-        directed_weighted_graph g = new DWGraph_DS();
+        directed_weighted_graph g;
         for (int i = 0; i < 24; i++) {
             game_service game = Game_Server_Ex2.getServer(i); // you have [0,23] games
             g = e.json2graph(game.getGraph());
+            assertNotNull(g);
         }
     }
 

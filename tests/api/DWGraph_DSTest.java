@@ -14,7 +14,7 @@ class DWGraph_DSTest {
     private static directed_weighted_graph _g0;//empty graph
     private static directed_weighted_graph _g1;//graph with 1 node
     private static directed_weighted_graph _g2;//graph with 1000*50 node
-    private static int _node = 1000*50;
+    private static final int _node = 1000*50;
 
 
     //help function
@@ -25,15 +25,15 @@ class DWGraph_DSTest {
         }
     }
 
-    void buildEdge_2(directed_weighted_graph g, int e){
+    void buildEdge_2(directed_weighted_graph g){
         for (node_data n : g.getV()) {
-            g.connect(n.getKey(),e,1.0);
+            g.connect(n.getKey(), 0,1.0);
         }
     }
 
-    void buildEdge_3(directed_weighted_graph g, int e){
+    void buildEdge_3(directed_weighted_graph g){
         for (node_data n : g.getV()) {
-            g.connect(e,n.getKey(),1.0);
+            g.connect(0,n.getKey(),1.0);
         }
     }
 
@@ -219,8 +219,8 @@ class DWGraph_DSTest {
             _g0.addNode(new NodeData(i,new GeoLocation()));
         }
         mc += t;
-        buildEdge_2(_g0,0);
-        buildEdge_3(_g0,0);
+        buildEdge_2(_g0);
+        buildEdge_3(_g0);
         mc += t-1;
         mc += t-1;
         _g0.removeNode(0);

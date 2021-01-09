@@ -29,8 +29,8 @@ public class DWGraph_Algo implements dw_graph_algorithms{
 	 */
     @Override
     public void init(directed_weighted_graph g) {
-        if (g==null) _graph = new DWGraph_DS(); // better avoid null on testers
-        else _graph = g;
+        // better avoid null on testers
+        _graph = Objects.requireNonNullElseGet(g, DWGraph_DS::new);
     }
     
 	/**
@@ -77,7 +77,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         // the node to start impliment BFS on original and also on the reversed graph (must be the same node).
         int startNode = this._graph.getV().iterator().next().getKey();
         boolean original = isConnectedBFS(startNode); // original graph connected result.
-        if (original==false) return false;
+        if (!original) return false;
         directed_weighted_graph Fliped = flipedGraph(); // for checking if the reversed graph connected.
         this.init(Fliped); // init the reversed graph temporarily (so we can call methods).
         boolean fliped = isConnectedBFS(startNode); // reversed graph connected result.
@@ -112,8 +112,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         Queue<node_data> q = new LinkedList<node_data>();
         if (!this._graph.getV().iterator().hasNext())
             return vis.size() == this._graph.getV().size();
-        node_data first = this._graph.getNode(startNode);
-        node_data current = first;
+        node_data current = this._graph.getNode(startNode);
         q.add(current);
         vis.put(current, true);
         while (!q.isEmpty()) {
@@ -126,6 +125,32 @@ public class DWGraph_Algo implements dw_graph_algorithms{
             }
         }
         return vis.size() == this._graph.getV().size();
+    }
+
+    /**
+     * About isConnectedBFS method:
+     *   this method we using the same BFS algo as on DWGraph_Algo.
+     * @param startNode - the game
+     * @param g - the game
+     * @return vis - the group of connect
+     */
+    public HashSet<node_data> isConnectedBFS(int startNode, directed_weighted_graph g) {
+        HashSet<node_data> vis = new HashSet<>();
+        Queue<node_data> q = new LinkedList<node_data>();
+        node_data current = g.getNode(startNode);
+        q.add(current);
+        vis.add(current);
+        while (!q.isEmpty()) {
+            current = q.remove();
+            for (edge_data node : g.getE(current.getKey())) {
+                node_data dest = g.getNode(node.getDest());
+                if (!vis.contains(dest)) {
+                    q.add(dest);
+                    vis.add(dest);
+                }
+            }
+        }
+        return vis;
     }
     
 	/**
@@ -144,6 +169,56 @@ public class DWGraph_Algo implements dw_graph_algorithms{
             for (edge_data e : this._graph.getE(node.getKey()))
                 temp.connect(e.getDest(), e.getSrc(), e.getWeight());
         return temp;
+    }
+
+    public Collection<node_data> connected_component(int id1){
+        if (_graph.getNode(id1) == null)return null;
+        return findGroup(id1,new HashSet<>());
+    }
+
+    public HashSet<Collection<node_data>> connected_components(){
+        HashSet<Collection<node_data>> allGroup = new HashSet<>();
+        HashSet<node_data> vis = new HashSet<>();
+        Collection<node_data> nodes = _graph.getV();
+        //here we fine all the graphing component of a graph
+        for (node_data n : nodes) {
+            if (!vis.contains(n)){
+                Collection<node_data> group = findGroup(n.getKey(),vis);
+                allGroup.add(group);
+            }
+        }
+        return allGroup;
+    }
+
+    /**
+     * About findGroup() method:
+     *   this method find the graphing component
+     *   of the key.
+     *   working by two BFS algo:
+     *     one for the right graph.
+     *     second for the fliped graph .
+     *   then all the element that in the two
+     *   group is the graphing component of key
+     * @param key - the pokemons that in the group
+     * @param vis - the node that have a graphing component
+     * @return group - the graphing component
+     */
+    public Collection<node_data> findGroup (int key, HashSet<node_data> vis){
+        Collection<node_data> group = new ArrayList<>();
+        if (_graph.getE(key).isEmpty()){
+            group.add(_graph.getNode(key));
+            return group;
+        }
+        HashSet<node_data> ni1 = isConnectedBFS(key, _graph);
+        directed_weighted_graph g2 = flipedGraph();
+        HashSet<node_data> ni2 = isConnectedBFS(key, g2);
+        for (node_data n1 : ni1) {
+            if (ni2.contains(n1)) {
+                group.add(n1);
+                vis.add(n1);
+            }
+        }
+        return group;
     }
 
     /**
@@ -282,10 +357,13 @@ public class DWGraph_Algo implements dw_graph_algorithms{
             // add the nodes
             for (int i = 0; i < t; i++) {
                 JSONObject node = nodes.getJSONObject(i);
-                String pos = node.getString("pos");
-                String[] xyz = pos.split(",");
-                double x = Double.parseDouble(xyz[0]), y = Double.parseDouble(xyz[1]), z = Double.parseDouble(xyz[2]);
-                geo_location geo = new GeoLocation(x,y,z);
+                geo_location geo = new GeoLocation();
+                if (node.has("pos")){
+                    String pos = node.getString("pos");
+                    String[] xyz = pos.split(",");
+                    double x = Double.parseDouble(xyz[0]), y = Double.parseDouble(xyz[1]), z = Double.parseDouble(xyz[2]);
+                    geo = new GeoLocation(x,y,z);
+                }
                 int id = (int)node.get("id");
                 node_data n1 = new NodeData(id,geo);
                 g.addNode(n1);

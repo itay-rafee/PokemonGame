@@ -1,14 +1,9 @@
 package api;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
-import java.util.Iterator;
 import java.util.List;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class DWGraph_AlgoTest {
@@ -93,8 +88,7 @@ class DWGraph_AlgoTest {
 		
 		return g;
     }
-	directed_weighted_graph graph = graph();
-	
+
     @Test
     void init() {
     }
@@ -109,49 +103,49 @@ class DWGraph_AlgoTest {
     	dw_graph_algorithms ga = new DWGraph_Algo();
     	ga.init(g);
     	directed_weighted_graph g2 = new DWGraph_DS(g);
-    	assertEquals(g,g2);
+    	Assertions.assertEquals(g,g2);
     	g2.getEdge(11, 13).setTag(123);
-    	assertNotEquals(g,g2);
+    	Assertions.assertNotEquals(g,g2);
     	g.getEdge(11, 13).setTag(123);
-    	assertEquals(g,g2);
+    	Assertions.assertEquals(g,g2);
     	g2.removeNode(14);
-    	assertNotEquals(g,g2);
+    	Assertions.assertNotEquals(g,g2);
     	g.removeNode(14);
-    	assertEquals(g,g2);
+    	Assertions.assertEquals(g,g2);
     	g.addNode(new NodeData(15, new GeoLocation()));
     	g2.addNode(new NodeData(15, new GeoLocation()));
     	g2.removeEdge(12, 13);
-    	assertNotEquals(g,g2);
+    	Assertions.assertNotEquals(g,g2);
     	g2.connect(12, 13, 0);
-    	assertEquals(g,g2);
+    	Assertions.assertEquals(g,g2);
     	g2.connect(12, 13, 0.5);
-    	assertNotEquals(g,g2);
+    	Assertions.assertNotEquals(g,g2);
     	g2.removeEdge(12, 13);
     	g.removeEdge(12, 13);
-    	assertEquals(g,g2);
+    	Assertions.assertEquals(g,g2);
     }
 
     @Test
     void isConnected() {
     	dw_graph_algorithms ga = new DWGraph_Algo();
-    	assertTrue(ga.isConnected());
+    	Assertions.assertTrue(ga.isConnected());
     	directed_weighted_graph oneNodeGraph = new DWGraph_DS();
     	node_data node = new NodeData();
     	oneNodeGraph.addNode(node);
     	ga.init(oneNodeGraph);
-    	assertTrue(ga.isConnected());
+    	Assertions.assertTrue(ga.isConnected());
     	directed_weighted_graph g = graph();
     	ga.init(g);
-    	assertFalse(ga.isConnected());
+    	Assertions.assertFalse(ga.isConnected());
     	g.removeNode(0);
-    	assertFalse(ga.isConnected());
+    	Assertions.assertFalse(ga.isConnected());
     	g.removeNode(10);
     	g.removeNode(11);
     	g.removeNode(12);
     	g.removeNode(13);
-    	assertFalse(ga.isConnected());
+    	Assertions.assertFalse(ga.isConnected());
     	g.removeNode(14);
-    	assertTrue(ga.isConnected());
+    	Assertions.assertTrue(ga.isConnected());
     }
 
     @Test
@@ -188,55 +182,52 @@ class DWGraph_AlgoTest {
     	directed_weighted_graph g = graph();
     	dw_graph_algorithms ga = new DWGraph_Algo();
     	ga.init(g);
-    	List<node_data> directions = ga.shortestPath(0, 0);
-    	String answer;
+    	List<node_data> directions;
+    	StringBuilder answer;
     	
     	directions = ga.shortestPath(1, 7);
 		System.out.print("The Path from 1 to 7: ");
-		answer = "";
-		for (Iterator<node_data> iterator = directions.iterator(); iterator.hasNext();)
-			answer = answer + " "+iterator.next().getKey()+" >";
+		answer = new StringBuilder();
+		for (node_data direction : directions) answer.append(" ").append(direction.getKey()).append(" >");
 		System.out.print(answer);
-		if (answer.equals(" 1 > 2 > 3 > 7 >")) System.out.print("> Correct Answer!");
+		if (answer.toString().equals(" 1 > 2 > 3 > 7 >")) System.out.print("> Correct Answer!");
 		else System.out.print("> Wrong Answer!");
 		System.out.println();
-		assertEquals(" 1 > 2 > 3 > 7 >", answer);
+		Assertions.assertEquals(" 1 > 2 > 3 > 7 >", answer.toString());
     	
 		directions = ga.shortestPath(1, 10);
 		System.out.print("The Path from 1 to 10 >> ");
 		if (ga.shortestPath(1, 10)==null) System.out.print("> Correct Answer!");
 		else System.out.print("> Wrong Answer! Should be Null!");
 		System.out.println();
-		assertNull(directions);
+		Assertions.assertNull(directions);
 		
 		directions = ga.shortestPath(14, 9);
 		System.out.print("The Path from 14 to 9 >> ");
 		if (ga.shortestPath(14, 9)==null) System.out.print("> Correct Answer!");
 		else System.out.print("> Wrong Answer! Should be Null!");
 		System.out.println();
-		assertNull(directions);
+		Assertions.assertNull(directions);
     	
 		directions = ga.shortestPath(10, 13);
 		System.out.print("The Path from 10 to 13: ");
-		answer = "";
-		for (Iterator<node_data> iterator = directions.iterator(); iterator.hasNext();)
-			answer = answer + " "+iterator.next().getKey()+" >";
+		answer = new StringBuilder();
+		for (node_data direction : directions) answer.append(" ").append(direction.getKey()).append(" >");
 		System.out.print(answer);
-		if (answer.equals(" 10 > 12 > 13 >")) System.out.print("> Correct Answer!");
+		if (answer.toString().equals(" 10 > 12 > 13 >")) System.out.print("> Correct Answer!");
 		else System.out.print("> Wrong Answer!");
 		System.out.println();
-		assertEquals(" 10 > 12 > 13 >", answer);
+		Assertions.assertEquals(" 10 > 12 > 13 >", answer.toString());
     	
 		directions = ga.shortestPath(7, 6);
 		System.out.print("The Path from 7 to 6: ");
-		answer = "";
-		for (Iterator<node_data> iterator = directions.iterator(); iterator.hasNext();)
-			answer = answer + " "+iterator.next().getKey()+" >";
+		answer = new StringBuilder();
+		for (node_data direction : directions) answer.append(" ").append(direction.getKey()).append(" >");
 		System.out.print(answer);
-		if (answer.equals(" 7 > 4 > 5 > 6 >")) System.out.print("> Correct Answer!");
+		if (answer.toString().equals(" 7 > 4 > 5 > 6 >")) System.out.print("> Correct Answer!");
 		else System.out.print("> Wrong Answer!");
 		System.out.println();
-		assertEquals(" 7 > 4 > 5 > 6 >", answer);
+		Assertions.assertEquals(" 7 > 4 > 5 > 6 >", answer.toString());
     }
 
     @Test
@@ -247,16 +238,12 @@ class DWGraph_AlgoTest {
     	ga.save("graph.json");
     	dw_graph_algorithms ga2 = new DWGraph_Algo();
     	ga2.load("graph.json");
-    	//ga.getGraph().toString(); // print graph 1
-    	//ga2.getGraph().toString(); // print graph 2
-    	assertEquals(ga.getGraph(),ga2.getGraph());
+		Assertions.assertEquals(ga.getGraph(),ga2.getGraph());
     	geo_location gl = new GeoLocation(1,2,3);
     	node_data c15 = new NodeData(15, gl);
     	g.addNode(c15);
     	ga.save("graph.json");
     	ga2.load("graph.json");
-    	//ga.getGraph().toString(); // print graph 1
-    	//ga2.getGraph().toString(); // print graph 2
-    	assertEquals(ga.getGraph(),ga2.getGraph());
+		Assertions.assertEquals(ga.getGraph(),ga2.getGraph());
     }
 }
