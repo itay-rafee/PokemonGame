@@ -24,7 +24,9 @@ public class Ex2 implements Runnable{
 	//or in the open frame by init the scenario_num = -1
 	private static int scenario_num = -1;
 	//Object for the open screen
-	private static int count = 0;
+	// count=1 -> run the game with the command line arguments
+	// count=0 -> run the GUI & use the 'inputMode' variable as input indicator (explained below)
+	private static int inputMode = 0;
 	private static int id = 0;
 	private static boolean endOfGame = false;
 	private static int[] data = new int[4];
@@ -35,13 +37,11 @@ public class Ex2 implements Runnable{
 	 * Otherwise the login window is activated automatically.
 	 */
 	public static void main(String[] args) {
-		if (args.length >= 2){
-			try{
+		if (args.length >= 2) {
+			try {
 				id = Integer.parseInt(args[0]);
 				scenario_num = Integer.parseInt(args[1]);
-				game_service game = Game_Server_Ex2.getServer(scenario_num);
-				String g = game.getGraph();
-				count = 1;
+				inputMode = 1;
 			}
 			catch (Exception e){
 				System.out.println("Invalid Data!");
@@ -50,10 +50,9 @@ public class Ex2 implements Runnable{
 			}
 		}
 		Ex2 e = new Ex2();
-		if (count == 0){
+		if (inputMode == 0){
 			e.openFrame();
-		}
-		else {
+		} else {
 			Thread client = new Thread(e);
 			client.start();
 		}
@@ -66,12 +65,11 @@ public class Ex2 implements Runnable{
 	 */
 	public void run() {
 		game_service game = Game_Server_Ex2.getServer(scenario_num); // you have [0,23] games
-		if (count > 0) game.login(id);
+		if (inputMode > 0) game.login(id);
 		String g = game.getGraph();
-		String pks = game.getPokemons();
+		//String pks = game.getPokemons();
 		directed_weighted_graph gg =  json2graph(g); // game.getJava_Graph_Not_to_be_used();
 		init(game);
-		_ar.setGame(game); // added
 		game.startGame();
 		_win.setTitle("Ex2 - OOP: (NONE trivial Solution) "+game.toString());
 		int ind=0;
@@ -83,7 +81,7 @@ public class Ex2 implements Runnable{
 		_ar.setAgents(log);
 		_ar.initHashMaps();
 		while(game.isRunning()) {
-			moveAgants(game, gg);
+			moveAgents(game, gg);
 			try {
 				if(ind%1==0) {_win.repaint();}
 				Thread.sleep(sleep);
@@ -103,7 +101,7 @@ public class Ex2 implements Runnable{
 	 * @param gg
 	 * @param
 	 */
-	private static void moveAgants(game_service game, directed_weighted_graph gg) {
+	private static void moveAgents(game_service game, directed_weighted_graph gg) {
 		String lg = game.move();
 		List<CL_Agent> log = Arena.getAgents(lg, gg);
 		_ar.setAgents(log);
@@ -373,6 +371,7 @@ public class Ex2 implements Runnable{
 		directed_weighted_graph gg = json2graph(game.getGraph());
 		//gg.init(g);
 		_ar = new Arena();
+		_ar.setGame(game);
 		_ar.setGraph(gg);
 		_ar.setPokemons(Arena.json2Pokemons(fs));
 		_win = new MyFrame("test Ex2");
@@ -440,7 +439,7 @@ public class Ex2 implements Runnable{
 	 *   game is over.
 	 */
 	private void setData(){
-		count = 0;
+		inputMode = 0;
 		endOfGame = true;
 		data[0] = id;
 		data[1] = scenario_num;
@@ -500,10 +499,10 @@ public class Ex2 implements Runnable{
 			public void actionPerformed(ActionEvent e){
 				String a = tf.getText();
 				int num;
-				if (count == 0) {
+				if (inputMode == 0) { // first screen (use 'a' as ID input)
 					try {
 						id = Integer.parseInt(a);
-						count = 1;
+						inputMode = 1;
 						tf.setText("Enter level");
 						b.setText("Start");
 						f.requestFocus();
@@ -511,7 +510,7 @@ public class Ex2 implements Runnable{
 						tf.setText("Try again!");
 						f.requestFocus();
 					}
-				} else {
+				} else { // inputMode!=0 (use 'a' as level number input)
 					try {
 						num = Integer.parseInt(a);
 						game_service game = Game_Server_Ex2.getServer(num); // you have [0,23] games
@@ -520,8 +519,8 @@ public class Ex2 implements Runnable{
 						f.setVisible(false);
 						start();
 					} catch (Exception r){
-						count++;
-						if (count > 3) tf.setText("Put a correct number!");
+						inputMode++;
+						if (inputMode > 3) tf.setText("Put a correct number!");
 						else tf.setText("Try again!");
 						f.requestFocus();
 					}

@@ -90,7 +90,7 @@ public class MyFrame extends JFrame {
 		// updateFrame();
 		drawGraph(g);
 		drawPokemons(g);
-		drawAgants(g);
+		drawAgents(g);
 		drawInfo(g);
 	}
 	
@@ -110,17 +110,17 @@ public class MyFrame extends JFrame {
 	/**
 	 * About aspectRatio(double aspectratio) method:
 	 * The method adjusts the aspect ratio according to the input Graphics
-	 * @param aspectratio
+	 * @param aspectRatio
 	 */
-	private void aspectRatio(double aspectratio) {
+	private void aspectRatio(double aspectRatio) {
 		final Frame _frame = this;
-		if (aspectratio>10/7.0) {
+		if (aspectRatio>10/7.0) {
 			SwingUtilities.invokeLater(new Runnable(){
 			    public void run() {
 			      _frame.setSize(_frame.getHeight()*10/7, _frame.getHeight());
 			    }
 			  });
-		} else if (aspectratio<10/7.0) {
+		} else if (aspectRatio<10/7.0) {
 			SwingUtilities.invokeLater(new Runnable(){
 			    public void run() {
 			      _frame.setSize(_frame.getWidth(), _frame.getWidth()*7/10);
@@ -162,7 +162,8 @@ public class MyFrame extends JFrame {
 			g.drawString("Time: "+_ar.getTime(), (2*25)*w/845, (2*25)*h/60);
 			g.setColor(Color.BLACK);
 			List<CL_Agent> ags = _ar.getAgents();
-			for (int i = 0; i < ags.size() && i < 3 ; i++) {
+			// print only if ags!=null (don't print the agents' details before the server completely loads)
+			for (int i = 0; ags!=null && i < ags.size() && i < 3 ; i++) {
 				g.drawString("A"+i+" Val: "+ags.get(i).getValue(), (2*25)*w/265, (2*25)*h/(64-2*i));
 			}
 		} catch (JSONException e) {
@@ -172,7 +173,7 @@ public class MyFrame extends JFrame {
 	
 	/**
 	 * About drawPokemons(Graphics g) method:
-	 * The method draw the pokemons according to the input Graphics
+	 * The method draw the Pokemon's according to the input Graphics
 	 * @param g
 	 */
 	private void drawPokemons(Graphics g) {
@@ -199,11 +200,11 @@ public class MyFrame extends JFrame {
 	}
 	
 	/**
-	 * About drawAgants(Graphics g) method:
-	 * The method draw the agants according to the input Graphics
+	 * About drawAgents(Graphics g) method:
+	 * The method draw the agents according to the input Graphics
 	 * @param g
 	 */
-	private void drawAgants(Graphics g) {
+	private void drawAgents(Graphics g) {
 		List<CL_Agent> rs = _ar.getAgents();
 	//	Iterator<OOP_Point3D> itr = rs.iterator();
 		g.setColor(Color.red);

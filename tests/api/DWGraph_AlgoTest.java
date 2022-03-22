@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 class DWGraph_AlgoTest {
 	/* Most tests are performed by the following graph */
-	public directed_weighted_graph graph() {
+	private directed_weighted_graph graph() {
 		directed_weighted_graph g = new DWGraph_DS();
 		node_data c0 = new NodeData(0, new GeoLocation());
     	node_data c1 = new NodeData(1, new GeoLocation());

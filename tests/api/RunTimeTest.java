@@ -22,8 +22,9 @@ class RunTimeTest {
         ga.connected_components();
         long endTime   = System.nanoTime();
         long totalTime = endTime - startTime;
-        System.out.println("Time for connected_components function: " + (double)totalTime / big_n);
-
+        //System.out.println("Time for connected_components function: " + (double)totalTime / big_n);
+        System.out.printf("Time for connected_components function: %f\n", (double)totalTime / big_n);
+        
         // shortestPath() function
         startTime = System.nanoTime();
         for (int i = 0; i < 5; i++) {
@@ -32,7 +33,8 @@ class RunTimeTest {
         endTime   = System.nanoTime();
         totalTime = endTime - startTime;
         float time1 = (float)totalTime / big_n;
-        System.out.println("Time for shortest_path function: " + time1 / 5);
+        //System.out.println("Time for shortest_path function: " + time1 / 5);
+        System.out.printf("Time for shortest_path function: %f\n", time1 / 5);
 
         // connected_component function
         startTime = System.nanoTime();
@@ -42,7 +44,8 @@ class RunTimeTest {
         endTime   = System.nanoTime();
         totalTime = endTime - startTime;
         time1 = (float)totalTime / big_n;
-        System.out.println("Time for connected_component function: " + time1 / 5);
+        //System.out.println("Time for connected_component function: " + time1 / 5);
+        System.out.printf("Time for connected_component function: %f\n", time1 / 5);
         System.out.println("\n\n");
         return true;
     }
