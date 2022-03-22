@@ -20,10 +20,10 @@ public class Ex2 implements Runnable{
 	private static MyFrame _win;
 	private static Arena _ar;
 	private static long sleep = 100;
-	//can select the level of the game here
-	//or in the open frame by init the scenario_num = -1
+	// Can select the level of the game here
+	// or in the open frame by init the scenario_num = -1
 	private static int scenario_num = -1;
-	//Object for the open screen
+	// Object for the open screen
 	// count=1 -> run the game with the command line arguments
 	// count=0 -> run the GUI & use the 'inputMode' variable as input indicator (explained below)
 	private static int inputMode = 0;
@@ -42,8 +42,7 @@ public class Ex2 implements Runnable{
 				id = Integer.parseInt(args[0]);
 				scenario_num = Integer.parseInt(args[1]);
 				inputMode = 1;
-			}
-			catch (Exception e){
+			} catch (Exception e){
 				System.out.println("Invalid Data!");
 				Ex2 ex2 = new Ex2();
 				ex2.openFrame();
@@ -66,57 +65,52 @@ public class Ex2 implements Runnable{
 	public void run() {
 		game_service game = Game_Server_Ex2.getServer(scenario_num); // you have [0,23] games
 		if (inputMode > 0) game.login(id);
-		String g = game.getGraph();
-		//String pks = game.getPokemons();
-		directed_weighted_graph gg =  json2graph(g); // game.getJava_Graph_Not_to_be_used();
 		init(game);
 		game.startGame();
-		_win.setTitle("Ex2 - OOP: (NONE trivial Solution) "+game.toString());
-		int ind=0;
+		_win.setTitle("Ex2 - OOP: (NONE trivial Solution) " + game);
 		_win.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {System.exit(0);}
 		});
-		String lg = game.move();
-		List<CL_Agent> log = Arena.getAgents(lg, gg);
+		String agents_status = game.move();
+		List<CL_Agent> log = Arena.getAgents(agents_status, _ar.getGraph());
 		_ar.setAgents(log);
 		_ar.initHashMaps();
 		while(game.isRunning()) {
-			moveAgents(game, gg);
+			moveAgents(game, _ar.getGraph());
 			try {
-				if(ind%1==0) {_win.repaint();}
+				_win.repaint();
 				Thread.sleep(sleep);
-				ind++;
 			} catch(Exception e) {e.printStackTrace();}}
-		System.out.println(game.toString());
+		System.out.println(game);
 		_win.setVisible(false);
-		setData();
+		setResultData();
+		/* Open the Frame again in order to allow the player to play again */
 		openFrame();
-		//System.exit(0);
 	}
 
 	/**
 	 * Moves each of the agents along the edge,
 	 * in case the agent is on a node the next destination (next edge) is chosen (randomly).
 	 * @param game
-	 * @param gg
+	 * @param graph
 	 * @param
 	 */
-	private static void moveAgents(game_service game, directed_weighted_graph gg) {
-		String lg = game.move();
-		List<CL_Agent> log = Arena.getAgents(lg, gg);
-		_ar.setAgents(log);
-		String fs =  game.getPokemons();
-		List<CL_Pokemon> ffs = Arena.json2Pokemons(fs);
-		_ar.setPokemons(ffs);
-		for(int i=0;i<log.size();i++) {
-			CL_Agent ag = log.get(i);
-			int id = ag.getID();
-			int dest = ag.getNextNode();
-			int src = ag.getSrcNode();
-			double v = ag.getValue();
-			if(dest==-1) {
-				dest = nextNode(gg, src, ag);
-				game.chooseNextEdge(ag.getID(), dest);
+	private static void moveAgents(game_service game, directed_weighted_graph graph) {
+		String agents_status = game.move();
+		List<CL_Agent> agents = Arena.getAgents(agents_status, graph);
+		_ar.setAgents(agents);
+		String pokemons_status = game.getPokemons();
+		List<CL_Pokemon> pokemons = Arena.json2Pokemons(pokemons_status);
+		_ar.setPokemons(pokemons);
+		for (int i = 0; i < agents.size(); i++) {
+			CL_Agent agent = agents.get(i);
+			int id = agent.getID();
+			int dest = agent.getNextNode();
+			int src = agent.getSrcNode();
+			double v = agent.getValue();
+			if (dest == -1) {
+				dest = nextNode(graph, src, agent);
+				game.chooseNextEdge(agent.getID(), dest);
 				System.out.println("Agent: "+id+", val: "+v+"   turned to node: "+dest);
 			}
 		}
@@ -157,42 +151,42 @@ public class Ex2 implements Runnable{
 	 *   Then the algorithm will temporarily accelerate the number of calls to the server
 	 *   until the next call to the nextNode function which will return the number of
 	 *   calls to the server to the default.
-	 * @param g
+	 * @param graph
 	 * @param src
 	 * @return nextNode
 	 */
-	private static int nextNode(directed_weighted_graph g, int src, CL_Agent ag) {
+	private static int nextNode(directed_weighted_graph graph, int src, CL_Agent agent) {
 		sleep = 100;
-		dw_graph_algorithms hh = new DWGraph_Algo();
-		hh.init(g);
+		dw_graph_algorithms graph_algo = new DWGraph_Algo();
+		graph_algo.init(graph);
 		double min = Integer.MAX_VALUE;
-		double temp = -1;
+		double temp;
 		int destNode = -1;
 		CL_Pokemon currPok;
 		for (int i = 0; i < _ar.getPokemons().size(); i++) {
 			currPok = _ar.getPokemons().get(i);
 			Arena.updateEdge(currPok, _ar.getGraph());
 			if (currPok.get_edge().getSrc()==src) {
-				if (_ar.isPreviousPok(currPok, ag)) {
+				if (_ar.isPreviousPok(currPok, agent)) {
 					sleep = 10;
 					System.out.println("Turbo Mode!");
-				} else _ar.setAsPreviousPok(currPok, ag);
+				} else _ar.setAsPreviousPok(currPok, agent);
 				return currPok.get_edge().getDest();
 			} else {
-				temp = hh.shortestPathDist(src, currPok.get_edge().getSrc());
-				if (temp<min&&temp!=-1&&_ar.isAvailableFruit(currPok, ag)) {
+				temp = graph_algo.shortestPathDist(src, currPok.get_edge().getSrc());
+				if (temp<min&&temp!=-1&&_ar.isAvailableFruit(currPok, agent)) {
 					min = temp;
 					destNode = currPok.get_edge().getSrc();
-					_ar.setFruit(currPok, ag);
+					_ar.setFruit(currPok, agent);
 				}
 			}
 		}
-		int nextNode = -1;
+		int nextNode;
 		if (destNode!=-1) {
-			List<node_data> directions = hh.shortestPath(src, destNode);
+			List<node_data> directions = graph_algo.shortestPath(src, destNode);
 			nextNode = directions.get(1).getKey();
 		} else {
-			Collection<edge_data> ee = g.getE(src);
+			Collection<edge_data> ee = graph.getE(src);
 			Iterator<edge_data> itr = ee.iterator();
 			int s = ee.size();
 			int r = (int)(Math.random()*s);
@@ -203,8 +197,6 @@ public class Ex2 implements Runnable{
 		return nextNode;
 	}
 
-
-	////////// init function /////////
 	/**
 	 * About init(game_service game) method: this method init the agents
 	 *   by consideration if the graph is connected using the method initAgentNearPok()
@@ -212,16 +204,15 @@ public class Ex2 implements Runnable{
 	 * @param game - the game
 	 */
 	public void init(game_service game) {
-		initFrame(game);
+		initFrameAndArea(game);
 		directed_weighted_graph g = _ar.getGraph();
 		dw_graph_algorithms ga = new DWGraph_Algo(g);
 		int agentsNum = json2numAgent(game);
 		if (ga.isConnected()){
-			//while the graph is connected
+			// While the graph is connected
 			initAgentNearPok(game,_ar.getPokemons(),agentsNum,g.getV());
-		}
-		else{
-			//while the graph is disconnected
+		} else {
+			// While the graph is disconnected
 			initAgentDisconnectedGraph(game,_ar.getPokemons(),agentsNum);
 		}
 	}
@@ -245,10 +236,10 @@ public class Ex2 implements Runnable{
 		DWGraph_Algo ga = new DWGraph_Algo(g);
 		Collection<node_data> nodes = g.getV();
 		int ageSum = 0;
-		//here we fine all the graphing component of a graph
+		// Here we find all the graphing component of a graph
 		allGroup = ga.connected_components();
 
-		//here we init 1 agent for each graphing component
+		// Here we init the rest of the agents by equals
 		for (Collection<node_data> group : allGroup) {
 			List<CL_Pokemon> pokInGroup = findPokInGroup(pokemonS,group);
 			if (agentsNum > 0){
@@ -258,7 +249,7 @@ public class Ex2 implements Runnable{
 			}
 		}
 
-		//here we init the rest of the agents by equals
+		// Here we init the rest of the agents by equals
 		for (Collection<node_data> group : allGroup) {
 			List<CL_Pokemon> pokInGroup = findPokInGroup(pokemonS,group);
 			int agentForGroup = agentsNum*(group.size()/g.nodeSize());
@@ -268,7 +259,7 @@ public class Ex2 implements Runnable{
 			}
 		}
 
-		//if there is more agents
+		// If there is more agents
 		Iterator<node_data> n = nodes.iterator();
 		while (ageSum < agentsNum){
 			game.addAgent(n.next().getKey());
@@ -296,8 +287,6 @@ public class Ex2 implements Runnable{
 		}
 		return pokForGroup;
 	}
-
-
 
 	/**
 	 * About json2numAgent(game_service game) method:
@@ -363,7 +352,7 @@ public class Ex2 implements Runnable{
 	 * @param game - the game
 	 */
 	@SuppressWarnings("deprecation")
-	public void initFrame(game_service game) {
+	public void initFrameAndArea(game_service game) {
 		String info = game.toString();
 		System.out.println(info);
 		System.out.println(game.getPokemons());
@@ -432,11 +421,11 @@ public class Ex2 implements Runnable{
 	 * About setData method:
 	 *   this method we using to set the data of
 	 *   the id, scenario_num, grade and moves.
-	 *   this is the resulte of the game.
+	 *   this is the results of the game.
 	 *   used to show it on the open screen after the
 	 *   game is over.
 	 */
-	private void setData(){
+	private void setResultData(){
 		inputMode = 0;
 		endOfGame = true;
 		data[0] = id;
