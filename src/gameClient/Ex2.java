@@ -380,8 +380,6 @@ public class Ex2 implements Runnable{
 		_win.show();
 	}
 
-
-
 	static class PokemonComparator implements Comparator<CL_Pokemon> {
 		@Override
 		public int compare(CL_Pokemon o1, CL_Pokemon o2) {

@@ -66,7 +66,7 @@ public class Arena {
 	/**
 	 * About setGraph(directed_weighted_graph g) method:
 	 * The method sets the graph to the input graph.
-	 * @param f
+	 * @param g
 	 */
 	public void setGraph(directed_weighted_graph g) {this._gg =g;}
 	//init();}

@@ -1,7 +1,8 @@
-package gameClient;
+package api.gameClient;
 
 import Server.Game_Server_Ex2;
 import api.*;
+import gameClient.Ex2;
 import org.junit.jupiter.api.Test;
 import java.util.Collection;
 import static org.junit.jupiter.api.Assertions.assertEquals;
