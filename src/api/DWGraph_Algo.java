@@ -108,7 +108,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
 	 * from startNode node to each.
 	 * @return boolean
 	 */
-    public boolean isConnectedBFS(int startNode) {
+    private boolean isConnectedBFS(int startNode) {
         HashMap<node_data, Boolean> vis = new HashMap<>();
         Queue<node_data> q = new LinkedList<node_data>();
         if (!this._graph.getV().iterator().hasNext())
@@ -204,7 +204,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
      * @param vis - the node that have a graphing component
      * @return group - the graphing component
      */
-    public Collection<node_data> findGroup (int key, HashSet<node_data> vis){
+    private Collection<node_data> findGroup (int key, HashSet<node_data> vis){
         Collection<node_data> group = new ArrayList<>();
         if (_graph.getE(key).isEmpty()){
             group.add(_graph.getNode(key));

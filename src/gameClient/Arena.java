@@ -29,8 +29,6 @@ public class Arena {
 	private List<CL_Pokemon> _pokemons;
 	private List<String> _info;
 	private game_service game;
-	/*private static Point3D MIN = new Point3D(0, 100,0);
-	private static Point3D MAX = new Point3D(0, 100,0);*/
 	private static HashMap<Integer, Point3D> lastPos = new HashMap<>();
 	private static HashMap<Integer, CL_Pokemon> fruits = new HashMap<>();
 
@@ -38,12 +36,6 @@ public class Arena {
 	public Arena() {;
 		_info = new ArrayList<String>();
 	}
-	
-	/*private Arena(directed_weighted_graph g, List<CL_Agent> r, List<CL_Pokemon> p) {
-		_gg = g;
-		this.setAgents(r);
-		this.setPokemons(p);
-	}*/
 	
 	/**
 	 * About setPokemons(List<CL_Pokemon> f) method:
@@ -69,24 +61,6 @@ public class Arena {
 	 * @param g
 	 */
 	public void setGraph(directed_weighted_graph g) {this._gg =g;}
-	//init();}
-	
-	/*private void init( ) {
-		MIN=null; MAX=null;
-		double x0=0,x1=0,y0=0,y1=0;
-		Iterator<node_data> iter = _gg.getV().iterator();
-		while(iter.hasNext()) {
-			geo_location c = iter.next().getLocation();
-			if(MIN==null) {x0 = c.x(); y0=c.y(); x1=x0;y1=y0;MIN = new Point3D(x0,y0);}
-			if(c.x() < x0) {x0=c.x();}
-			if(c.y() < y0) {y0=c.y();}
-			if(c.x() > x1) {x1=c.x();}
-			if(c.y() > y1) {y1=c.y();}
-		}
-		double dx = x1-x0, dy = y1-y0;
-		MIN = new Point3D(x0-dx/10,y0-dy/10);
-		MAX = new Point3D(x1+dx/10,y1+dy/10);
-	}*/
 	
 	/**
 	 * About getAgents() method:
