@@ -102,8 +102,7 @@ public class Ex2 implements Runnable{
 		String pokemons_status = game.getPokemons();
 		List<CL_Pokemon> pokemons = Arena.json2Pokemons(pokemons_status);
 		_ar.setPokemons(pokemons);
-		for (int i = 0; i < agents.size(); i++) {
-			CL_Agent agent = agents.get(i);
+		for (CL_Agent agent : agents) {
 			int id = agent.getID();
 			int dest = agent.getNextNode();
 			int src = agent.getSrcNode();
@@ -111,7 +110,7 @@ public class Ex2 implements Runnable{
 			if (dest == -1) {
 				dest = nextNode(graph, src, agent);
 				game.chooseNextEdge(agent.getID(), dest);
-				System.out.println("Agent: "+id+", val: "+v+"   turned to node: "+dest);
+				System.out.println("Agent: " + id + ", val: " + v + "   turned to node: " + dest);
 			}
 		}
 	}

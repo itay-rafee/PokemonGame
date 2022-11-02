@@ -11,6 +11,7 @@ import org.json.JSONException;
 import java.awt.*;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * This class represents a very simple GUI class to present a
@@ -26,11 +27,11 @@ public class MyFrame extends JFrame {
 	private Graphics dbG;
 
 	private gameClient.util.Range2Range _w2f;
-    Image pika = new ImageIcon(getClass().getResource("/pika.png")).getImage();
-    Image bulbasaur = new ImageIcon(getClass().getResource("/bulbasaur.png")).getImage();
-    Image ash = new ImageIcon(getClass().getResource("/ash.png")).getImage();
-    Image field = new ImageIcon(getClass().getResource("/field.png")).getImage();
-	Image pokedex = new ImageIcon(getClass().getResource("/pokedex.png")).getImage();
+    Image pika = new ImageIcon(Objects.requireNonNull(getClass().getResource("/pika.png"))).getImage();
+    Image bulbasaur = new ImageIcon(Objects.requireNonNull(getClass().getResource("/bulbasaur.png"))).getImage();
+    Image ash = new ImageIcon(Objects.requireNonNull(getClass().getResource("/ash.png"))).getImage();
+    Image field = new ImageIcon(Objects.requireNonNull(getClass().getResource("/field.png"))).getImage();
+	Image pokedex = new ImageIcon(Objects.requireNonNull(getClass().getResource("/pokedex.png"))).getImage();
 	
 	/* Constructor */
     MyFrame(String a) {
