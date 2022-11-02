@@ -1,6 +1,5 @@
 package api;
 
-import kotlin.Pair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -54,22 +53,22 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         return new DWGraph_DS(this._graph);
     }
 	/**
-	 * About isConnected() method:
-	 * this method returns true if there is a valid path from EVERY node
-	 * to each (strongly connected) by Kosaraju algorithm (using BFS).
-	 * The directed graph will be considered connected if the original graph
-	 * is connected and also if after reversing the graph it still connected!
-	 * (reversing the graph by rotatating the edges in the opposite direction)
-	 * Source: https://www.geeksforgeeks.org/check-given-directed-graph-strongly-
-	 * connected-set-2-kosaraju-using-bfs/
-	 * if the graph is empty the function returns true.
-	 * Otherwise the function selects a random vertex from which it checks whether
-	 * the graph is connected using isConnectedBFS(int startNode) method [below].
-	 * if true - the method calls flipedGraph() method [below] and check
-	 * if the reversed graph is also connected from the same vertex.
-	 * If indeed the 2 conditions are true then the graph is strongly connected.
-	 * @return boolean
-	 */
+     * About isConnected() method:
+     * this method returns true if there is a valid path from EVERY node
+     * to each (strongly connected) by Kosaraju algorithm (using BFS).
+     * The directed graph will be considered connected if the original graph
+     * is connected and also if after reversing the graph it still connected!
+     * (reversing the graph by rotatating the edges in the opposite direction)
+     * Source: <a href="https://www.geeksforgeeks.org/check-given-directed-graph-strongly-">...</a>
+     * connected-set-2-kosaraju-using-bfs/
+     * if the graph is empty the function returns true.
+     * Otherwise the function selects a random vertex from which it checks whether
+     * the graph is connected using isConnectedBFS(int startNode) method [below].
+     * if true - the method calls flipedGraph() method [below] and check
+     * if the reversed graph is also connected from the same vertex.
+     * If indeed the 2 conditions are true then the graph is strongly connected.
+     * @return boolean
+     */
     @Override
     public boolean isConnected() {
         directed_weighted_graph Original = _graph; // point to original graph to init it again after all.
@@ -117,7 +116,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         q.add(current);
         vis.put(current, true);
         while (!q.isEmpty()) {
-            current = (node_data) q.remove();
+            current = q.remove();
             for (edge_data node : this._graph.getE(current.getKey())) {
                 if (!vis.containsKey(_graph.getNode(node.getDest()))) {
                     q.add(_graph.getNode(node.getDest()));
@@ -137,7 +136,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
      */
     public HashSet<node_data> isConnectedBFS(int startNode, directed_weighted_graph g) {
         HashSet<node_data> vis = new HashSet<>();
-        Queue<node_data> q = new LinkedList<node_data>();
+        Queue<node_data> q = new LinkedList<>();
         node_data current = g.getNode(startNode);
         q.add(current);
         vis.add(current);
@@ -240,8 +239,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         //used in shortestPath()
         HashMap<node_data,node_data> thePath = new HashMap<>();
         //call the function that return the weight
-        double w = dijkstra(src,dest,thePath);
-        return w;
+        return dijkstra(src,dest,thePath);
     }
 
     /**
