@@ -1,5 +1,5 @@
 
-# EX2
+# Pokemon Game
 Object Oriented Course Assignment - Creating and Implementing Directed Weighted Graph Theory.
 
 
