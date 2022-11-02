@@ -17,7 +17,7 @@ public class CL_Agent {
 		private double _speed;
 		private edge_data _curr_edge;
 		private node_data _curr_node;
-		private directed_weighted_graph _gg;
+		private final directed_weighted_graph _gg;
 		private CL_Pokemon _curr_fruit;
 		private long _sg_dt;
 		private double _value;
@@ -35,7 +35,7 @@ public class CL_Agent {
 		/**
 		 * About update(String json) method:
 		 * The method update the variable of this agent from the input json file
-		 * @param json
+		 * @param json - new agent
 		 */
 		public void update(String json) {
 			JSONObject line;
@@ -55,7 +55,9 @@ public class CL_Agent {
 					this._pos = pp;
 					this.setCurrNode(src);
 					this.setSpeed(speed);
-					this.setNextNode(dest);
+					if (!this.setNextNode(dest)) {
+						System.out.println("There is not next node!");
+					}
 					this.setMoney(value);
 				}
 			}
@@ -79,16 +81,15 @@ public class CL_Agent {
 		 */
 		public String toJSON() {
 			int d = this.getNextNode();
-			String ans = "{\"Agent\":{"
-					+ "\"id\":"+this._id+","
-					+ "\"value\":"+this._value+","
-					+ "\"src\":"+this._curr_node.getKey()+","
+			return "{\"Agent\":{"
+					+ "\"id\":"+ this._id+","
+					+ "\"value\":"+ this._value+","
+					+ "\"src\":"+ this._curr_node.getKey()+","
 					+ "\"dest\":"+d+","
-					+ "\"speed\":"+this.getSpeed()+","
+					+ "\"speed\":"+ this.getSpeed()+","
 					+ "\"pos\":\""+_pos.toString()+"\""
 					+ "}"
 					+ "}";
-			return ans;	
 		}
 		
 		/**
@@ -104,14 +105,9 @@ public class CL_Agent {
 		 * @return ans
 		 */
 		public boolean setNextNode(int dest) {
-			boolean ans = false;
 			int src = this._curr_node.getKey();
 			this._curr_edge = _gg.getEdge(src, dest);
-			if(_curr_edge!=null) {
-				ans=true;
-			}
-			else {_curr_edge = null;}
-			return ans;
+			return _curr_edge!=null;
 		}
 		
 		/**
@@ -139,15 +135,7 @@ public class CL_Agent {
 		public String toString() {
 			return toJSON();
 		}
-		
-		/**
-		 * About toString() method:
-		 * The method returns the info of the agent
-		 */
-		public String toString1() {
-			String ans=""+this.getID()+","+_pos+", "+isMoving()+","+this.getValue();	
-			return ans;
-		}
+
 		
 		/**
 		 * About getID() method:
@@ -186,12 +174,8 @@ public class CL_Agent {
 		 * @return ans
 		 */
 		public int getNextNode() {
-			int ans = -2;
-			if(this._curr_edge==null) {
-				ans = -1;}
-			else {
-				ans = this._curr_edge.getDest();
-			}
+			int ans = -1;
+			if(this._curr_edge!=null) {ans = this._curr_edge.getDest();}
 			return ans;
 		}
 		
