@@ -5,16 +5,16 @@ import java.util.HashSet;
 
 public class DWGraph_DS implements directed_weighted_graph{
     private HashMap<Integer,node_data> _graph; // nodes of this graph
-    private HashMap<Integer, HashMap<Integer, edge_data>> _ni; // edges of this graph
-    private HashMap<Integer, HashSet<Integer>> _niRevers; // edges against the direction
+    private HashMap<Integer, HashMap<Integer, edge_data>> _edges; // edges of this graph
+    private HashMap<Integer, HashSet<Integer>> _reversEdges; // edges against the direction
     private int _edgeSize;
     private int _mc;
     
     /* Copy Constructor */
     public DWGraph_DS(){
         _graph = new HashMap<>();
-        _ni = new HashMap<>();
-        _niRevers = new HashMap<>();
+        _edges = new HashMap<>();
+        _reversEdges = new HashMap<>();
         _edgeSize = 0;
         _mc = 0;
     }
@@ -36,13 +36,13 @@ public class DWGraph_DS implements directed_weighted_graph{
     	gNi.forEach(node -> {
         	node_data temp = new NodeData((NodeData) node);
 		_graph.put(temp.getKey(), temp);
-		_ni.put(temp.getKey(), new HashMap<>());
-		_niRevers.put(temp.getKey(), new HashSet<>());
+		_edges.put(temp.getKey(), new HashMap<>());
+		_reversEdges.put(temp.getKey(), new HashSet<>());
 		});
     	gNi.forEach(node -> {
 		g.getE(node.getKey()).forEach(e -> {
-			this._ni.get(e.getSrc()).put(e.getDest(), new EdgeData(e));
-			this._niRevers.get(e.getDest()).add(e.getSrc());
+			this._edges.get(e.getSrc()).put(e.getDest(), new EdgeData(e));
+			this._reversEdges.get(e.getDest()).add(e.getSrc());
 			});
 		});
 		this._mc = g.nodeSize() + g.edgeSize();
@@ -77,7 +77,7 @@ public class DWGraph_DS implements directed_weighted_graph{
     @Override
     public edge_data getEdge(int src, int dest) {
     	if (!_graph.containsKey(src)||!_graph.containsKey(dest)||src==dest) return null; // exception is better
-        return _ni.get(src).get(dest); // exception is better instead of null if no edge
+        return _edges.get(src).get(dest); // exception is better instead of null if no edge
     }
     
         /**
@@ -95,9 +95,9 @@ public class DWGraph_DS implements directed_weighted_graph{
         int key = n.getKey();
         _graph.put(key,n);
         // define new place to the node in the _ni
-        _ni.put(key,new HashMap<>());
+        _edges.put(key,new HashMap<>());
         // define new place to the node in the _ni
-        _niRevers.put(key,new HashSet<>());
+        _reversEdges.put(key,new HashSet<>());
         _mc++;
     }
     
@@ -114,14 +114,14 @@ public class DWGraph_DS implements directed_weighted_graph{
     @Override
     public void connect(int src, int dest, double w) {
     	if (!_graph.containsKey(src)||!_graph.containsKey(dest)||src==dest||w<0) return; // w==0 valid input? read interface
-    	HashMap<Integer, edge_data> srcNi = _ni.get(src);
+    	HashMap<Integer, edge_data> srcNi = _edges.get(src);
     	edge_data e = new EdgeData(src,dest,w);
     	if (srcNi.containsKey(dest)) { // edge existe, check the weight
     		if (srcNi.get(dest).getWeight()==w) return; // same as input >> do nothing (MC stays the same)
     		srcNi.put(dest,e); // update edge only
     	} else { // there no such edge
     		srcNi.put(dest,e);
-    		_niRevers.get(dest).add(src);
+    		_reversEdges.get(dest).add(src);
     		_edgeSize++; // a new edge added
     	}
         _mc++;
@@ -148,7 +148,7 @@ public class DWGraph_DS implements directed_weighted_graph{
     @Override
     public Collection<edge_data> getE(int node_id) {
     	if (!_graph.containsKey(node_id)) return null; // returning null ???
-        return _ni.get(node_id).values();
+        return _edges.get(node_id).values();
     }
     
         /**
@@ -169,19 +169,19 @@ public class DWGraph_DS implements directed_weighted_graph{
         // while the node not exists
         if (!_graph.containsKey(key)) return null;
         // delete the reversed edges to other nodes marked by _niRevers
-        this._ni.get(key).forEach((k,v) -> {
-        	_niRevers.get(k).remove(key);
+        this._edges.get(key).forEach((k, v) -> {
+        	_reversEdges.get(k).remove(key);
         	// (no need to update mc\edgeSize because _niRevers used for mark only)
 		});
         //delete the edge from key to others
-        int niSize = _ni.get(key).size();
-        _ni.remove(key);
+        int niSize = _edges.get(key).size();
+        _edges.remove(key);
         _edgeSize -= niSize; 
         _mc += niSize;
         //delete the edge from others to key
-        _edgeSize -= this._niRevers.get(key).size();
-        this._niRevers.get(key).forEach(e -> {
-        	_ni.get(e).remove(key);
+        _edgeSize -= this._reversEdges.get(key).size();
+        this._reversEdges.get(key).forEach(e -> {
+        	_edges.get(e).remove(key);
         	_mc++;
 		});
         _mc++;
@@ -203,12 +203,12 @@ public class DWGraph_DS implements directed_weighted_graph{
     public edge_data removeEdge(int src, int dest) {
         //while the edge not exists
         if (!_graph.containsKey(src) || !_graph.containsKey(dest)
-                || !_ni.get(src).containsKey(dest)) return null;
+                || !_edges.get(src).containsKey(dest)) return null;
         //remove the edge
         this._edgeSize--;
-        _niRevers.get(dest).remove(src);
+        _reversEdges.get(dest).remove(src);
         _mc++;
-        return _ni.get(src).remove(dest);
+        return _edges.get(src).remove(dest);
     }
 
         /**
@@ -289,9 +289,9 @@ public class DWGraph_DS implements directed_weighted_graph{
 			if (tempOne == null || !tempOne.equals(node))
 				return false;
 			Collection<edge_data> nodeE = g.getE(node.getKey());
-			if (nodeE.size() != _ni.get(node.getKey()).size()) {return false;}
+			if (nodeE.size() != _edges.get(node.getKey()).size()) {return false;}
 			for (edge_data e : nodeE) {
-				tempTwo = _ni.get(tempOne.getKey()).get(e.getDest());
+				tempTwo = _edges.get(tempOne.getKey()).get(e.getDest());
 				if (tempTwo == null || !e.equals(tempTwo))
 					return false;
 			}

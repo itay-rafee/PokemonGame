@@ -109,9 +109,7 @@ public class GeoLocation implements geo_location {
 	 * @return boolean
 	 */
 	public boolean equals(GeoLocation gl) {
-		if (this._x==gl._x&&this._y==gl._y&&this._z==gl._z)
-			return true;
-		return false;
+		return this._x == gl._x && this._y == gl._y && this._z == gl._z;
 	}
 	
 	/**

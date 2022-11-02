@@ -171,11 +171,31 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         return temp;
     }
 
-    public Collection<node_data> connected_component(int id1){
-        if (_graph.getNode(id1) == null)return null;
-        return findGroup(id1,new HashSet<>());
+    /**
+     * About connected_component() method:
+     * this method returns the group of the
+     * node with key 'key' using two direction
+     * BFS algorithm.
+     * @return the group of 'key'
+     */
+    public Collection<node_data> connected_component(int key){
+        if (_graph.getNode(key) == null)return null;
+        return findGroup(key,new HashSet<>());
     }
 
+    /**
+     * About connected_components() method:
+     *  this method returns all the groups of the
+     *  graph.
+     *  Algorithm:
+     *      Step 1) Choose a vertex
+     *      Step 2) Take the vertex, find its group and mark all
+     *              the vertices in the group that we visited.
+     *      Step 3) Taking a vertex that we haven't visited yet
+     *              and return to step 2 until there are no vertices
+     *              left.
+     * @return All the groups of the graph
+     */
     public HashSet<Collection<node_data>> connected_components(){
         HashSet<Collection<node_data>> allGroup = new HashSet<>();
         HashSet<node_data> vis = new HashSet<>();
