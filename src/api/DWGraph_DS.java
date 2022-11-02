@@ -215,7 +215,7 @@ public class DWGraph_DS implements directed_weighted_graph{
 	 * About nodeSize() method: this method return the number of vertices (nodes) in
 	 * the graph. The implementation of the method is simply by returning '_graph'
 	 * size [O(1)].
-	 * @return
+	 * @return number of node in graph
 	 */
     @Override
     public int nodeSize() {
