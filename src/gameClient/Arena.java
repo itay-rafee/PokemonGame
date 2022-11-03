@@ -107,15 +107,15 @@ public class Arena {
 	 * About getAgents(String aa, directed_weighted_graph gg) method:
 	 * The method returns the agents list from the json file
 	 * in accordance with the input objects.
-	 * @param aa
+	 * @param agentString
 	 * @param gg
 	 * @return ans
 	 */
-	public static List<CL_Agent> getAgents(String aa, directed_weighted_graph gg) {
+	public static List<CL_Agent> getAgents(String agentString, directed_weighted_graph gg) {
 		ArrayList<CL_Agent> ans = new ArrayList<CL_Agent>();
 		try {
-			JSONObject ttt = new JSONObject(aa);
-			JSONArray ags = ttt.getJSONArray("Agents");
+			JSONObject jsonObject = new JSONObject(agentString);
+			JSONArray ags = jsonObject.getJSONArray("Agents");
 			for(int i=0;i<ags.length();i++) {
 				CL_Agent c = new CL_Agent(gg,0);
 				c.update(ags.get(i).toString());
@@ -132,14 +132,14 @@ public class Arena {
 	 * About json2Pokemons(String fs) method:
 	 * The method returns the pokemons list from the json file
 	 * in accordance with the input object.
-	 * @param fs
+	 * @param pokemonString
 	 * @return ans
 	 */
-	public static ArrayList<CL_Pokemon> json2Pokemons(String fs) {
+	public static ArrayList<CL_Pokemon> json2Pokemons(String pokemonString) {
 		ArrayList<CL_Pokemon> ans = new  ArrayList<CL_Pokemon>();
 		try {
-			JSONObject ttt = new JSONObject(fs);
-			JSONArray ags = ttt.getJSONArray("Pokemons");
+			JSONObject jsonObject = new JSONObject(pokemonString);
+			JSONArray ags = jsonObject.getJSONArray("Pokemons");
 			for(int i=0;i<ags.length();i++) {
 				JSONObject pp = ags.getJSONObject(i);
 				JSONObject pk = pp.getJSONObject("Pokemon");
@@ -159,19 +159,17 @@ public class Arena {
 	 * About updateEdge(CL_Pokemon fr, directed_weighted_graph g) method:
 	 * The method checks the edge on which the Pokemon is located
 	 * (by the isOnEdge() method) and then updates the Pokemon with the appropriate edge.
-	 * @param fr
+	 * @param pokemon
 	 * @param g
 	 */
-	public static void updateEdge(CL_Pokemon fr, directed_weighted_graph g) {
+	public static void updateEdge(CL_Pokemon pokemon, directed_weighted_graph g) {
 		//	oop_edge_data ans = null;
-		Iterator<node_data> itr = g.getV().iterator();
-		while(itr.hasNext()) {
-			node_data v = itr.next();
-			Iterator<edge_data> iter = g.getE(v.getKey()).iterator();
-			while(iter.hasNext()) {
-				edge_data e = iter.next();
-				boolean f = isOnEdge(fr.getLocation(), e,fr.getType(), g);
-				if(f) {fr.set_edge(e);}
+		for (node_data v : g.getV()) {
+			for (edge_data e : g.getE(v.getKey())) {
+				boolean f = isOnEdge(pokemon.getLocation(), e, pokemon.getType(), g);
+				if (f) {
+					pokemon.set_edge(e);
+				}
 			}
 		}
 	}
@@ -260,8 +258,7 @@ public class Arena {
 	 */
 	public static Range2Range w2f(directed_weighted_graph g, Range2D frame) {
 		Range2D world = GraphRange(g);
-		Range2Range ans = new Range2Range(world, frame);
-		return ans;
+		return new Range2Range(world, frame);
 	}
 	
 	/**
@@ -289,9 +286,8 @@ public class Arena {
 	public int getGrade() throws JSONException {
 		String info = game.toString();
 		JSONObject line = new JSONObject(info);
-		JSONObject ttt = line.getJSONObject("GameServer");
-		int grade = ttt.getInt("grade");
-		return grade;
+		JSONObject gameServer = line.getJSONObject("GameServer");
+		return gameServer.getInt("grade");
 	}
 	
 	/**
@@ -302,9 +298,8 @@ public class Arena {
 	public int getMoves() throws JSONException {
 		String info = game.toString();
 		JSONObject line = new JSONObject(info);
-		JSONObject ttt = line.getJSONObject("GameServer");
-		int moves = ttt.getInt("moves");
-		return moves;
+		JSONObject gameServer = line.getJSONObject("GameServer");
+		return gameServer.getInt("moves");
 	}
 	
 	/**
@@ -326,10 +321,10 @@ public class Arena {
 	public void initHashMaps() {
 		List<CL_Agent> ag = this.getAgents();
 		if (ag==null) return;
-		for (int i = 0; i<ag.size(); i++) {
+		for (CL_Agent cl_agent : ag) {
 			Point3D p = new Point3D(-1, -1, -1);
-			lastPos.put(ag.get(i).getID(), p);
-			fruits.put(ag.get(i).getID(), new CL_Pokemon(p, -1, -1, -1, null));
+			lastPos.put(cl_agent.getID(), p);
+			fruits.put(cl_agent.getID(), new CL_Pokemon(p, -1, -1, -1, null));
 		}
 	}
 	
@@ -356,10 +351,7 @@ public class Arena {
 	 * @return boolean
 	 */
 	public boolean isPreviousPok(CL_Pokemon p, CL_Agent a) {
-		if (p.getLocation().distance(lastPos.get(a.getID()))<0.00000000000001) {
-			return true;
-		}
-		return false;
+		return p.getLocation().distance(lastPos.get(a.getID())) < 0.00000000000001;
 	}
 	
 	/**
@@ -390,11 +382,15 @@ public class Arena {
 	 */
 	public boolean isAvailableFruit(CL_Pokemon p, CL_Agent a) {
 		List<CL_Agent> ag = this.getAgents();
-		for (int i = 0; i<ag.size(); i++) {
-			if (ag.get(i).getID()!=a.getID()&&fruits.containsKey(ag.get(i).getID())) {
-				if (p.getPokNum()==fruits.get(ag.get(i).getID()).pokNum) {return false;}
-				double distance = fruits.get(ag.get(i).getID()).getLocation().distance(p.getLocation());
-				if (distance<0.0045) {return false;}
+		for (CL_Agent cl_agent : ag) {
+			if (cl_agent.getID() != a.getID() && fruits.containsKey(cl_agent.getID())) {
+				if (p.getPokNum() == fruits.get(cl_agent.getID()).pokNum) {
+					return false;
+				}
+				double distance = fruits.get(cl_agent.getID()).getLocation().distance(p.getLocation());
+				if (distance < 0.0045) {
+					return false;
+				}
 			}
 		}
 		return true;
